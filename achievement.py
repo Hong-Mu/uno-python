@@ -144,7 +144,7 @@ class Achievement:
       self.save() #그 바뀐 값들을 json에 저장
       self.load() #그 바뀐 json을 achievements에 반영
 
-   
-ach=Achievement()
-ach.load()
-print(ach.achievements)
+if __name__ == '__main__':
+   ach=Achievement()
+   ach.load()
+   print(ach.achievements)
