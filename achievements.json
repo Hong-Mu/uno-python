@@ -1,0 +1,41 @@
+{
+   "ACH_single_win": {
+      "achievement": true,
+      "date": null
+   },
+   "ACH_story_win": {
+      "achievement": {
+         "regionA": true,
+         "regionB": false,
+         "regionC": false,
+         "regionD": false
+      },
+      "date": null
+   },
+   "ACH_10turn_win": {
+      "achievement": false,
+      "date": null
+   },
+   "ACH_noskill_win": {
+      "achievement": false,
+      "date": null
+   },
+   "ACH_swap_win": {
+      "achievement": false,
+      "date": null
+   },
+   "ACH_swap_lose": {
+      "achievement": false,
+      "date": null
+   },
+   "ACH_single10_win": {
+      "achievement": false,
+      "date": null,
+      "cnt": 0
+   },
+   "ACH_uno_cnt": {
+      "achievement": false,
+      "date": null,
+      "cnt": 0
+   }
+}
