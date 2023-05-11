@@ -22,6 +22,7 @@ class HomeScreen:
                 self.screen_controller.set_screen_type(TYPE_STORY),
                 self.screen_controller.screens[TYPE_STORY].init()
             )},
+            {'text': '업적', 'action': lambda: self.screen_controller.set_screen(TYPE_ACHIVEMENT), 'view': None, 'rect': None},
             {'text': '설정', 'action': lambda: self.screen_controller.set_screen(TYPE_SETTING), 'view': None, 'rect': None },
             {'text': '종료', 'action': lambda: self.screen_controller.stop(), 'view': None, 'rect': None },
         ]

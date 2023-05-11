@@ -62,6 +62,7 @@ TYPE_SETTING = "setting"
 TYPE_PLAY = "play"
 TYPE_LOBBY = "lobby"
 TYPE_STORY = "story"
+TYPE_ACHIVEMENT = "achivement"
 
 MODE_SCREEN = "mode_screen"
 MODE_BLIND = "mode_blind"
