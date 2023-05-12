@@ -1,6 +1,7 @@
 import os
 
 from util.achievementsutil import *
+from util.fontutil import wrap_text
 from util.globals import *
 import pygame
 
@@ -24,7 +25,7 @@ class AchivementScreen:
         self.scroll_speed = 50
         self.scroll_max = None
 
-        self.data = {
+        self.info = {
             Achivement.SINGLE_WIN_1:
                 {KEY_NAME: "싱글 플레이어 대전에서 승리", KEY_DESC: "싱글 플레이어 대전에서 승리하여 업적 달성!", },
             Achivement.SINGLE_WIN_10:
@@ -73,27 +74,33 @@ class AchivementScreen:
     def draw_achievements(self, screen):
 
         temp_topleft = (0, get_medium_margin())
-        for item in self.data.keys():
+        for item in self.info.keys():
             self.draw_item(screen, item, (temp_topleft[0], temp_topleft[1] - self.scroll_y))
 
             temp_topleft = (0, temp_topleft[1] + ITEM_HEIGHT)
 
         self.scroll_max = temp_topleft[1] - screen.get_height() + get_medium_margin()
 
-
-
-
-
-
     def draw_item(self, screen, achivement, topleft):
-
         data = self.achivemenstUtil.get(achivement.name)
-        file_name = achivement.value + ('_disabled' if not data[PREF_ACQUIRED] else '')
 
+        # 아이콘
+        file_name = achivement.value + ('_disabled' if not data[PREF_ACQUIRED] else '')
         resource = f'resource\\achivement\\{file_name}.png'
         item = pygame.image.load(os.path.join(ROOT, resource))
         item = pygame.transform.scale(item, (ITEM_WIDTH, ITEM_HEIGHT))
         screen.blit(item, topleft)
+
+        # 제목
+        name = get_medium_font().render(self.info[achivement][KEY_NAME], True, COLOR_BLACK)
+        screen.blit(name, (topleft[0] + ITEM_WIDTH + get_medium_margin(), topleft[1] + get_extra_small_margin()))
+
+        #  설명
+        temp_y = topleft[1] + name.get_height() + get_medium_margin()
+        for line in wrap_text(self.info[achivement][KEY_DESC], get_medium_font(), screen.get_width() - ITEM_WIDTH - get_medium_margin()):
+            description = get_medium_font().render(line, True, COLOR_BLACK)
+            screen.blit(description, (topleft[0] + ITEM_WIDTH + get_medium_margin(), temp_y))
+            temp_y += description.get_height()
 
     def run_events(self, events):
         for event in events:
