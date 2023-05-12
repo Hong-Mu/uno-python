@@ -1,7 +1,7 @@
 import os
 
-from util.achievementsutil import *
-from util.fontutil import wrap_text
+from util.achievement import *
+from util.text import wrap_text
 from util.globals import *
 import pygame
 

@@ -1,6 +1,6 @@
 from enum import Enum
 
-from util.base import BaseFileUtil
+from base.basefileutil import BaseFileUtil
 
 
 class ExtraDataUtil(BaseFileUtil):

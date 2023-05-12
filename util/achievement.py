@@ -1,9 +1,8 @@
-import json
 import time
 from enum import Enum
 from datetime import datetime
 
-from util.base import BaseFileUtil
+from base.basefileutil import BaseFileUtil
 
 PREF_ACQUIRED = "acquired"
 PREF_TIMIESTAMP = "timestamp"
