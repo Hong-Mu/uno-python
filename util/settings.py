@@ -61,7 +61,7 @@ class SettingsUtil:
         try:
             with open(self.file_path, 'r') as f:
                 self.data = json.load(f)
-        except:
+        except IOError:
             self.clear()
 
 

@@ -1,5 +1,9 @@
+import os
+
 import pygame
 from game.model.card import Card
+
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 COLOR_WHITE = (255, 255, 255)
 COLOR_GRAY = (128, 128, 128)
