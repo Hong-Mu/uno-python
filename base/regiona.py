@@ -1,10 +1,11 @@
 import random
 
 from base.basegame import BaseGame
+from game.model.card import Card
 from game.model.computer import Computer
 from game.story.region import Region
 from util.extradata import ExtraData
-from util.globals import extraDataUtil
+from util.globals import extraDataUtil, CARD_COLOR_NONE, SKILL_COMBO
 
 
 class GameA(BaseGame):
@@ -48,3 +49,11 @@ class GameA(BaseGame):
             return random.choice(non_int_values)
         else:
             return random.choice(int_values)
+
+    def get_combo(self, computer):
+        temp = computer.get_special_cards()
+        if len(temp) > 0:
+            for card in temp:
+                computer.hands.remove(card)
+            computer.hands.append(Card(CARD_COLOR_NONE, SKILL_COMBO))
+            return len(computer.hands) - 1

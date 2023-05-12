@@ -3,6 +3,7 @@ from __future__ import annotations
 import random
 from typing import TYPE_CHECKING
 
+from base.regiona import GameA
 from game.model.computer import Computer
 from screen.game.play.section.escapeDialog import EscapeDialog
 from screen.game.play.section.gameOverDialog import GameOverDialog
@@ -22,6 +23,7 @@ class PlayScreen:
     def __init__(self, screen_controller: ScreenController):
 
         # 의존성 객체
+
 
         self.screen_controller = screen_controller
         self.animate_controller = AnimateController()
@@ -49,6 +51,8 @@ class PlayScreen:
         self.select_color_enabled = False
 
         self.combo_enabled = False
+
+        self.to_computer_play_idx = None
 
         # 애니메이션 관련
         self.animate_view = None
@@ -429,13 +433,8 @@ class PlayScreen:
 
             self.to_computer_play_idx = computer.to_play(self.game)
 
-            if self.game.play_type == TYPE_STORY_A:
-                temp = computer.get_special_cards()
-                if len(temp) > 0:
-                    for card in temp:
-                        computer.hands.remove(card)
-                    computer.hands.append(Card(CARD_COLOR_NONE, SKILL_COMBO))
-                    self.to_computer_play_idx = len(computer.hands) - 1
+            if self.game is GameA:
+                self.to_computer_play_idx = self.game.get_combo()
 
             if self.to_computer_play_idx is not None:
                 self.screen_controller.play_effect()

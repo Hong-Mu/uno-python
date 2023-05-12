@@ -29,12 +29,8 @@ class Deck:
 
         self.cards = cards
 
-        if self.game.play_type == TYPE_STORY_D:
-            cards = []
-            for c in color[1:]:
-                for v in range(1,10):
-                    cards.append(Card(c, v))
-            self.cards = cards
+    def set_cards(self, cards):
+        self.cards = cards
 
         
     def shuffle(self):

@@ -1,6 +1,12 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
+
+from base.regiona import GameA
+from base.regionb import GameB
+from base.regionc import GameC
+from base.regiond import GameD
 from game.model.player import Player
+from game.story.region import Region
 from util.extradata import ExtraData
 
 if TYPE_CHECKING:
@@ -27,10 +33,10 @@ class StoryScreen:
 
         # 스토리 목록
         self.stories = [
-            {'type': TYPE_STORY_A, 'rect': None, 'action': None, 'hover': None, 'color': COLOR_RED, 'features': ['컴퓨터 플레이어 첫 분배 기술 카드 확률 50% 상승', '컴퓨터 플레이어 기술 카드 콤보 사용(2-3장)']},
-            {'type': TYPE_STORY_B, 'rect': None, 'action': None, 'hover': None, 'color': COLOR_BLUE, 'features': ['컴퓨터 플레이어 3명', '모든 카드를 같은 수만큼 분배']},
-            {'type': TYPE_STORY_C, 'rect': None, 'action': None, 'hover': None, 'color': COLOR_GREEN, 'features': ['컴퓨터 플레이어 2명', '매 5턴마다 낼 수 있는 카드 색상 무작위 변경']},
-            {'type': TYPE_STORY_D, 'rect': None, 'action': None, 'hover': None, 'color': COLOR_YELLOW, 'features': ['컴퓨터 플레이어 5명', '숫자 카드로만 진행']},
+            {'type': Region.A, 'game': GameA, 'rect': None, 'action': None, 'hover': None, 'color': COLOR_RED, 'features': ['컴퓨터 플레이어 첫 분배 기술 카드 확률 50% 상승', '컴퓨터 플레이어 기술 카드 콤보 사용(2-3장)']},
+            {'type': Region.B, 'game': GameB, 'rect': None, 'action': None, 'hover': None, 'color': COLOR_BLUE, 'features': ['컴퓨터 플레이어 3명', '모든 카드를 같은 수만큼 분배']},
+            {'type': Region.C, 'game': GameC, 'rect': None, 'action': None, 'hover': None, 'color': COLOR_GREEN, 'features': ['컴퓨터 플레이어 2명', '매 5턴마다 낼 수 있는 카드 색상 무작위 변경']},
+            {'type': Region.D, 'game': GameD, 'rect': None, 'action': None, 'hover': None, 'color': COLOR_YELLOW, 'features': ['컴퓨터 플레이어 5명', '숫자 카드로만 진행']},
         ]
 
         # 확인 다이얼로그
@@ -166,7 +172,9 @@ class StoryScreen:
 
     def move_play_screen(self):
         self.screen_controller.set_screen_type(TYPE_PLAY)
-        self.screen_controller.game.start_game(self.get_selected_story()['type'], [Player("You")])
+        self.screen_controller.set_game(self.get_selected_story()['game']())
+        self.screen_controller.game.set_players([Player("You")])
+        self.screen_controller.game.start_game()
 
     def get_selected_story(self):
         return self.stories[self.current_position]

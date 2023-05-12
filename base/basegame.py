@@ -8,8 +8,6 @@ from util.globals import *
 class BaseGame:
     def __init__(self):
         self.is_started = False
-
-        self.play_type = None
         self.players = []
 
         self.reverse_direction = False
