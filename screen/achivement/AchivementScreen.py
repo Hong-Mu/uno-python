@@ -7,7 +7,10 @@ import pygame
 KEY_NAME = "name"
 KEY_DESC = "description"
 
-ITEM_WIDTH, ITEM_HEIGHT = (100, 100)
+SCROLL_UP = 4
+SCROLL_DOWN = 5
+
+ITEM_WIDTH, ITEM_HEIGHT = (150, 150)
 
 class AchivementScreen:
     def __init__(self, screen_controller):
@@ -15,6 +18,11 @@ class AchivementScreen:
         self.achivemenstUtil = screen_controller.achivemenstUtil
 
         self.title_rect = None
+        self.scroll_surface = None
+
+        self.scroll_y = 0
+        self.scroll_speed = 50
+        self.scroll_max = None
 
         self.data = {
             Achivement.SINGLE_WIN_1:
@@ -45,7 +53,8 @@ class AchivementScreen:
         screen.fill(COLOR_WHITE)
 
         self.draw_title(screen)
-        self.draw_achievements(screen)
+        self.draw_scroll_surface(screen)
+
         
         
     def draw_title(self, screen):
@@ -53,16 +62,24 @@ class AchivementScreen:
         title_rect = get_rect(title, screen.get_width() // 2, get_medium_margin())
         self.title_rect = screen.blit(title, title_rect)
 
+
+    def draw_scroll_surface(self, screen):
+        self.scroll_surface = pygame.Surface(size=(screen.get_width(), screen.get_height() - self.title_rect.bottom))
+        self.scroll_surface.fill(COLOR_WHITE)
+        self.draw_achievements(self.scroll_surface)
+
+        screen.blit(self.scroll_surface, (0, self.title_rect.bottom))
+
     def draw_achievements(self, screen):
 
-        temp_topleft = (0, self.title_rect.bottom + get_medium_margin())
+        temp_topleft = (0, get_medium_margin())
         for item in self.data.keys():
-            self.draw_item(screen, item, temp_topleft)
+            self.draw_item(screen, item, (temp_topleft[0], temp_topleft[1] - self.scroll_y))
 
-            if temp_topleft[0] + ITEM_WIDTH * 2 < screen.get_width():
-                temp_topleft = (temp_topleft[0] + ITEM_WIDTH, temp_topleft[1])
-            else:
-                temp_topleft = (0, temp_topleft[1] + ITEM_HEIGHT)
+            temp_topleft = (0, temp_topleft[1] + ITEM_HEIGHT)
+
+        self.scroll_max = temp_topleft[1] - screen.get_height() + get_medium_margin()
+
 
 
 
@@ -71,7 +88,6 @@ class AchivementScreen:
     def draw_item(self, screen, achivement, topleft):
 
         data = self.achivemenstUtil.get(achivement.name)
-        print(data)
         file_name = achivement.value + ('_disabled' if not data[PREF_ACQUIRED] else '')
 
         resource = f'resource\\achivement\\{file_name}.png'
@@ -80,4 +96,24 @@ class AchivementScreen:
         screen.blit(item, topleft)
 
     def run_events(self, events):
+        for event in events:
+            if event.type == pygame.KEYDOWN:
+                self.run_key_event(event)
+            elif event.type == pygame.MOUSEBUTTONUP:
+                pos = pygame.mouse.get_pos()
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                self.run_scroll_event(event)
+
+
+    def run_scroll_event(self, event):
+        if event.button == SCROLL_UP:  # 위로 스크롤
+            if self.scroll_y - self.scroll_speed >= 0:
+                self.scroll_y -= self.scroll_speed
+        elif event.button == SCROLL_DOWN:  # 아래
+            if self.scroll_y + self.scroll_speed <= self.scroll_max:
+                self.scroll_y += self.scroll_speed
+        print(self.scroll_y)
+
+    def run_key_event(self, event):
         pass
+
