@@ -1,6 +1,7 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 
+from screen.model.screentype import ScreenType
 from util.globals import *
 import pygame
 
@@ -15,15 +16,18 @@ class HomeScreen:
         self.selected_menu_index = 0
         self.menu_dict = [
             {'text': '싱글플레이', 'view': None, 'rect': None, 'action': lambda: (
-                self.screen_controller.set_screen(TYPE_LOBBY),
-                self.screen_controller.screens[TYPE_LOBBY].init()
+                self.screen_controller.set_screen(ScreenType.LOBBY),
+                self.screen_controller.screens[ScreenType.LOBBY].init()
+            )},
+            {'text': '멀티플레이', 'view': None, 'rect': None, 'action': lambda: (
+
             )},
             {'text': '스토리모드', 'view': None, 'rect': None, 'action': lambda: (
-                self.screen_controller.set_screen_type(TYPE_STORY),
-                self.screen_controller.screens[TYPE_STORY].init()
+                self.screen_controller.set_screen_type(ScreenType.STORY),
+                self.screen_controller.screens[ScreenType.STORY].init()
             )},
-            {'text': '업적', 'action': lambda: self.screen_controller.set_screen(TYPE_ACHIVEMENT), 'view': None, 'rect': None},
-            {'text': '설정', 'action': lambda: self.screen_controller.set_screen(TYPE_SETTING), 'view': None, 'rect': None },
+            {'text': '업적', 'action': lambda: self.screen_controller.set_screen(ScreenType.ACHIVEMENT), 'view': None, 'rect': None},
+            {'text': '설정', 'action': lambda: self.screen_controller.set_screen(ScreenType.SETTING), 'view': None, 'rect': None },
             {'text': '종료', 'action': lambda: self.screen_controller.stop(), 'view': None, 'rect': None },
         ]
 

@@ -44,12 +44,6 @@ COLOR_SET = {
     CARD_COLOR_BLUE: COLOR_BLUE,
 }
 
-TYPE_START = "start"
-TYPE_SETTING = "setting"
-TYPE_PLAY = "play"
-TYPE_LOBBY = "lobby"
-TYPE_STORY = "story"
-TYPE_ACHIVEMENT = "achivement"
 
 MODE_SCREEN = "mode_screen"
 MODE_BLIND = "mode_blind"
@@ -62,9 +56,6 @@ MODE_DECK_KEY = "mode_deck_key"
 
 MODE_CLEAR = "mode_clear"
 MODE_RETURN = "mode_return"
-
-TYPE_SINGLE = "type_single"
-TYPE_MULTI = "type_multi"
 
 DIMEN_EXTRA_LARGE = 50
 DIMEN_LARGE = 40

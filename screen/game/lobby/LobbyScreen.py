@@ -5,6 +5,7 @@ import pygame.draw
 from game.single import SinglePlayGame
 from game.model.computer import Computer
 from game.model.player import *
+from screen.model.screentype import ScreenType
 from util.globals import *
 
 
@@ -21,7 +22,7 @@ class LobbyScreen:
         self.menus = [
             {'text': '플레이', 'view': None, 'rect': None, 'action': self.toggle_input_name_dialog },
             {'text': '돌아가기', 'view': None, 'rect': None, 'action': lambda: (
-                self.screen_controller.set_screen_type(TYPE_START)
+                self.screen_controller.set_screen_type(ScreenType.START)
             )},
         ]
 
@@ -197,7 +198,7 @@ class LobbyScreen:
                 players.append(Computer(computer['name']))
 
         # 화면 이동
-        self.screen_controller.set_screen_type(TYPE_PLAY)
+        self.screen_controller.set_screen_type(ScreenType.PLAY)
         self.screen_controller.set_game(SinglePlayGame())
         self.screen_controller.game.set_players(players)
         self.screen_controller.game.start_game()

@@ -1,4 +1,5 @@
 from screen.achivement.AchivementScreen import AchivementScreen
+from screen.model.screentype import ScreenType
 from util.achievement import AchievementsUtil
 from util.extradata import ExtraDataUtil
 from util.settings import SettingsUtil
@@ -24,7 +25,7 @@ class ScreenController:
         self.clock = pygame.time.Clock()
         self.fps = 30
 
-        self.screen_type = TYPE_START
+        self.screen_type = ScreenType.START
         self.running = True
 
         # 설정 불러오기
@@ -59,12 +60,12 @@ class ScreenController:
 
     def init_instance(self):
         ScreenController.screens = {
-            TYPE_START: HomeScreen(self),
-            TYPE_SETTING: SettingScreen(self),
-            TYPE_PLAY: PlayScreen(self),
-            TYPE_LOBBY: LobbyScreen(self),
-            TYPE_STORY: StoryScreen(self),
-            TYPE_ACHIVEMENT: AchivementScreen(self),
+            ScreenType.START: HomeScreen(self),
+            ScreenType.SETTING: SettingScreen(self),
+            ScreenType.PLAY: PlayScreen(self),
+            ScreenType.LOBBY: LobbyScreen(self),
+            ScreenType.STORY: StoryScreen(self),
+            ScreenType.ACHIVEMENT: AchivementScreen(self),
         }
 
     # 화면 설정
@@ -126,7 +127,7 @@ class ScreenController:
 
 
     def update_bgm(self):
-        if self.screen_type == TYPE_PLAY:
+        if self.screen_type == ScreenType.PLAY:
             if not self.is_bgm_playing:
                 self.is_bgm_playing = True
                 self.bgm.play(-1)

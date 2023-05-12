@@ -2,6 +2,8 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import pygame
+
+from screen.model.screentype import ScreenType
 from util.globals import *
 
 if TYPE_CHECKING:
@@ -24,7 +26,7 @@ class EscapeDialog:
         self.menus = [
             {'text': '설정', 'view': None, 'rect': None,
              'action': lambda: (
-                 self.screen_controller.set_screen(TYPE_SETTING),
+                 self.screen_controller.set_screen(ScreenType.SETTING),
                  self.screen_controller.set_paused(),
              )},
             {'text': '돌아가기', 'view': None, 'rect': None,
@@ -34,7 +36,7 @@ class EscapeDialog:
             {'text': '종료', 'view': None, 'rect': None, 'action': lambda: (
                 self.play_screen.init(),
                 self.play_screen.game.finish_game(),
-                self.screen_controller.set_screen(TYPE_START),
+                self.screen_controller.set_screen(ScreenType.START),
             )
              }
         ]

@@ -7,6 +7,7 @@ from game.story.regiona import GameA
 from game.story.regionb import GameB
 from game.story.regionc import GameC
 from game.story.regiond import GameD
+from screen.model.screentype import ScreenType
 from util.extradata import ExtraData
 
 if TYPE_CHECKING:
@@ -168,7 +169,7 @@ class StoryScreen:
             self.is_story_enabled = True
 
     def move_play_screen(self):
-        self.screen_controller.set_screen_type(TYPE_PLAY)
+        self.screen_controller.set_screen_type(ScreenType.PLAY)
         self.screen_controller.set_game(self.get_selected_story()['game']())
         self.screen_controller.game.set_players([Player("You")])
         self.screen_controller.game.start_game()

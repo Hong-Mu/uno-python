@@ -2,6 +2,8 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import pygame
+
+from screen.model.screentype import ScreenType
 from util.globals import *
 
 if TYPE_CHECKING:
@@ -37,8 +39,8 @@ class GameOverDialog:
 
     def run_key_event(self, key):
         self.play_screen.init(),
-        self.screen_controller.set_screen(TYPE_START)
+        self.screen_controller.set_screen(ScreenType.START)
 
     def run_click_event(self, pos):
         self.play_screen.init(),
-        self.screen_controller.set_screen(TYPE_START)
+        self.screen_controller.set_screen(ScreenType.START)
