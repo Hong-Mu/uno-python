@@ -1,5 +1,6 @@
 from screen.achivement.AchivementScreen import AchivementScreen
 from util.achievementsutil import AchievementsUtil
+from util.extradatautil import ExtraDataUtil
 from util.settings import SettingsUtil
 from util.globals import *
 from screen.home.HomeScreen import HomeScreen
@@ -33,7 +34,8 @@ class ScreenController:
         self.screen = pygame.display.set_mode(self.setting.get_resolution())
 
         # 업적
-        self.achivemenstUtil = AchievementsUtil()
+        self.achivementsUtil = AchievementsUtil()
+        self.extraDataUtil = ExtraDataUtil()
 
         self.init_instance()
 

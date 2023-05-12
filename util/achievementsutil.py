@@ -3,41 +3,22 @@ import time
 from enum import Enum
 from datetime import datetime
 
-FILE_PATH = 'achievements.json'
+from util.base import BaseFileUtil
 
 PREF_ACQUIRED = "acquired"
 PREF_TIMIESTAMP = "timestamp"
 
 
-class AchievementsUtil:
-
+class AchievementsUtil(BaseFileUtil):
     def __init__(self):
-        self.data = None
+        super().__init__()
+        self.FILE_PATH = 'achievements.json'
         self.load()
 
     def init(self):
         self.data = {}
         for item in Achivement:
             self.data[item.name] = {PREF_ACQUIRED: False, PREF_TIMIESTAMP: None}
-
-    def save(self):
-        with open(FILE_PATH, 'w') as f:
-            json.dump(self.data, f, indent=4)
-
-    def load(self):
-        try:
-            with open(FILE_PATH, 'r') as f:
-                self.data = json.load(f)
-        except IOError:
-            self.clear()
-
-    def clear(self):
-        self.init()
-        self.save()
-        self.load()
-
-    def get(self, key):
-        return self.data.get(key)
 
     def set_acquired(self, achivement):
         self.data[achivement.name][PREF_ACQUIRED] = True

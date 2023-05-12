@@ -3,18 +3,17 @@ import os
 
 import pygame
 
+from util.base import BaseFileUtil
 from util.globals import *
 
 
-class SettingsUtil:
-    file_path = 'uno_setting.json'
-
+class SettingsUtil(BaseFileUtil):
     MAX_VOLUME = 10
 
     def __init__(self):
-
+        super().__init__()
+        self.FILE_PATH = 'uno_setting.json'
         self.data = None
-
         self.load()
 
         # 화면
@@ -31,10 +30,6 @@ class SettingsUtil:
             MODE_DECK_KEY: pygame.K_d,
         }
 
-    def clear(self):
-        self.init()
-        self.save()
-
     def get_resolution(self):
         return self.screen_resolution[self.get(MODE_SCREEN)]
 
@@ -43,26 +38,6 @@ class SettingsUtil:
 
     def get_effect_volume(self):
         return self.get(MODE_EFFECT_VOLUME) * self.get(MODE_MASTER_VOLUME) / 100
-
-    # 파일 저장 관련 코드
-    def get(self, key):
-        self.load()
-        return self.data.get(key)
-
-    def set(self, key, value):
-        self.data[key] = value
-        self.save()
-
-    def save(self):
-        with open(self.file_path, 'w') as f:
-            json.dump(self.data, f, indent=4)
-
-    def load(self):
-        try:
-            with open(self.file_path, 'r') as f:
-                self.data = json.load(f)
-        except IOError:
-            self.clear()
 
 
 if __name__ == '__main__':

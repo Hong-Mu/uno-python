@@ -16,7 +16,8 @@ ITEM_WIDTH, ITEM_HEIGHT = (150, 150)
 class AchivementScreen:
     def __init__(self, screen_controller):
         self.screen_controller = screen_controller
-        self.achivemenstUtil = screen_controller.achivemenstUtil
+        self.achivementsUtil = screen_controller.achivementsUtil
+        self.extraDataUtil = screen_controller.extraDataUtil
 
         self.title_rect = None
         self.scroll_surface = None
@@ -56,13 +57,11 @@ class AchivementScreen:
         self.draw_title(screen)
         self.draw_scroll_surface(screen)
 
-        
-        
+
     def draw_title(self, screen):
         title = get_large_font().render('업적', True, COLOR_BLACK)
         title_rect = get_rect(title, screen.get_width() // 2, get_medium_margin())
         self.title_rect = screen.blit(title, title_rect)
-
 
     def draw_scroll_surface(self, screen):
         self.scroll_surface = pygame.Surface(size=(screen.get_width(), screen.get_height() - self.title_rect.bottom))
@@ -82,7 +81,7 @@ class AchivementScreen:
         self.scroll_max = temp_topleft[1] - screen.get_height() + get_medium_margin()
 
     def draw_item(self, screen, achivement, topleft):
-        data = self.achivemenstUtil.get(achivement.name)
+        data = self.achivementsUtil.get(achivement.name)
 
         # 아이콘
         file_name = achivement.value + ('_disabled' if not data[PREF_ACQUIRED] else '')
@@ -124,7 +123,6 @@ class AchivementScreen:
         elif event.button == SCROLL_DOWN:  # 아래
             if self.scroll_y + self.scroll_speed <= self.scroll_max:
                 self.scroll_y += self.scroll_speed
-        print(self.scroll_y)
 
     def run_key_event(self, event):
         pass
