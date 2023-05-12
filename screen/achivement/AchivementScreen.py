@@ -91,13 +91,18 @@ class AchivementScreen:
         item = pygame.transform.scale(item, (ITEM_WIDTH, ITEM_HEIGHT))
         screen.blit(item, topleft)
 
+        # 날짜
+        if data[PREF_ACQUIRED]:
+            date = get_small_font().render(data[PREF_TIMIESTAMP][:11], True, COLOR_BLACK)
+            screen.blit(date, ((ITEM_WIDTH - date.get_width()) // 2, topleft[1] + ITEM_HEIGHT - date.get_height()))
+
         # 제목
         name = get_medium_font().render(self.info[achivement][KEY_NAME], True, COLOR_BLACK)
         screen.blit(name, (topleft[0] + ITEM_WIDTH + get_medium_margin(), topleft[1] + get_extra_small_margin()))
 
         #  설명
         temp_y = topleft[1] + name.get_height() + get_medium_margin()
-        for line in wrap_text(self.info[achivement][KEY_DESC], get_medium_font(), screen.get_width() - ITEM_WIDTH - get_medium_margin()):
+        for line in wrap_text('설명: ' + self.info[achivement][KEY_DESC], get_medium_font(), screen.get_width() - ITEM_WIDTH - get_medium_margin()):
             description = get_medium_font().render(line, True, COLOR_BLACK)
             screen.blit(description, (topleft[0] + ITEM_WIDTH + get_medium_margin(), temp_y))
             temp_y += description.get_height()

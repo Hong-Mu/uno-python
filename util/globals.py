@@ -133,7 +133,7 @@ def get_small_font(percent = 1):
     return pygame.font.Font('./resource/font/pretendard_regular.otf', DIMEN_SMALL * percent)
 
 def get_extra_small_font(percent = 1):
-    return pygame.font.Font('./resouorce/font/pretendard_regular.otf', DIMEN_EXTRA_SMALL * percent)
+    return pygame.font.Font('./resource/font/pretendard_regular.otf', DIMEN_EXTRA_SMALL * percent)
 
 
 def get_medium_margin(percent = 1):
