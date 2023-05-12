@@ -1,9 +1,8 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING
 
 import pygame.draw
 
-from base.single import SinglePlayGame
+from game.single import SinglePlayGame
 from game.model.computer import Computer
 from game.model.player import *
 from util.globals import *

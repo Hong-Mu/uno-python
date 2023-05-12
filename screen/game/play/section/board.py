@@ -1,7 +1,7 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 
-
+from game.model.skill import Skill
 from util.globals import *
 import time
 import pygame
@@ -58,7 +58,7 @@ class Board:
 
     def draw_reverse(self, screen):
         if self.game.reverse_direction:
-            surface = get_skill(SKILL_REVERSE, 2)
+            surface = get_skill(Skill.REVERSE.value, 2)
             rect = surface.get_rect(bottomright=self.background_rect.bottomright)
             screen.blit(surface, rect)
 

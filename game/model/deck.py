@@ -1,5 +1,5 @@
 from game.model.card import Card
-from game.model.skill import SKILL
+from game.model.skill import Skill
 from util.globals import *
 import random
 
@@ -16,13 +16,13 @@ class Deck:
 
     def create_cards(self):
         color = list(CARD_COLOR_SET.keys())
-        value = [i for i in range(1,10)] + [item.value for item in SKILL]
+        value = [i for i in range(1,10)] + [item.value for item in Skill]
 
         # 무색상 +4 기술 카드
         cards = []
-        cards.extend([Card(CARD_COLOR_NONE, SKILL.PLUS_4.value)])
+        cards.extend([Card(CARD_COLOR_NONE, Skill.PLUS_4.value)])
         # 무색상 색상 기술 카드
-        cards.extend([Card(CARD_COLOR_NONE, SKILL.COLOR.value)])
+        cards.extend([Card(CARD_COLOR_NONE, Skill.COLOR.value)])
 
         for c in color[1:]:
             for v in value[:14]:

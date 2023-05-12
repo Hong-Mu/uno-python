@@ -1,19 +1,16 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 
-from base.regiona import GameA
-from base.regionb import GameB
-from base.regionc import GameC
-from base.regiond import GameD
 from game.model.player import Player
-from game.story.region import Region
+from game.model.region import Region
+from game.story.regiona import GameA
+from game.story.regionb import GameB
+from game.story.regionc import GameC
+from game.story.regiond import GameD
 from util.extradata import ExtraData
 
 if TYPE_CHECKING:
     from screen.ScreenController import ScreenController
-
-
-import pygame
 
 from util.globals import *
 

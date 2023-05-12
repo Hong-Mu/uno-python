@@ -3,8 +3,8 @@ import random
 from base.basegame import BaseGame
 from game.model.card import Card
 from game.model.computer import Computer
-from game.model.skill import SKILL
-from game.story.region import Region
+from game.model.skill import Skill
+from game.model.region import Region
 from util.extradata import ExtraData
 from util.globals import extraDataUtil, CARD_COLOR_NONE
 
@@ -56,5 +56,5 @@ class GameA(BaseGame):
         if len(temp) > 0:
             for card in temp:
                 computer.hands.remove(card)
-            computer.hands.append(Card(CARD_COLOR_NONE, SKILL.COMBO))
+            computer.hands.append(Card(CARD_COLOR_NONE, Skill.COMBO))
             return len(computer.hands) - 1

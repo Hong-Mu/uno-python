@@ -1,7 +1,6 @@
 from enum import Enum
 
-
-class SKILL(Enum):
+class Skill(Enum):
     JUMP = "skill_skip"
     REVERSE = "skill_reverse"
     PLUS_2 = "skill_card_2"

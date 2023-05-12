@@ -3,9 +3,9 @@ from __future__ import annotations
 import random
 from typing import TYPE_CHECKING
 
-from base.regiona import GameA
 from game.model.computer import Computer
-from game.model.skill import SKILL
+from game.model.skill import Skill
+from game.story.regiona import GameA
 from screen.game.play.section.escapeDialog import EscapeDialog
 from screen.game.play.section.gameOverDialog import GameOverDialog
 from screen.game.play.section.playersLayout import PlayersLayout
@@ -24,8 +24,6 @@ class PlayScreen:
     def __init__(self, screen_controller: ScreenController):
 
         # 의존성 객체
-
-
         self.screen_controller = screen_controller
         self.animate_controller = AnimateController()
         self.game = None
@@ -61,6 +59,8 @@ class PlayScreen:
         self.animate_deck_to_player_enabled = False
         self.animate_board_player_to_current_card_enabled = False
         self.animate_current_player_to_current_card_enabled = False
+
+        self.is_animation_running = False
 
     def pause_game(self):  # 일시정지
         self.stop_timer_enabled = True
@@ -141,92 +141,103 @@ class PlayScreen:
         # 애니메이션
         self.draw_animation(screen)
 
+        if not self.is_animation_running:
+            self.run_computer()
+
     def draw_animation(self, screen):
+        self.is_animation_running = True
         if self.animate_deck_to_player_enabled:
-            if self.animate_controller.enabled:
-                self.pause_game()
-                self.animate_controller.draw(screen)
-            else:
-                if self.game.can_uno_penalty:
-                    self.game.penalty(self.game.previous_player_index)
-                    self.game.uno_enabled = False
-                    self.game.uno_clicked = False
-                    self.game.can_uno_penalty = False
-                    self.animate_deck_to_player_enabled = False
-                    self.continue_game()
-                elif self.game.skill_plus_cnt > 0:
-                    self.game.penalty(self.game.next_player_index)
-                    print('기술 1장 부여')
-                    self.game.skill_plus_cnt -= 1
-                    if self.game.skill_plus_cnt > 0:
-                        self.on_deck_selected()
-                    else:
-                        turn = 0 if self.combo_enabled else 1
-                        self.game.next_turn(turn)
-                        self.animate_deck_to_player_enabled = False
-                        self.continue_game()
-                else:
-                    self.game.draw()
-                    self.game.next_turn()
-                    self.animate_deck_to_player_enabled = False
-                    self.continue_game()
-
-
-
+            self.animate_deck_to_player(screen)
             # 카드 제출 애니메이션
         elif self.animate_board_player_to_current_card_enabled:
-            if self.animate_controller.enabled:
-                self.pause_game()
-                self.animate_controller.draw(screen)
-
-            # 애니메이션 종료 시 호출
-            else:
-                # 한 장 제출
-                self.game.play(self.board_player_to_current_card_idx)
-                self.run_card(self.game.current_card)
-
-                self.animate_board_player_to_current_card_enabled = False
-                self.continue_game()
+            self.animate_board_player_to_current_card(screen)
 
         elif self.animate_current_player_to_current_card_enabled:
-            if self.animate_controller.enabled:
-                self.pause_game()
-                self.animate_controller.draw(screen)
-
-            # 애니메이션 종료 시 호출
-            else:
-                # 한 장 제출
-                self.game.play(self.to_computer_play_idx)
-                self.run_card(self.game.current_card)
-                
-                self.animate_current_player_to_current_card_enabled = False
-                self.continue_game()
+            self.animate_current_player_to_current_card(screen)
         else:
-            self.run_computer()
+            self.is_animation_running = False
+
+
+    def animate_deck_to_player(self, screen):
+        if self.animate_controller.enabled:
+            self.pause_game()
+            self.animate_controller.draw(screen)
+        else:
+            if self.game.can_uno_penalty:
+                self.game.penalty(self.game.previous_player_index)
+                self.game.uno_enabled = False
+                self.game.uno_clicked = False
+                self.game.can_uno_penalty = False
+                self.animate_deck_to_player_enabled = False
+                self.continue_game()
+            elif self.game.skill_plus_cnt > 0:
+                self.game.penalty(self.game.next_player_index)
+                print('기술 1장 부여')
+                self.game.skill_plus_cnt -= 1
+                if self.game.skill_plus_cnt > 0:
+                    self.on_deck_selected()
+                else:
+                    turn = 0 if self.combo_enabled else 1
+                    self.game.next_turn(turn)
+                    self.animate_deck_to_player_enabled = False
+                    self.continue_game()
+            else:
+                self.game.draw()
+                self.game.next_turn()
+                self.animate_deck_to_player_enabled = False
+                self.continue_game()
+
+    def animate_board_player_to_current_card(self, screen):
+        if self.animate_controller.enabled:
+            self.pause_game()
+            self.animate_controller.draw(screen)
+
+        # 애니메이션 종료 시 호출
+        else:
+            # 한 장 제출
+            self.game.play(self.board_player_to_current_card_idx)
+            self.run_card(self.game.current_card)
+
+            self.animate_board_player_to_current_card_enabled = False
+            self.continue_game()
+
+    def animate_current_player_to_current_card(self, screen):
+        if self.animate_controller.enabled:
+            self.pause_game()
+            self.animate_controller.draw(screen)
+
+        # 애니메이션 종료 시 호출
+        else:
+            # 한 장 제출
+            self.game.play(self.to_computer_play_idx)
+            self.run_card(self.game.current_card)
+
+            self.animate_current_player_to_current_card_enabled = False
+            self.continue_game()
 
     # 카드 실행
     def run_card(self, card: Card):
-        if card.value == SKILL.REVERSE.value:
+        if card.value == Skill.REVERSE.value:
             self.game.toggle_turn_direction()
             self.game.next_turn()
 
-        elif card.value == SKILL.JUMP.value:
+        elif card.value == Skill.JUMP.value:
             self.game.skip_turn()
 
-        elif card.value == SKILL.PLUS_2.value:
+        elif card.value == Skill.PLUS_2.value:
             self.game.skill_plus_cnt = 2
             self.on_deck_selected()
 
-        elif card.value == SKILL.PLUS_4.value:
+        elif card.value == Skill.PLUS_4.value:
             self.game.skill_plus_cnt = 4
             self.on_deck_selected()
-        elif card.value == SKILL.OMIT.value:
+        elif card.value == Skill.OMIT.value:
             self.game.next_turn(0)
-        elif card.value == SKILL.JUMP_RANDOM.value:
+        elif card.value == Skill.JUMP_RANDOM.value:
             self.game.skip_turn(random.randint(1, len(self.game.players) - 1))
-        elif card.value == SKILL.COLOR.value:
+        elif card.value == Skill.COLOR.value:
             self.select_color_enabled = True
-        elif card.value == SKILL.COMBO.value:
+        elif card.value == Skill.COMBO.value:
             self.combo_enabled = True
             self.game.toggle_turn_direction() # 리버스
             self.game.skill_plus_cnt = 2
@@ -415,7 +426,6 @@ class PlayScreen:
             if time.time() - self.game.turn_start_time >= Computer.UNO_DELAY:
                 self.game.uno_clicked = True
                 self.game.uno_clicked_player_index = random.randint(1, len(self.game.players) - 1)  # 랜덤 컴퓨터가 우노 버튼 클릭
-                print(f'컴퓨터가 우노 버튼 클릭 {self.game.uno_clicked_player_index}')
 
         if type(self.game.get_current_player()) is Computer:
 
