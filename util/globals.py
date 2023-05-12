@@ -2,8 +2,11 @@ import os
 
 import pygame
 from game.model.card import Card
+from util.extradata import ExtraDataUtil
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+extraDataUtil = ExtraDataUtil()
 
 COLOR_WHITE = (255, 255, 255)
 COLOR_GRAY = (128, 128, 128)

@@ -17,7 +17,6 @@ class AchivementScreen:
     def __init__(self, screen_controller):
         self.screen_controller = screen_controller
         self.achivementsUtil = screen_controller.achivementsUtil
-        self.extraDataUtil = screen_controller.extraDataUtil
 
         self.title_rect = None
         self.scroll_surface = None

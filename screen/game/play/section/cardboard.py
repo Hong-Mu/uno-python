@@ -14,7 +14,7 @@ class CardBoard:
     def __init__(self, play_screen):
         self.play_screen: PlayScreen = play_screen
 
-        self.game: UnoGame = play_screen.game
+        self.game = None
         self.board = play_screen.board
 
         self.next_card_start_x = get_extra_small_margin()
@@ -28,6 +28,7 @@ class CardBoard:
         ]
     
     def draw(self, screen):
+        self.game = self.play_screen.game
         background_height = screen.get_height() // 3
 
         self.card_width = get_card_width(1.5)

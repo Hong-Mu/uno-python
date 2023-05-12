@@ -3,6 +3,7 @@ from typing import TYPE_CHECKING
 
 import pygame.draw
 
+from base.single import SinglePlayGame
 from game.model.computer import Computer
 from game.model.player import *
 from util.globals import *
@@ -14,7 +15,6 @@ class LobbyScreen:
         # 상위 의존성 초기화
         self.screen_controller = screen_controller
         self.screen = screen_controller.screen
-        self.game = screen_controller.game
 
 
         # 메뉴 초기화
@@ -199,7 +199,9 @@ class LobbyScreen:
 
         # 화면 이동
         self.screen_controller.set_screen_type(TYPE_PLAY)
-        self.screen_controller.game.start_game(TYPE_SINGLE, players)
+        self.screen_controller.set_game(SinglePlayGame())
+        self.screen_controller.game.set_players(players)
+        self.screen_controller.game.start_game()
 
     def run_computer_select_key_event(self, key):
         if key == pygame.K_UP:

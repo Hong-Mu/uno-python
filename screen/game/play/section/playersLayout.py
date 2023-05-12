@@ -16,9 +16,9 @@ class PlayersLayout:
     def __init__(self, play_screen):
 
         # 의존성 객체
-        self.play_screen =  play_screen
+        self.play_screen = play_screen
         self.screen_controller = play_screen.screen_controller
-        self.game: UnoGame = self.screen_controller.game
+        self.game = None
 
         self.width = 200
         self.left = 0
@@ -31,6 +31,8 @@ class PlayersLayout:
         self.players = []
 
     def draw(self, screen: pygame.Surface):
+        self.game = self.play_screen.game
+
         self.player_height = (screen.get_height() - get_small_margin() * 6) // 5
 
         self.draw_background(screen)

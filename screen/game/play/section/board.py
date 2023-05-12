@@ -14,9 +14,12 @@ if TYPE_CHECKING:
 class Board:
     def __init__(self, play_screen: PlayScreen):
         self.play_screen = play_screen
-        self.game = play_screen.game
+        self.game = None
 
     def draw(self, screen: pygame.Surface):
+        self.game = self.play_screen.game
+        print("보드")
+
         current_card = self.game.current_card
 
         self.background_rect = pygame.Rect((0, 0, screen.get_width() - self.play_screen.players_layout.width, screen.get_height() - screen.get_height() // 3))

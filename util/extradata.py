@@ -12,10 +12,10 @@ class ExtraDataUtil(BaseFileUtil):
     def init(self):
         self.data = {}
         for item in ExtraData:
-            self.data[item.name] = 0
+            self.data[item] = 0
 
 
 class ExtraData(Enum):
-    SINGLE_WIN_CNT = "single_win_cnt"
-    SINGLE_UNO_CNT = "single_uno_cnt"
-    STORY_CLEARED = "story_cleared"
+    SINGLE_WIN_CNT = 0
+    SINGLE_UNO_CNT = 1
+    STORY_CLEARED = 2

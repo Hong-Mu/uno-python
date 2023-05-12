@@ -10,8 +10,6 @@ from screen.game.lobby.LobbyScreen import LobbyScreen
 from screen.game.play.PlayScreen import PlayScreen
 from screen.game.story.StoryScreen import StoryScreen
 
-
-from game.game import UnoGame
 import pygame
 
 class ScreenController:
@@ -21,7 +19,7 @@ class ScreenController:
     def __init__(self):
         self.init_pygame()
 
-        self.game: UnoGame = UnoGame()
+        self.game = None
 
         self.clock = pygame.time.Clock()
         self.fps = 30
@@ -35,7 +33,6 @@ class ScreenController:
 
         # 업적
         self.achivementsUtil = AchievementsUtil()
-        self.extraDataUtil = ExtraDataUtil()
 
         self.init_instance()
 
@@ -44,6 +41,9 @@ class ScreenController:
         self.effect = pygame.mixer.Sound('./resource/sound/effect.mp3')
 
         self.is_paused = False  # 설정에서 돌아오기 위한 용도
+
+    def set_game(self, game):
+        self.game = game
 
     def set_paused(self):
         self.is_paused = True

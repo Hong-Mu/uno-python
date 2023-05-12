@@ -25,7 +25,7 @@ class PlayScreen:
 
         self.screen_controller = screen_controller
         self.animate_controller = AnimateController()
-        self.game = screen_controller.game
+        self.game = None
         
         # 레이아웃 모음
         self.players_layout = PlayersLayout(self)
@@ -99,6 +99,8 @@ class PlayScreen:
     # 모든 View
     def draw(self, screen):
         screen.fill(COLOR_WHITE)
+        self.game = self.screen_controller.game
+
         if not self.game.is_started:
             return
 
@@ -119,7 +121,7 @@ class PlayScreen:
         if self.game.is_turn_start:
             self.select_color_enabled = False
             self.check_uno_clicked()
-            self.check_type()
+            self.game.run_in_turn_start()
             self.game.is_turn_start = False
 
         # 게임 관련 동작 업데이트
@@ -133,10 +135,6 @@ class PlayScreen:
 
         # 애니메이션
         self.draw_animation(screen)
-
-    def check_type(self):
-        if self.game.play_type == TYPE_STORY_C:
-            self.game.region_c.color_change()
 
     def draw_animation(self, screen):
         if self.animate_deck_to_player_enabled:

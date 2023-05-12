@@ -1,22 +1,16 @@
-from game.model.player import *
-from game.model.deck import Deck
-from game.model.card import *
-from game.story.regionA import RegionA
-from game.story.regionB import RegionB
-from game.story.regionC import RegionC
-from game.story.regionD import RegionD
-from util.globals import *
-import random
 import time
 
+from game.model.deck import Deck
+from util.extradata import ExtraDataUtil
+from util.globals import *
 
-class UnoGame:
 
+class BaseGame:
     def __init__(self):
         self.is_started = False
 
         self.play_type = None
-        self.players: list[Player] = []
+        self.players = []
 
         self.reverse_direction = False
         self.current_player_index = 0
@@ -43,20 +37,8 @@ class UnoGame:
         self.uno_clicked = False
         self.uno_clicked_player_index = None
 
-
-        self.region_a = RegionA(self)
-        self.region_b = RegionB(self)
-        self.region_c = RegionC(self)
-        self.region_d = RegionD(self)
-
-        self.story_index = 0
-
-
-    def start_game(self, play_type, players):
-        print('게임 시작')
+    def init(self):
         self.is_started = True
-        self.play_type = play_type
-        self.players = players
 
         self.reverse_direction = False
         self.current_player_index = 0
@@ -68,27 +50,6 @@ class UnoGame:
 
         self.skill_plus_cnt = 0
 
-
-
-        self.deck = Deck(self)
-
-        if self.play_type == TYPE_SINGLE:
-            self.deal()
-        elif self.play_type == TYPE_STORY_B:
-            self.region_b.init()
-        elif self.play_type == TYPE_STORY_C:
-            self.region_c.init()
-            self.deal()
-        elif self.play_type == TYPE_STORY_A:
-            self.region_a.init()
-        elif self.play_type == TYPE_STORY_D:
-            self.region_d.init()
-            self.deal()
-
-
-        self.current_card = self.deck.draw()
-        self.current_color = self.current_card.color
-
         self.turn_start_time = time.time()
         self.is_turn_start = False
 
@@ -97,9 +58,22 @@ class UnoGame:
         self.uno_clicked = False
         self.uno_clicked_player_index = None
 
+
+    def start_game(self):
+        self.deck = Deck(self)
+        self.init()
+
+        self.current_card = self.deck.draw()
+        self.current_color = self.current_card.color
+
+
+    def run_in_turn_start(self):
+        pass
+
+
     def finish_game(self):
         self.is_started = False
-        self.players: list[Player] = []
+        self.players = []
 
     # 다음 턴
     def next_turn(self, turn=1):
@@ -114,14 +88,16 @@ class UnoGame:
         self.next_player_index = (self.current_player_index + next_direction) % len(self.players)
         self.current_player_index = (self.current_player_index + direction) % len(self.players)
 
-
         self.turn_counter += 1
         self.reset_turn_start_time()
+
+    def set_players(self, players):
+        self.players = players
 
     # 현재 플레이어 반환
     def get_current_player(self):
         return self.players[self.current_player_index]
-    
+
     def get_board_player(self):
         return self.players[self.board_player_index]
 
@@ -130,7 +106,7 @@ class UnoGame:
 
     def get_previous_player(self):
         return self.players[self.previous_player_index]
-    
+
     def draw(self):
         print(f'드로우 {self.current_player_index}')
         self.get_current_player().draw(self.deck.draw())
@@ -138,11 +114,11 @@ class UnoGame:
     # 카드 제출
     def play(self, idx=None):
         self.set_current_card(self.get_current_player().play(self, idx))
-    
+
     def reset_turn_start_time(self):
         self.turn_start_time = time.time()
 
-    # 다음 턴 스킵 : 
+    # 다음 턴 스킵 :
     def skip_turn(self, skip=1):
         print('스킵')
         self.next_turn(skip + 1)
@@ -151,7 +127,8 @@ class UnoGame:
     def get_skipped_player_indexs(self):
         temp = []
         if abs(self.skip_direction) != 1:
-            for direction in list(range(1, abs(self.skip_direction))) if self.skip_direction > 0 else list(range(-1, self.skip_direction, -1)):
+            for direction in list(range(1, abs(self.skip_direction))) if self.skip_direction > 0 else list(
+                    range(-1, self.skip_direction, -1)):
                 temp.append((self.previous_player_index + direction) % len(self.players))
 
         return temp
@@ -176,17 +153,17 @@ class UnoGame:
         self.current_color = card.color
 
     # 카드 검증
-    def verify_new_card(self, new_card: Card) -> bool:
+    def verify_new_card(self, new_card) -> bool:
         if self.current_card.value == SKILL_COLOR:
             if new_card.color == CARD_COLOR_NONE:
                 print('유효성 검사1', new_card.value == SKILL_COLOR)
                 return new_card.value == SKILL_COLOR
-            
+
         # 이전 카드가 미색상 기술 카드이면서 새로운 카드가 미색상 카드가 아닌 경우
         temp = self.current_color == CARD_COLOR_NONE or \
-            new_card.color == CARD_COLOR_NONE or \
-            self.current_color == new_card.color or \
-            self.current_card.value == new_card.value
+               new_card.color == CARD_COLOR_NONE or \
+               self.current_color == new_card.color or \
+               self.current_card.value == new_card.value
         print('유효성 검사2', temp)
         return temp
 
@@ -199,18 +176,8 @@ class UnoGame:
                 self.set_winner(self.players[idx])
                 return True
         return False
-    
+
     def set_winner(self, player):
-        # 스토리 과련 코드 추가
-        if player == self.get_board_player():
-            if self.play_type == TYPE_STORY_A:
-                self.story_index = 1
-            elif self.play_type == TYPE_STORY_B:
-                self.story_index = 2
-            elif self.play_type == TYPE_STORY_C:
-                self.story_index = 3
-            elif self.play_type == TYPE_STORY_D:
-                self.story_index = 3
         self.winner = player
 
     def get_winner(self):
