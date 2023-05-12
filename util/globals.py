@@ -23,26 +23,6 @@ COLOR_TRANSPARENT_RED = (255, 0, 0, 128)
 COLOR_BOARD = (8, 64, 21)
 COLOR_PLAYER = (40, 120, 58)
 
-SKILL_JUMP = "skill_skip"
-SKILL_REVERSE = "skill_reverse"
-SKILL_PLUS_2 = "skill_card_2"
-SKILL_JUMP_RANDOM = "skill_jump_random"
-SKILL_OMIT = "skill_again"
-SKILL_PLUS_4 = "skill_card_4"
-SKILL_COLOR = "skill_color"
-
-SKILL_COMBO = "skill_combo"
-
-SKILL_SET = [
-    SKILL_JUMP,
-    SKILL_REVERSE,
-    SKILL_PLUS_2,
-    SKILL_JUMP_RANDOM,
-    SKILL_OMIT,
-    SKILL_PLUS_4,
-    SKILL_COLOR,
-]
-
 CARD_COLOR_NONE = "none"
 CARD_COLOR_RED = "red"
 CARD_COLOR_YELLOW = "yellow"

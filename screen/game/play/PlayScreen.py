@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING
 
 from base.regiona import GameA
 from game.model.computer import Computer
+from game.model.skill import SKILL
 from screen.game.play.section.escapeDialog import EscapeDialog
 from screen.game.play.section.gameOverDialog import GameOverDialog
 from screen.game.play.section.playersLayout import PlayersLayout
@@ -205,27 +206,27 @@ class PlayScreen:
 
     # 카드 실행
     def run_card(self, card: Card):
-        if card.value == SKILL_REVERSE:
+        if card.value == SKILL.REVERSE.value:
             self.game.toggle_turn_direction()
             self.game.next_turn()
 
-        elif card.value == SKILL_JUMP:
+        elif card.value == SKILL.JUMP.value:
             self.game.skip_turn()
 
-        elif card.value == SKILL_PLUS_2:
+        elif card.value == SKILL.PLUS_2.value:
             self.game.skill_plus_cnt = 2
             self.on_deck_selected()
 
-        elif card.value == SKILL_PLUS_4:
+        elif card.value == SKILL.PLUS_4.value:
             self.game.skill_plus_cnt = 4
             self.on_deck_selected()
-        elif card.value == SKILL_OMIT:
+        elif card.value == SKILL.OMIT.value:
             self.game.next_turn(0)
-        elif card.value == SKILL_JUMP_RANDOM:
+        elif card.value == SKILL.JUMP_RANDOM.value:
             self.game.skip_turn(random.randint(1, len(self.game.players) - 1))
-        elif card.value == SKILL_COLOR:
+        elif card.value == SKILL.COLOR.value:
             self.select_color_enabled = True
-        elif card.value == SKILL_COMBO:
+        elif card.value == SKILL.COMBO.value:
             self.combo_enabled = True
             self.game.toggle_turn_direction() # 리버스
             self.game.skill_plus_cnt = 2

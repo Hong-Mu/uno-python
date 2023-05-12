@@ -1,6 +1,7 @@
 import time
 
 from game.model.deck import Deck
+from game.model.skill import SKILL
 from util.extradata import ExtraDataUtil
 from util.globals import *
 
@@ -152,10 +153,10 @@ class BaseGame:
 
     # 카드 검증
     def verify_new_card(self, new_card) -> bool:
-        if self.current_card.value == SKILL_COLOR:
+        if self.current_card.value == SKILL.COLOR.value:
             if new_card.color == CARD_COLOR_NONE:
-                print('유효성 검사1', new_card.value == SKILL_COLOR)
-                return new_card.value == SKILL_COLOR
+                print('유효성 검사1', new_card.value == SKILL.COLOR.value)
+                return new_card.value == SKILL.COLOR.value
 
         # 이전 카드가 미색상 기술 카드이면서 새로운 카드가 미색상 카드가 아닌 경우
         temp = self.current_color == CARD_COLOR_NONE or \
