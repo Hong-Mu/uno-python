@@ -6,8 +6,9 @@ from typing import TYPE_CHECKING
 from game.model.computer import Computer
 from game.model.skill import Skill
 from game.story.regiona import GameA
-from screen.game.play.section.escapeDialog import EscapeDialog
-from screen.game.play.section.gameOverDialog import GameOverDialog
+from screen.game.play.dialog.escapeDialog import EscapeDialog
+from screen.game.play.dialog.gameOverDialog import GameOverDialog
+from screen.game.play.dialog.multiplaydialog import MultiPlayDialog
 from screen.game.play.section.playersLayout import PlayersLayout
 from util.globals import *
 from screen.animate.animate import AnimateController
@@ -36,26 +37,26 @@ class PlayScreen:
         self.escape_dialog = EscapeDialog(self)
         self.game_over_dialog = GameOverDialog(self)
 
-        # 카드보드 관련 변수 TODO: 나중에 분리
+        # 카드보드 관련 변수
         self.my_cards_selected_index = 0
         self.cards_line_size = 0  # 한 줄 당 카드 개수
 
         # 게임 관련
-        self.stop_timer_enabled = False  # 일시정지 상태
         self.pause_temp_time = None  # 일시정지 임시 시간 저장 변수
-        
+        self.stop_timer_enabled = False  # 일시정지 상태
         self.deck_select_enabled = False  # 덱 선택 가능 상태
         self.card_select_enabled = False  # 카드 선택 가능 상태
-
         self.select_color_enabled = False
-
         self.combo_enabled = False
 
         self.to_computer_play_idx = None
 
         # 애니메이션 관련
         self.animate_view = None
+        self.animate_destination_x = None
+        self.animate_destination_y = None
         
+        # 애니메이션 종류
         self.animate_deck_to_player_enabled = False
         self.animate_board_player_to_current_card_enabled = False
         self.animate_current_player_to_current_card_enabled = False
@@ -373,14 +374,24 @@ class PlayScreen:
     # 덱 선택
     def on_deck_selected(self):
         self.screen_controller.play_effect()
+
         self.animate_deck_to_player_enabled = True
-
-        self.set_animate_view_to_card_back()
         
-        # 출발지 지정
+        # 좌표 및 애니메이션 아이템 지정
+        self.set_animate_view_to_card_back()
         start_x, start_y = self.animate_view_rect.topleft
+        self.set_deck_to_plyer_destination()
 
-        # 목적지 지정
+        # 애니메이션 시작
+        self.animate_controller.start(
+            self.animate_view, 
+            self.animate_view_rect, 
+            start_x, 
+            start_y,
+            self.animate_destination_x, self.animate_destination_y
+        )
+
+    def set_deck_to_plyer_destination(self):
         if self.game.can_uno_penalty:
             # 이전 플레이어 목적지 지정
             if self.game.previous_player_index == self.game.board_player_index:
@@ -402,15 +413,6 @@ class PlayScreen:
             else:
                 player_rect = self.players_layout.players[self.game.current_player_index - 1]
                 self.animate_destination_x, self.animate_destination_y = player_rect.topleft
-
-        # 애니메이션 시작
-        self.animate_controller.start(
-            self.animate_view, 
-            self.animate_view_rect, 
-            start_x, 
-            start_y,
-            self.animate_destination_x, self.animate_destination_y
-        )
 
     def set_animate_view_to_card_back(self):
         self.animate_view = get_card_back(MY_BOARD_CARD_PERCENT)
