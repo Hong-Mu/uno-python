@@ -31,10 +31,10 @@ class StoryScreen:
 
         # 스토리 목록
         self.stories = [
-            {'type': Region.A, 'game': GameA, 'rect': None, 'action': None, 'hover': None, 'color': COLOR_RED, 'features': ['컴퓨터 플레이어 첫 분배 기술 카드 확률 50% 상승', '컴퓨터 플레이어 기술 카드 콤보 사용(2-3장)']},
-            {'type': Region.B, 'game': GameB, 'rect': None, 'action': None, 'hover': None, 'color': COLOR_BLUE, 'features': ['컴퓨터 플레이어 3명', '모든 카드를 같은 수만큼 분배']},
-            {'type': Region.C, 'game': GameC, 'rect': None, 'action': None, 'hover': None, 'color': COLOR_GREEN, 'features': ['컴퓨터 플레이어 2명', '매 5턴마다 낼 수 있는 카드 색상 무작위 변경']},
-            {'type': Region.D, 'game': GameD, 'rect': None, 'action': None, 'hover': None, 'color': COLOR_YELLOW, 'features': ['컴퓨터 플레이어 5명', '숫자 카드로만 진행']},
+            {'type': Region.A, 'game': GameA, 'rect': None, 'action': None, 'hover': None, 'color': COLOR_RED, 'features': ['지역 A', '컴퓨터 플레이어 첫 분배 기술 카드 확률 50% 상승', '컴퓨터 플레이어 기술 카드 콤보 사용(2-3장)']},
+            {'type': Region.B, 'game': GameB, 'rect': None, 'action': None, 'hover': None, 'color': COLOR_BLUE, 'features': ['지역 B', '컴퓨터 플레이어 3명', '모든 카드를 같은 수만큼 분배']},
+            {'type': Region.C, 'game': GameC, 'rect': None, 'action': None, 'hover': None, 'color': COLOR_GREEN, 'features': ['지역 C', '컴퓨터 플레이어 2명', '매 5턴마다 낼 수 있는 카드 색상 무작위 변경']},
+            {'type': Region.D, 'game': GameD, 'rect': None, 'action': None, 'hover': None, 'color': COLOR_YELLOW, 'features': ['지역 D', '컴퓨터 플레이어 5명', '숫자 카드로만 진행']},
         ]
 
         # 확인 다이얼로그
@@ -46,11 +46,22 @@ class StoryScreen:
         self.is_confirm_enabled = False
 
     def draw(self, screen: pygame.Surface):
-        screen.fill(COLOR_WHITE)
+        self.draw_background(screen)
+
         self.draw_stories(screen)
 
         if self.is_confirm_enabled:
             self.draw_confirm_dialog(screen)
+
+    def draw_background(self, screen):
+        background = pygame.image.load('./resource/background/map.jpg')
+        background = pygame.transform.scale(background, screen.get_size())
+
+        surface = pygame.Surface(screen.get_size(), pygame.SRCALPHA)
+        surface.fill(COLOR_TRANSPARENT_WHITE_25)
+
+        screen.blit(background, background.get_rect())
+        screen.blit(surface, surface.get_rect())
 
     def draw_stories(self, screen):
         width = screen.get_width() / (len(self.stories) + 1)

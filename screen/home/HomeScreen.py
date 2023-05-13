@@ -99,13 +99,13 @@ class HomeScreen:
 
     def draw_title(self, screen):
         self.title = get_large_font().render("Uno Game", True, COLOR_BLACK)
-        self.title_rect = get_rect(self.title, screen.get_width() // 2, screen.get_height() // 3)
+        self.title_rect = get_rect(self.title, screen.get_width() // 2, screen.get_height() // 5)
         screen.blit(self.title, self.title_rect)
 
     def draw_menu(self, screen, menus):
         for index, menu in enumerate(menus):
             text = get_medium_font().render(menu['text'], True, COLOR_GRAY if  index != self.selected_menu_index else COLOR_BLACK)
-            rect = get_rect(text, screen.get_width() // 2, screen.get_height() // 2 + text.get_height() * index)
+            rect = get_rect(text, screen.get_width() // 2, screen.get_height() // 3 + text.get_height() * index)
             self.menu_dict[index].update({'view': text, 'rect': rect})
             screen.blit(text, rect)
 
