@@ -2,7 +2,7 @@ import random
 
 from base.basegame import BaseGame
 from game.model.computer import Computer
-from game.model.region import Region
+from model.region import Region
 from util.extradata import ExtraData
 from util.globals import COLOR_SET, extraDataUtil
 

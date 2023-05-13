@@ -1,9 +1,5 @@
-import pygame
-
 from base.baseMenuDialog import BaseMenuDialog
-from screen.model.screentype import ScreenType
-from util.globals import *
-
+from model.screentype import ScreenType
 
 
 class MultiPlayDialog(BaseMenuDialog):

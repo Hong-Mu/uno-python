@@ -1,5 +1,4 @@
-from game.model.card import Card
-from game.model.skill import Skill
+from model.skill import Skill
 from util.globals import *
 import random
 

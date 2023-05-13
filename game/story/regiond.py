@@ -1,7 +1,7 @@
 from base.basegame import BaseGame
 from game.model.card import Card
 from game.model.computer import Computer
-from game.model.region import Region
+from model.region import Region
 from util.extradata import ExtraData
 from util.globals import extraDataUtil, CARD_COLOR_SET
 

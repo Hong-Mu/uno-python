@@ -2,11 +2,17 @@ import os
 
 import pygame
 from game.model.card import Card
+from model.achievement import Achievement
+from util.achievement import AchievementsUtil
 from util.extradata import ExtraDataUtil
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 extraDataUtil = ExtraDataUtil()
+achievementsUtil = AchievementsUtil()
+
+KEY_NAME = "name"
+KEY_DESC = "description"
 
 COLOR_WHITE = (255, 255, 255)
 COLOR_GRAY = (128, 128, 128)
@@ -76,6 +82,31 @@ MY_BOARD_CARD_PERCENT = 1.5
 
 UNO_WIDTH = 50
 UNO_HEIGHT = 50
+
+ACHIEVE_INFO = {
+    Achievement.SINGLE_WIN_1:
+        {KEY_NAME: "싱글 플레이어 대전에서 승리", KEY_DESC: "싱글 플레이어 대전에서 승리하여 업적 달성!", },
+    Achievement.SINGLE_WIN_10:
+        {KEY_NAME: "UNO게임 마스터", KEY_DESC: "싱글 플레이어 대전에서 10번 승리하여 업적 달성!", },
+    Achievement.SINGLE_WIN_IN_10_TURN:
+        {KEY_NAME: "너무 쉬운데?", KEY_DESC: "싱글 플레이어 대전에서 10턴 안에 승리하여 업적 달성!", },
+    Achievement.SINGLE_WIN_NO_SKILL:
+        {KEY_NAME: "핸디캡 줘도 이기네ㅋ", KEY_DESC: "기술 카드를 단 한 번도 사용하지 않고 승리하여 업적 달성!", },
+    Achievement.STORY_A:
+        {KEY_NAME: "스토리모드 A 승리", KEY_DESC: "스토리모드 A 대전에서 승리하여 업적 달성!", },
+    Achievement.STORY_B:
+        {KEY_NAME: "스토리모드 B 승리", KEY_DESC: "스토리모드 B 대전에서 승리하여 업적 달성!", },
+    Achievement.STORY_C:
+        {KEY_NAME: "스토리모드 C 승리", KEY_DESC: "스토리모드 C 대전에서 승리하여 업적 달성!", },
+    Achievement.STORY_D:
+        {KEY_NAME: "스토리모드 D 승리", KEY_DESC: "스토리모드 D 대전에서 승리하여 업적 달성!", },
+    Achievement.SINGLE_WIN_UNO:
+        {KEY_NAME: "이걸 역전하네?!", KEY_DESC: "다른 플레이어가 UNO를 선언한 뒤에 승리하여 업적 달성!", },
+    Achievement.SINGLE_LOSE_UNO:
+        {KEY_NAME: "이걸 역전당하네..", KEY_DESC: "내가 UNO를 선언한 뒤에 패배하여 업적 달성!", },
+    Achievement.SINGLE_UNO_CNT:
+        {KEY_NAME: "순발력 좋은데?", KEY_DESC: "상대보다 UNO 먼저 선언한 횟수", }
+}
 
 def get_rect(view, x, y):
     return view.get_rect(center = (x, y + view.get_height() // 2))

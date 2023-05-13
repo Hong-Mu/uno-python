@@ -1,9 +1,7 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 
-import pygame
-
-from screen.model.screentype import ScreenType
+from model.screentype import ScreenType
 from util.globals import *
 
 if TYPE_CHECKING:

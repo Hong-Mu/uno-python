@@ -4,11 +4,11 @@ import random
 from typing import TYPE_CHECKING
 
 from game.model.computer import Computer
-from game.model.skill import Skill
+from model.skill import Skill
 from game.story.regiona import GameA
+from screen.game.play.dialog.achievement import AchievementDialog
 from screen.game.play.dialog.escapeDialog import EscapeDialog
 from screen.game.play.dialog.gameOverDialog import GameOverDialog
-from screen.game.play.dialog.multiplaydialog import MultiPlayDialog
 from screen.game.play.section.playersLayout import PlayersLayout
 from util.globals import *
 from screen.animate.animate import AnimateController
@@ -36,6 +36,7 @@ class PlayScreen:
 
         self.escape_dialog = EscapeDialog(self)
         self.game_over_dialog = GameOverDialog(self)
+        self.achievement_dialog = AchievementDialog(self)
 
         # 카드보드 관련 변수
         self.my_cards_selected_index = 0
@@ -109,6 +110,9 @@ class PlayScreen:
         self.card_board.draw(screen)
         self.players_layout.draw(screen)
 
+        if self.achievement_dialog.enabled:
+            self.achievement_dialog.draw(screen)
+
         # 게임 종료
         if self.game.is_game_over():
             self.game_over_dialog.draw(screen, self.game.get_winner())
@@ -122,6 +126,7 @@ class PlayScreen:
         self.check_time() # 타이머 관련 동작
         self.game.update_uno_enabled()  # 우노 상태 확인
 
+
         # 일시정지 다이얼로그
         if self.escape_dialog.enabled:
             self.escape_dialog.draw(screen)
@@ -132,6 +137,7 @@ class PlayScreen:
 
         if not self.is_animation_running:
             self.run_computer()
+
 
     def init_turn(self):
         self.select_color_enabled = False

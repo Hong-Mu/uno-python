@@ -1,6 +1,3 @@
-import pygame
-
-from screen.model.screentype import ScreenType
 from util.globals import *
 
 

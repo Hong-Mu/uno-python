@@ -2,12 +2,12 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from game.model.player import Player
-from game.model.region import Region
+from model.region import Region
 from game.story.regiona import GameA
 from game.story.regionb import GameB
 from game.story.regionc import GameC
 from game.story.regiond import GameD
-from screen.model.screentype import ScreenType
+from model.screentype import ScreenType
 from util.extradata import ExtraData
 
 if TYPE_CHECKING:

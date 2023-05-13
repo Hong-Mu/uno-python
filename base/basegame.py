@@ -1,8 +1,7 @@
 import time
 
 from game.model.deck import Deck
-from game.model.skill import Skill
-from util.extradata import ExtraDataUtil
+from model.skill import Skill
 from util.globals import *
 
 

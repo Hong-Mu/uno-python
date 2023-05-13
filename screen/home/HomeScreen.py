@@ -2,7 +2,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from screen.game.play.dialog.multiplaydialog import MultiPlayDialog
-from screen.model.screentype import ScreenType
+from model.screentype import ScreenType
 from util.globals import *
 import pygame
 
@@ -27,7 +27,7 @@ class HomeScreen:
                 self.screen_controller.set_screen_type(ScreenType.STORY),
                 self.screen_controller.screens[ScreenType.STORY].init()
             )},
-            {'text': '업적', 'action': lambda: self.screen_controller.set_screen(ScreenType.ACHIVEMENT), 'view': None, 'rect': None},
+            {'text': '업적', 'action': lambda: self.screen_controller.set_screen(ScreenType.ACHIEVEMENT), 'view': None, 'rect': None},
             {'text': '설정', 'action': lambda: self.screen_controller.set_screen(ScreenType.SETTING), 'view': None, 'rect': None },
             {'text': '종료', 'action': lambda: self.screen_controller.stop(), 'view': None, 'rect': None },
         ]

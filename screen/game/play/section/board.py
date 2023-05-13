@@ -1,15 +1,12 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 
-from game.model.skill import Skill
+from model.skill import Skill
 from util.globals import *
-import time
 import pygame
 
 if TYPE_CHECKING:
     from screen.game.play.PlayScreen import PlayScreen
-    from game.game import UnoGame
-    from screen.ScreenController import ScreenController
 
 class Board:
     def __init__(self, play_screen: PlayScreen):
@@ -18,7 +15,6 @@ class Board:
 
     def draw(self, screen: pygame.Surface):
         self.game = self.play_screen.game
-        print("보드")
 
         current_card = self.game.current_card
 
