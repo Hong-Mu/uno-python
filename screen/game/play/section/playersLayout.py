@@ -131,18 +131,18 @@ class PlayersLayout:
         screen.blit(txt_card_cnt, txt_card_cnt_rect)
 
 
-    def run_select_key_event(self, key):
-        if key == pygame.K_UP:
+    def run_select_key_event(self, event):
+        if event.key == pygame.K_UP:
             self.selected_idx = (self.selected_idx - 1) % len(self.game.players)
             # 보드 플레이어 제외
             if self.selected_idx == self.game.board_player_index:
                 self.selected_idx = (self.selected_idx - 1) % len(self.game.players)
-        elif key == pygame.K_DOWN:
+        elif event.key == pygame.K_DOWN:
             self.selected_idx = (self.selected_idx + 1) % len(self.game.players)
             # 보드 플레이어 제외
             if self.selected_idx == self.game.board_player_index:
                 self.selected_idx = (self.selected_idx + 1) % len(self.game.players)
-        elif key == pygame.K_RETURN:
+        elif event.key == pygame.K_RETURN:
             self.on_player_selected(self.selected_idx)
 
     def run_select_click_event(self, pos):

@@ -92,15 +92,6 @@ class PlayScreen:
         else:
             self.continue_game()
 
-    # 다이얼로그 표시 상태 변경
-    def toggle_escape_dialog(self):
-        self.escape_dialog.enabled = not self.escape_dialog.enabled
-
-        # 일시정지 시간 처리
-        if self.escape_dialog.enabled:
-            self.pause_game()
-        else:
-            self.continue_game()
 
     # 모든 View
     def draw(self, screen):
@@ -295,30 +286,33 @@ class PlayScreen:
 
         for event in events:
             if event.type == pygame.KEYDOWN:
-                self.run_key_event(event.key)
+                self.run_key_event(event)
 
             elif event.type == pygame.MOUSEBUTTONUP:
                 self.run_click_event(pygame.mouse.get_pos())
 
-    def run_key_event(self, key):
+    def run_key_event(self, event):
         if self.game.is_game_over():
-            self.game_over_dialog.run_key_event(key)
+            self.game_over_dialog.run_key_event(event)
 
-        elif key == pygame.K_ESCAPE:
-            self.toggle_escape_dialog()
+        elif event.key == pygame.K_ESCAPE:
+            self.escape_dialog.toggle()
 
 
-        if self.escape_dialog.enabled:  # 일시정지 다이얼로그
-            self.escape_dialog.run_key_event(key)
+        if self.escape_dialog.enabled:
+            self.escape_dialog.run_key_event(event)
+
         elif self.select_color_enabled and self.game.board_player_index == self.game.current_player_index:
-            self.card_board.run_slect_color_key_event(key)
-        elif self.card_select_enabled:  #
-            self.card_board.run_my_cards_select_key_event(key)
+            self.card_board.run_slect_color_key_event(event)
+
+        elif self.card_select_enabled:
+            self.card_board.run_my_cards_select_key_event(event)
+
         elif self.players_layout.select_enabled:
-            self.players_layout.run_select_key_event(key)
+            self.players_layout.run_select_key_event(event)
 
         if self.game.uno_enabled:
-            self.board.run_uno_key_event(key)
+            self.board.run_uno_key_event(event)
 
     # 클릭 이벤트
     def run_click_event(self, pos):

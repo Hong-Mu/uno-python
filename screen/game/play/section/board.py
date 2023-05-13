@@ -80,7 +80,7 @@ class Board:
                 self.game.uno_clicked = True
                 self.game.uno_clicked_player_index = self.game.board_player_index
 
-    def run_uno_key_event(self, key):
-        if key == self.play_screen.screen_controller.setting.get(MODE_UNO_KEY):
+    def run_uno_key_event(self, event):
+        if event.key == self.play_screen.screen_controller.setting.get(MODE_UNO_KEY):
             self.game.uno_clicked = True
             self.game.uno_clicked_player_index = self.game.board_player_index

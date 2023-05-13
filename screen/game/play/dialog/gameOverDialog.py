@@ -37,10 +37,10 @@ class GameOverDialog:
         name_rect = get_center_rect(name, screen.get_rect())
         screen.blit(name, name_rect)
 
-    def run_key_event(self, key):
+    def run_key_event(self, event):
         self.play_screen.init(),
         self.screen_controller.set_screen(ScreenType.START)
 
-    def run_click_event(self, pos):
+    def run_click_event(self, event):
         self.play_screen.init(),
         self.screen_controller.set_screen(ScreenType.START)
