@@ -1,7 +1,7 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 
-
+from game.model.skill import Skill
 from util.globals import *
 import time
 import pygame
@@ -14,9 +14,12 @@ if TYPE_CHECKING:
 class Board:
     def __init__(self, play_screen: PlayScreen):
         self.play_screen = play_screen
-        self.game = play_screen.game
+        self.game = None
 
     def draw(self, screen: pygame.Surface):
+        self.game = self.play_screen.game
+        print("보드")
+
         current_card = self.game.current_card
 
         self.background_rect = pygame.Rect((0, 0, screen.get_width() - self.play_screen.players_layout.width, screen.get_height() - screen.get_height() // 3))
@@ -55,7 +58,7 @@ class Board:
 
     def draw_reverse(self, screen):
         if self.game.reverse_direction:
-            surface = get_skill(SKILL_REVERSE, 2)
+            surface = get_skill(Skill.REVERSE.value, 2)
             rect = surface.get_rect(bottomright=self.background_rect.bottomright)
             screen.blit(surface, rect)
 
@@ -77,7 +80,7 @@ class Board:
                 self.game.uno_clicked = True
                 self.game.uno_clicked_player_index = self.game.board_player_index
 
-    def run_uno_key_event(self, key):
-        if key == self.play_screen.screen_controller.setting.get(MODE_UNO_KEY):
+    def run_uno_key_event(self, event):
+        if event.key == self.play_screen.screen_controller.setting.get(MODE_UNO_KEY):
             self.game.uno_clicked = True
             self.game.uno_clicked_player_index = self.game.board_player_index

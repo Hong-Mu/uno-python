@@ -14,7 +14,7 @@ class CardBoard:
     def __init__(self, play_screen):
         self.play_screen: PlayScreen = play_screen
 
-        self.game: UnoGame = play_screen.game
+        self.game = None
         self.board = play_screen.board
 
         self.next_card_start_x = get_extra_small_margin()
@@ -28,6 +28,7 @@ class CardBoard:
         ]
     
     def draw(self, screen):
+        self.game = self.play_screen.game
         background_height = screen.get_height() // 3
 
         self.card_width = get_card_width(1.5)
@@ -97,12 +98,12 @@ class CardBoard:
                 self.game.current_color = color['type']
                 self.game.next_turn()
 
-    def run_slect_color_key_event(self, key):
-        if key == pygame.K_RIGHT:
+    def run_slect_color_key_event(self, event):
+        if event.key == pygame.K_RIGHT:
             self.color_index = (self.color_index + 1) % len(self.select_colors)
-        elif key == pygame.K_LEFT:
+        elif event.key == pygame.K_LEFT:
             self.color_index = (self.color_index - 1) % len(self.select_colors)
-        elif key == pygame.K_RETURN:
+        elif event.key == pygame.K_RETURN:
             self.game.current_color = self.select_colors[self.color_index]['type']
             self.game.next_turn()
 
@@ -142,32 +143,32 @@ class CardBoard:
         self.card_rects = temp_card_rects
 
     # 카드 선택 키 이벤트
-    def run_my_cards_select_key_event(self, key):
-        if key == pygame.K_LEFT:
+    def run_my_cards_select_key_event(self, event):
+        if event.key == pygame.K_LEFT:
             if not self.play_screen.deck_select_enabled:
                 self.play_screen.my_cards_selected_index = (self.play_screen.my_cards_selected_index - 1) % len(self.game.get_board_player().hands)
-        elif key == pygame.K_RIGHT:
+        elif event.key == pygame.K_RIGHT:
             if not self.play_screen.deck_select_enabled:
                 self.play_screen.my_cards_selected_index = (self.play_screen.my_cards_selected_index + 1) % len(self.game.get_board_player().hands)
-        elif key == pygame.K_UP:
+        elif event.key == pygame.K_UP:
             if self.cards_line_size != 0 and self.play_screen.my_cards_selected_index + self.cards_line_size < len(self.game.get_board_player().hands):
                 self.play_screen.my_cards_selected_index = self.play_screen.my_cards_selected_index + self.cards_line_size
             else: # 덱 선택
                 self.play_screen.deck_select_enabled = True
-        elif key == pygame.K_DOWN:
+        elif event.key == pygame.K_DOWN:
             # 다시 카드 선택으로 돌아옴
             if self.play_screen.deck_select_enabled:
                 self.play_screen.deck_select_enabled = False
             
             elif self.cards_line_size != 0 and self.play_screen.my_cards_selected_index - self.cards_line_size >= 0:
                 self.play_screen.my_cards_selected_index = self.play_screen.my_cards_selected_index - self.cards_line_size
-        elif key == pygame.K_RETURN:
+        elif event.key == pygame.K_RETURN:
 
             if self.play_screen.deck_select_enabled:
                 self.play_screen.on_deck_selected()
             else:
                 self.play_screen.on_card_selected(self.play_screen.my_cards_selected_index)
-        elif key == self.play_screen.screen_controller.setting.get(MODE_DECK_KEY):
+        elif event.key == self.play_screen.screen_controller.setting.get(MODE_DECK_KEY):
             self.play_screen.on_deck_selected()
 
     def run_board_cards_select_click_event(self, pos):

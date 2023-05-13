@@ -1,5 +1,12 @@
+import os
+
 import pygame
 from game.model.card import Card
+from util.extradata import ExtraDataUtil
+
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+extraDataUtil = ExtraDataUtil()
 
 COLOR_WHITE = (255, 255, 255)
 COLOR_GRAY = (128, 128, 128)
@@ -11,30 +18,11 @@ COLOR_YELLOW = (255, 255, 0)
 COLOR_BLUE = (0, 0, 255)
 
 COLOR_TRANSPARENT_WHITE = (255, 255, 255, 128)
+COLOR_TRANSPARENT_WHITE_25 = (255, 255, 255, 64)
 COLOR_TRANSPARENT_RED = (255, 0, 0, 128)
 
 COLOR_BOARD = (8, 64, 21)
 COLOR_PLAYER = (40, 120, 58)
-
-SKILL_JUMP = "skill_skip"
-SKILL_REVERSE = "skill_reverse"
-SKILL_PLUS_2 = "skill_card_2"
-SKILL_JUMP_RANDOM = "skill_jump_random"
-SKILL_OMIT = "skill_again"
-SKILL_PLUS_4 = "skill_card_4"
-SKILL_COLOR = "skill_color"
-
-SKILL_COMBO = "skill_combo"
-
-SKILL_SET = [
-    SKILL_JUMP,
-    SKILL_REVERSE,
-    SKILL_PLUS_2,
-    SKILL_JUMP_RANDOM,
-    SKILL_OMIT,
-    SKILL_PLUS_4,
-    SKILL_COLOR,
-]
 
 CARD_COLOR_NONE = "none"
 CARD_COLOR_RED = "red"
@@ -57,11 +45,6 @@ COLOR_SET = {
     CARD_COLOR_BLUE: COLOR_BLUE,
 }
 
-TYPE_START = "start"
-TYPE_SETTING = "setting"
-TYPE_PLAY = "play"
-TYPE_LOBBY = "lobby"
-TYPE_STORY = "story"
 
 MODE_SCREEN = "mode_screen"
 MODE_BLIND = "mode_blind"
@@ -74,13 +57,6 @@ MODE_DECK_KEY = "mode_deck_key"
 
 MODE_CLEAR = "mode_clear"
 MODE_RETURN = "mode_return"
-
-TYPE_SINGLE = "type_single"
-TYPE_MULTI = "type_multi"
-TYPE_STORY_A = 1
-TYPE_STORY_B = 2
-TYPE_STORY_C = 3
-TYPE_STORY_D = 4
 
 DIMEN_EXTRA_LARGE = 50
 DIMEN_LARGE = 40
@@ -128,7 +104,7 @@ def get_small_font(percent = 1):
     return pygame.font.Font('./resource/font/pretendard_regular.otf', DIMEN_SMALL * percent)
 
 def get_extra_small_font(percent = 1):
-    return pygame.font.Font('./resouorce/font/pretendard_regular.otf', DIMEN_EXTRA_SMALL * percent)
+    return pygame.font.Font('./resource/font/pretendard_regular.otf', DIMEN_EXTRA_SMALL * percent)
 
 
 def get_medium_margin(percent = 1):

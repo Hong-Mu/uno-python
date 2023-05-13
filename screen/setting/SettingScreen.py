@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from screen.model.screentype import ScreenType
 from util.globals import *
 from typing import TYPE_CHECKING
 
@@ -113,10 +114,10 @@ class SettingScreen:
         elif key == pygame.K_RETURN:
             if self.get_selected_type() == MODE_RETURN:
                 if self.controller.is_paused:
-                    self.controller.set_screen(TYPE_PLAY)
+                    self.controller.set_screen(ScreenType.PLAY)
                     self.controller.is_paused = False
                 else:
-                    self.controller.set_screen(TYPE_START)
+                    self.controller.set_screen(ScreenType.START)
             elif self.get_selected_type() == MODE_CLEAR:
                 self.setting.clear()
         else:
@@ -141,16 +142,17 @@ class SettingScreen:
             self.setting_select_enabled = True
 
     def run_setting_click_event(self, pos):
-        for setting in self.settings:
+        for idx, setting in enumerate(self.settings):
             if setting['rect'].collidepoint(pos):
+                self.selected_setting_idx = idx
                 if setting['type'] == MODE_CLEAR:
                     self.setting.clear()
                 elif setting['type'] == MODE_RETURN:
                     if self.controller.is_paused:
-                        self.controller.set_screen(TYPE_PLAY)
+                        self.controller.set_screen(ScreenType.PLAY)
                         self.controller.is_paused = False
                     else:
-                        self.controller.set_screen(TYPE_START)
+                        self.controller.set_screen(ScreenType.START)
 
     def run_mode_click_event(self, pos):
         for setting in self.settings:

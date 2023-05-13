@@ -1,4 +1,8 @@
-from setting.settings import Setting
+from screen.achivement.AchivementScreen import AchivementScreen
+from screen.model.screentype import ScreenType
+from util.achievement import AchievementsUtil
+from util.extradata import ExtraDataUtil
+from util.settings import SettingsUtil
 from util.globals import *
 from screen.home.HomeScreen import HomeScreen
 from screen.setting.SettingScreen import SettingScreen
@@ -7,8 +11,6 @@ from screen.game.lobby.LobbyScreen import LobbyScreen
 from screen.game.play.PlayScreen import PlayScreen
 from screen.game.story.StoryScreen import StoryScreen
 
-
-from game.game import UnoGame
 import pygame
 
 class ScreenController:
@@ -18,17 +20,20 @@ class ScreenController:
     def __init__(self):
         self.init_pygame()
 
-        self.game: UnoGame = UnoGame()
+        self.game = None
 
         self.clock = pygame.time.Clock()
         self.fps = 30
 
-        self.screen_type = TYPE_START
+        self.screen_type = ScreenType.START
         self.running = True
 
         # 설정 불러오기
-        self.setting = Setting()
+        self.setting = SettingsUtil()
         self.screen = pygame.display.set_mode(self.setting.get_resolution())
+
+        # 업적
+        self.achivementsUtil = AchievementsUtil()
 
         self.init_instance()
 
@@ -37,6 +42,9 @@ class ScreenController:
         self.effect = pygame.mixer.Sound('./resource/sound/effect.mp3')
 
         self.is_paused = False  # 설정에서 돌아오기 위한 용도
+
+    def set_game(self, game):
+        self.game = game
 
     def set_paused(self):
         self.is_paused = True
@@ -52,11 +60,12 @@ class ScreenController:
 
     def init_instance(self):
         ScreenController.screens = {
-            TYPE_START: HomeScreen(self),
-            TYPE_SETTING: SettingScreen(self),
-            TYPE_PLAY: PlayScreen(self),
-            TYPE_LOBBY: LobbyScreen(self),
-            TYPE_STORY: StoryScreen(self),
+            ScreenType.START: HomeScreen(self),
+            ScreenType.SETTING: SettingScreen(self),
+            ScreenType.PLAY: PlayScreen(self),
+            ScreenType.LOBBY: LobbyScreen(self),
+            ScreenType.STORY: StoryScreen(self),
+            ScreenType.ACHIVEMENT: AchivementScreen(self),
         }
 
     # 화면 설정
@@ -118,7 +127,7 @@ class ScreenController:
 
 
     def update_bgm(self):
-        if self.screen_type == TYPE_PLAY:
+        if self.screen_type == ScreenType.PLAY:
             if not self.is_bgm_playing:
                 self.is_bgm_playing = True
                 self.bgm.play(-1)

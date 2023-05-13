@@ -1,10 +1,11 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING
 
 import pygame.draw
 
+from game.single import SinglePlayGame
 from game.model.computer import Computer
 from game.model.player import *
+from screen.model.screentype import ScreenType
 from util.globals import *
 
 
@@ -14,7 +15,6 @@ class LobbyScreen:
         # 상위 의존성 초기화
         self.screen_controller = screen_controller
         self.screen = screen_controller.screen
-        self.game = screen_controller.game
 
 
         # 메뉴 초기화
@@ -22,7 +22,7 @@ class LobbyScreen:
         self.menus = [
             {'text': '플레이', 'view': None, 'rect': None, 'action': self.toggle_input_name_dialog },
             {'text': '돌아가기', 'view': None, 'rect': None, 'action': lambda: (
-                self.screen_controller.set_screen_type(TYPE_START)
+                self.screen_controller.set_screen_type(ScreenType.START)
             )},
         ]
 
@@ -198,8 +198,10 @@ class LobbyScreen:
                 players.append(Computer(computer['name']))
 
         # 화면 이동
-        self.screen_controller.set_screen_type(TYPE_PLAY)
-        self.screen_controller.game.start_game(TYPE_SINGLE, players)
+        self.screen_controller.set_screen_type(ScreenType.PLAY)
+        self.screen_controller.set_game(SinglePlayGame())
+        self.screen_controller.game.set_players(players)
+        self.screen_controller.game.start_game()
 
     def run_computer_select_key_event(self, key):
         if key == pygame.K_UP:
@@ -212,6 +214,8 @@ class LobbyScreen:
         elif key == pygame.K_RETURN:
             self.toggle_computer_enabled()
     def toggle_computer_enabled(self):
+        if self.computer_index == 0:
+            return
         self.computer_layout_list[self.computer_index]['enabled'] = not self.computer_layout_list[self.computer_index]['enabled']
 
     def run_click_event(self, event, pos):
@@ -228,8 +232,10 @@ class LobbyScreen:
                 menu['action']()
 
     def run_computer_select_click_event(self, pos):
-        for computer_layout in self.computer_layout_list:
+        for idx, computer_layout in enumerate(self.computer_layout_list):
             if computer_layout['rect'].collidepoint(pos):
+                if idx == 0:
+                    return
                 computer_layout['enabled'] = not computer_layout['enabled']
 
 

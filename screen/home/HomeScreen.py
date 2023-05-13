@@ -1,6 +1,8 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 
+from screen.game.play.dialog.multiplaydialog import MultiPlayDialog
+from screen.model.screentype import ScreenType
 from util.globals import *
 import pygame
 
@@ -15,16 +17,22 @@ class HomeScreen:
         self.selected_menu_index = 0
         self.menu_dict = [
             {'text': '싱글플레이', 'view': None, 'rect': None, 'action': lambda: (
-                self.screen_controller.set_screen(TYPE_LOBBY),
-                self.screen_controller.screens[TYPE_LOBBY].init()
+                self.screen_controller.set_screen(ScreenType.LOBBY),
+                self.screen_controller.screens[ScreenType.LOBBY].init()
+            )},
+            {'text': '멀티플레이', 'view': None, 'rect': None, 'action': lambda: (
+                self.multi_play_dialog.toggle(),
             )},
             {'text': '스토리모드', 'view': None, 'rect': None, 'action': lambda: (
-                self.screen_controller.set_screen_type(TYPE_STORY),
-                self.screen_controller.screens[TYPE_STORY].init()
+                self.screen_controller.set_screen_type(ScreenType.STORY),
+                self.screen_controller.screens[ScreenType.STORY].init()
             )},
-            {'text': '설정', 'action': lambda: self.screen_controller.set_screen(TYPE_SETTING), 'view': None, 'rect': None },
+            {'text': '업적', 'action': lambda: self.screen_controller.set_screen(ScreenType.ACHIVEMENT), 'view': None, 'rect': None},
+            {'text': '설정', 'action': lambda: self.screen_controller.set_screen(ScreenType.SETTING), 'view': None, 'rect': None },
             {'text': '종료', 'action': lambda: self.screen_controller.stop(), 'view': None, 'rect': None },
         ]
+
+        self.multi_play_dialog = MultiPlayDialog(self)
 
         self.alert_visibility = False # 다른 키 입력 알림
 
@@ -42,33 +50,43 @@ class HomeScreen:
         if self.alert_visibility:
             self.draw_alert(screen, "상/하 방향키와 엔터로 메뉴를 선택할 수 있습니다.")
 
+        if self.multi_play_dialog.enabled:
+            self.multi_play_dialog.draw(screen)
+
 
     # 시작 화면 이벤트 처리
     def run_events(self, events):
         for event in events:
-            # 마우스 좌표 (x, y)
-            pos = pygame.mouse.get_pos()
+            if event.type == pygame.KEYDOWN:
+                self.process_key_event(event)
+            elif event.type == pygame.MOUSEBUTTONUP:
+                self.run_click_event(event)
 
-            if event.type == pygame.KEYDOWN: # 키보드 입력 처리
-                self.process_key_event(event.key)
+    def process_key_event(self, event):
+        if self.multi_play_dialog.enabled:
+            self.multi_play_dialog.run_key_event(event)
+        else:
+            self.run_menu_key_event(event)
 
-            elif event.type == pygame.MOUSEBUTTONUP: # 마우스 클릭 처리
-                for menu in self.menu_dict:
-                    if menu['rect']:
-                        if menu['rect'].collidepoint(pos):
-                            menu['action']()
+    def run_click_event(self, event):
+        if self.multi_play_dialog.enabled:
+            self.multi_play_dialog.run_click_event(event)
+        else:
+            self.run_menu_click_event(event)
 
+    def run_menu_click_event(self, event):
+        for menu in self.menu_dict:
+            if menu['rect']:
+                if menu['rect'].collidepoint(pygame.mouse.get_pos()):
+                    menu['action']()
 
-
-
-
-    def process_key_event(self, key):
+    def run_menu_key_event(self, event):
         self.hide_alert()
-        if key == pygame.K_UP:
+        if event.key == pygame.K_UP:
             self.selected_menu_index = (self.selected_menu_index - 1) % len(self.menu_dict)
-        elif key == pygame.K_DOWN:
+        elif event.key == pygame.K_DOWN:
             self.selected_menu_index = (self.selected_menu_index + 1) % len(self.menu_dict)
-        elif key == pygame.K_RETURN:
+        elif event.key == pygame.K_RETURN:
             self.menu_dict[self.selected_menu_index]['action']()
         else:
             self.show_alert()
@@ -81,13 +99,13 @@ class HomeScreen:
 
     def draw_title(self, screen):
         self.title = get_large_font().render("Uno Game", True, COLOR_BLACK)
-        self.title_rect = get_rect(self.title, screen.get_width() // 2, screen.get_height() // 3)
+        self.title_rect = get_rect(self.title, screen.get_width() // 2, screen.get_height() // 5)
         screen.blit(self.title, self.title_rect)
 
     def draw_menu(self, screen, menus):
         for index, menu in enumerate(menus):
             text = get_medium_font().render(menu['text'], True, COLOR_GRAY if  index != self.selected_menu_index else COLOR_BLACK)
-            rect = get_rect(text, screen.get_width() // 2, screen.get_height() // 2 + text.get_height() * index)
+            rect = get_rect(text, screen.get_width() // 2, screen.get_height() // 3 + text.get_height() * index)
             self.menu_dict[index].update({'view': text, 'rect': rect})
             screen.blit(text, rect)
 

@@ -1,11 +1,17 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
+
 from game.model.player import Player
+from game.model.region import Region
+from game.story.regiona import GameA
+from game.story.regionb import GameB
+from game.story.regionc import GameC
+from game.story.regiond import GameD
+from screen.model.screentype import ScreenType
+from util.extradata import ExtraData
+
 if TYPE_CHECKING:
     from screen.ScreenController import ScreenController
-
-
-import pygame
 
 from util.globals import *
 
@@ -18,6 +24,7 @@ class StoryScreen:
 
         self.is_confirm_enabled = False
         self.is_story_enabled = True
+        self.is_return_enabled = False
 
         # 선택할 수 있는 스토리 최대 인덱스
         self.current_position = 0
@@ -25,31 +32,43 @@ class StoryScreen:
 
         # 스토리 목록
         self.stories = [
-            {'type': TYPE_STORY_A, 'rect': None, 'action': None, 'hover': None, 'color': COLOR_RED, 'features': ['컴퓨터 플레이어 첫 분배 기술 카드 확률 50% 상승', '컴퓨터 플레이어 기술 카드 콤보 사용(2-3장)']},
-            {'type': TYPE_STORY_B, 'rect': None, 'action': None, 'hover': None, 'color': COLOR_BLUE, 'features': ['컴퓨터 플레이어 3명', '모든 카드를 같은 수만큼 분배']},
-            {'type': TYPE_STORY_C, 'rect': None, 'action': None, 'hover': None, 'color': COLOR_GREEN, 'features': ['컴퓨터 플레이어 2명', '매 5턴마다 낼 수 있는 카드 색상 무작위 변경']},
-            {'type': TYPE_STORY_D, 'rect': None, 'action': None, 'hover': None, 'color': COLOR_YELLOW, 'features': ['컴퓨터 플레이어 5명', '숫자 카드로만 진행']},
+            {'type': Region.A, 'game': GameA, 'rect': None, 'action': None, 'hover': None, 'color': COLOR_RED, 'features': ['지역 A', '컴퓨터 플레이어 첫 분배 기술 카드 확률 50% 상승', '컴퓨터 플레이어 기술 카드 콤보 사용(2-3장)']},
+            {'type': Region.B, 'game': GameB, 'rect': None, 'action': None, 'hover': None, 'color': COLOR_BLUE, 'features': ['지역 B', '컴퓨터 플레이어 3명', '모든 카드를 같은 수만큼 분배']},
+            {'type': Region.C, 'game': GameC, 'rect': None, 'action': None, 'hover': None, 'color': COLOR_GREEN, 'features': ['지역 C', '컴퓨터 플레이어 2명', '매 5턴마다 낼 수 있는 카드 색상 무작위 변경']},
+            {'type': Region.D, 'game': GameD, 'rect': None, 'action': None, 'hover': None, 'color': COLOR_YELLOW, 'features': ['지역 D', '컴퓨터 플레이어 5명', '숫자 카드로만 진행']},
         ]
 
-        # 확인 다이얼로그
         self.confirm_yes_rect = None
         self.confirm_no_rect = None
+        self.return_rect = None
 
     def init(self):
         self.is_story_enabled = True
         self.is_confirm_enabled = False
+        self.is_return_enabled = False
 
     def draw(self, screen: pygame.Surface):
-        screen.fill(COLOR_WHITE)
+        self.draw_background(screen)
         self.draw_stories(screen)
+        self.draw_return_menu(screen)
 
         if self.is_confirm_enabled:
             self.draw_confirm_dialog(screen)
 
+    def draw_background(self, screen):
+        background = pygame.image.load('./resource/background/map.jpg')
+        background = pygame.transform.scale(background, screen.get_size())
+
+        surface = pygame.Surface(screen.get_size(), pygame.SRCALPHA)
+        surface.fill(COLOR_TRANSPARENT_WHITE_25)
+
+        screen.blit(background, background.get_rect())
+        screen.blit(surface, surface.get_rect())
+
     def draw_stories(self, screen):
         width = screen.get_width() / (len(self.stories) + 1)
         for idx, story in enumerate(self.stories):
-            color = story['color'] if idx <= self.game.story_index else COLOR_GRAY
+            color = story['color'] if idx <= extraDataUtil.get(ExtraData.STORY_CLEARED.name) else COLOR_GRAY
             story['rect'] = pygame.draw.circle(screen, color, (width * (idx + 1), screen.get_height() // 2), 20, 3)
 
             # 현재 위치
@@ -90,6 +109,11 @@ class StoryScreen:
         screen.blit(yes, self.confirm_yes_rect)
         screen.blit(no, self.confirm_no_rect)
 
+    def draw_return_menu(self, screen):
+        color = COLOR_BLACK if self.is_return_enabled else COLOR_GRAY
+        text = get_medium_font().render('돌아가기', True, color)
+        self.return_rect = screen.blit(text, get_bottom_center_rect(text, screen.get_rect(), x=-text.get_width() // 2, y=-get_medium_margin()))
+
     def run_events(self, events):
         for event in events:
             if event.type == pygame.KEYDOWN:
@@ -100,23 +124,33 @@ class StoryScreen:
 
     def run_key_event(self, event):
         key = event.key
-        if self.is_story_enabled:
-            self.run_story_event(key)
 
-        elif self.is_confirm_enabled:
+        if self.is_confirm_enabled:
             self.run_confirm_event(key)
+            return
 
-    def run_story_event(self, key):
+        if self.is_story_enabled:
+            self.run_story_event(event)
+        elif self.is_return_enabled:
+            self.run_return_event(event)
+
+    def run_story_event(self, event):
+        key = event.key
         if key == pygame.K_RIGHT:
             self.update_current_position(1)
         elif key == pygame.K_LEFT:
             self.update_current_position(-1)
         elif key == pygame.K_RETURN:
             self.toggle_confirm_dialog()
+        elif key == pygame.K_DOWN:
+            self.toggle_return_button()
 
-    def toggle_confirm_dialog(self):
-        self.is_story_enabled = not self.is_story_enabled
-        self.is_confirm_enabled = not self.is_confirm_enabled
+    def run_return_event(self, event):
+        key = event.key
+        if key == pygame.K_UP:
+            self.toggle_return_button()
+        elif key == pygame.K_RETURN:
+            self.screen_controller.set_screen_type(ScreenType.START)
 
     def run_confirm_event(self, key):
         if key == pygame.K_RIGHT:
@@ -133,26 +167,43 @@ class StoryScreen:
             self.is_confirm_enabled = False
             self.is_story_enabled = True
 
+    def toggle_confirm_dialog(self):
+        self.is_story_enabled = not self.is_story_enabled
+        self.is_confirm_enabled = not self.is_confirm_enabled
+
+    def toggle_return_button(self):
+        self.is_story_enabled = not self.is_story_enabled
+        self.is_return_enabled = not self.is_return_enabled
+
+
     def update_current_position(self, direction):
-        self.current_position = (self.current_position + direction) % (self.game.story_index + 1)
+        self.current_position = (self.current_position + direction) % (extraDataUtil.get(ExtraData.STORY_CLEARED.name) + 1)
 
     def update_confirm_idx(self, direction):
         self.confirm_idx = (self.confirm_idx + direction) % 2
 
     def run_click_event(self, event):
         pos = pygame.mouse.get_pos()
-        if self.is_story_enabled:
-            self.run_story_click_event(pos)
-        elif self.is_confirm_enabled:
+
+        if self.is_confirm_enabled:
             self.run_confirm_click_event(pos)
+            return
+
+        self.run_story_click_event(pos)
+        self.run_return_click_evnet(pos)
+
 
 
     def run_story_click_event(self, pos):
         for idx, story in enumerate(self.stories):
             if story['rect'].collidepoint(pos):
-                if idx <= self.game.story_index:
+                if idx <= extraDataUtil.get(ExtraData.STORY_CLEARED.name):
                     self.current_position = idx
                     self.toggle_confirm_dialog()
+
+    def run_return_click_evnet(self, pos):
+        if self.return_rect.collidepoint(pos):
+            self.screen_controller.set_screen_type(ScreenType.START)
 
     def run_confirm_click_event(self, pos):
         if self.confirm_yes_rect.collidepoint(pos):
@@ -163,8 +214,10 @@ class StoryScreen:
             self.is_story_enabled = True
 
     def move_play_screen(self):
-        self.screen_controller.set_screen_type(TYPE_PLAY)
-        self.screen_controller.game.start_game(self.get_selected_story()['type'], [Player("You")])
+        self.screen_controller.set_screen_type(ScreenType.PLAY)
+        self.screen_controller.set_game(self.get_selected_story()['game']())
+        self.screen_controller.game.set_players([Player("You")])
+        self.screen_controller.game.start_game()
 
     def get_selected_story(self):
         return self.stories[self.current_position]
