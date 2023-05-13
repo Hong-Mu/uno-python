@@ -24,6 +24,7 @@ class StoryScreen:
 
         self.is_confirm_enabled = False
         self.is_story_enabled = True
+        self.is_return_enabled = False
 
         # 선택할 수 있는 스토리 최대 인덱스
         self.current_position = 0
@@ -37,18 +38,19 @@ class StoryScreen:
             {'type': Region.D, 'game': GameD, 'rect': None, 'action': None, 'hover': None, 'color': COLOR_YELLOW, 'features': ['지역 D', '컴퓨터 플레이어 5명', '숫자 카드로만 진행']},
         ]
 
-        # 확인 다이얼로그
         self.confirm_yes_rect = None
         self.confirm_no_rect = None
+        self.return_rect = None
 
     def init(self):
         self.is_story_enabled = True
         self.is_confirm_enabled = False
+        self.is_return_enabled = False
 
     def draw(self, screen: pygame.Surface):
         self.draw_background(screen)
-
         self.draw_stories(screen)
+        self.draw_return_menu(screen)
 
         if self.is_confirm_enabled:
             self.draw_confirm_dialog(screen)
@@ -107,6 +109,11 @@ class StoryScreen:
         screen.blit(yes, self.confirm_yes_rect)
         screen.blit(no, self.confirm_no_rect)
 
+    def draw_return_menu(self, screen):
+        color = COLOR_BLACK if self.is_return_enabled else COLOR_GRAY
+        text = get_medium_font().render('돌아가기', True, color)
+        self.return_rect = screen.blit(text, get_bottom_center_rect(text, screen.get_rect(), x=-text.get_width() // 2, y=-get_medium_margin()))
+
     def run_events(self, events):
         for event in events:
             if event.type == pygame.KEYDOWN:
@@ -117,23 +124,33 @@ class StoryScreen:
 
     def run_key_event(self, event):
         key = event.key
-        if self.is_story_enabled:
-            self.run_story_event(key)
 
-        elif self.is_confirm_enabled:
+        if self.is_confirm_enabled:
             self.run_confirm_event(key)
+            return
 
-    def run_story_event(self, key):
+        if self.is_story_enabled:
+            self.run_story_event(event)
+        elif self.is_return_enabled:
+            self.run_return_event(event)
+
+    def run_story_event(self, event):
+        key = event.key
         if key == pygame.K_RIGHT:
             self.update_current_position(1)
         elif key == pygame.K_LEFT:
             self.update_current_position(-1)
         elif key == pygame.K_RETURN:
             self.toggle_confirm_dialog()
+        elif key == pygame.K_DOWN:
+            self.toggle_return_button()
 
-    def toggle_confirm_dialog(self):
-        self.is_story_enabled = not self.is_story_enabled
-        self.is_confirm_enabled = not self.is_confirm_enabled
+    def run_return_event(self, event):
+        key = event.key
+        if key == pygame.K_UP:
+            self.toggle_return_button()
+        elif key == pygame.K_RETURN:
+            self.screen_controller.set_screen_type(ScreenType.START)
 
     def run_confirm_event(self, key):
         if key == pygame.K_RIGHT:
@@ -150,6 +167,15 @@ class StoryScreen:
             self.is_confirm_enabled = False
             self.is_story_enabled = True
 
+    def toggle_confirm_dialog(self):
+        self.is_story_enabled = not self.is_story_enabled
+        self.is_confirm_enabled = not self.is_confirm_enabled
+
+    def toggle_return_button(self):
+        self.is_story_enabled = not self.is_story_enabled
+        self.is_return_enabled = not self.is_return_enabled
+
+
     def update_current_position(self, direction):
         self.current_position = (self.current_position + direction) % (extraDataUtil.get(ExtraData.STORY_CLEARED.name) + 1)
 
@@ -158,10 +184,14 @@ class StoryScreen:
 
     def run_click_event(self, event):
         pos = pygame.mouse.get_pos()
-        if self.is_story_enabled:
-            self.run_story_click_event(pos)
-        elif self.is_confirm_enabled:
+
+        if self.is_confirm_enabled:
             self.run_confirm_click_event(pos)
+            return
+
+        self.run_story_click_event(pos)
+        self.run_return_click_evnet(pos)
+
 
 
     def run_story_click_event(self, pos):
@@ -170,6 +200,10 @@ class StoryScreen:
                 if idx <= extraDataUtil.get(ExtraData.STORY_CLEARED.name):
                     self.current_position = idx
                     self.toggle_confirm_dialog()
+
+    def run_return_click_evnet(self, pos):
+        if self.return_rect.collidepoint(pos):
+            self.screen_controller.set_screen_type(ScreenType.START)
 
     def run_confirm_click_event(self, pos):
         if self.confirm_yes_rect.collidepoint(pos):
