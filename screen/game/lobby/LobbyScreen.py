@@ -214,6 +214,8 @@ class LobbyScreen:
         elif key == pygame.K_RETURN:
             self.toggle_computer_enabled()
     def toggle_computer_enabled(self):
+        if self.computer_index == 0:
+            return
         self.computer_layout_list[self.computer_index]['enabled'] = not self.computer_layout_list[self.computer_index]['enabled']
 
     def run_click_event(self, event, pos):
@@ -230,8 +232,10 @@ class LobbyScreen:
                 menu['action']()
 
     def run_computer_select_click_event(self, pos):
-        for computer_layout in self.computer_layout_list:
+        for idx, computer_layout in enumerate(self.computer_layout_list):
             if computer_layout['rect'].collidepoint(pos):
+                if idx == 0:
+                    return
                 computer_layout['enabled'] = not computer_layout['enabled']
 
 

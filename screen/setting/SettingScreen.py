@@ -142,8 +142,9 @@ class SettingScreen:
             self.setting_select_enabled = True
 
     def run_setting_click_event(self, pos):
-        for setting in self.settings:
+        for idx, setting in enumerate(self.settings):
             if setting['rect'].collidepoint(pos):
+                self.selected_setting_idx = idx
                 if setting['type'] == MODE_CLEAR:
                     self.setting.clear()
                 elif setting['type'] == MODE_RETURN:

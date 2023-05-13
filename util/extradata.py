@@ -12,7 +12,7 @@ class ExtraDataUtil(BaseFileUtil):
     def init(self):
         self.data = {}
         for item in ExtraData:
-            self.data[item] = 0
+            self.data[item.name] = 0
 
 
 class ExtraData(Enum):
