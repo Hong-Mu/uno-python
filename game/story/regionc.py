@@ -21,7 +21,7 @@ class GameC(BaseGame):
     def set_winner(self, player):
         super().set_winner(player)
         if player == self.get_board_player():
-            if extraDataUtil.get(ExtraData.STORY_CLEARED.name) > Region.C.value:
+            if extraDataUtil.get(ExtraData.STORY_CLEARED.name) < Region.C.value:
                 extraDataUtil.set(ExtraData.STORY_CLEARED.name, Region.C.value)
 
     def run_in_turn_start(self):

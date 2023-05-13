@@ -23,7 +23,7 @@ class GameD(BaseGame):
     def set_winner(self, player):
         super().set_winner(player)
         if player == self.get_board_player():
-            if extraDataUtil.get(ExtraData.STORY_CLEARED.name) > Region.D.value:
+            if extraDataUtil.get(ExtraData.STORY_CLEARED.name) < Region.D.value:
                 extraDataUtil.set(ExtraData.STORY_CLEARED.name, Region.D.value)
 
 

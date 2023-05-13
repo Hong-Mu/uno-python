@@ -26,7 +26,7 @@ class GameA(BaseGame):
     def set_winner(self, player):
         super().set_winner(player)
         if player == self.get_board_player():
-            if extraDataUtil.get(ExtraData.STORY_CLEARED.name) > Region.A.value:
+            if extraDataUtil.get(ExtraData.STORY_CLEARED.name) < Region.A.value:
                 extraDataUtil.set(ExtraData.STORY_CLEARED.name, Region.A.value)
 
     def computer_deal(self, n):
