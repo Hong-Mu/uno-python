@@ -56,6 +56,11 @@ class Board:
         uno_rect = uno.get_rect(topright=self.background_rect.topright)
         screen.blit(uno, uno_rect)
 
+        player = self.game.get_uno_clicked_player()
+        if player is not None:
+            text = get_small_font().render(player.name, True, COLOR_BLACK)
+            screen.blit(text, (uno_rect.x - text.get_width(), 0))
+
     def draw_reverse(self, screen):
         if self.game.reverse_direction:
             surface = get_skill(Skill.REVERSE.value, 2)
@@ -82,5 +87,6 @@ class Board:
 
     def run_uno_key_event(self, event):
         if event.key == self.play_screen.screen_controller.setting.get(MODE_UNO_KEY):
-            self.game.uno_clicked = True
-            self.game.uno_clicked_player_index = self.game.board_player_index
+            if not self.game.uno_clicked:
+                self.game.uno_clicked = True
+                self.game.uno_clicked_player_index = self.game.board_player_index

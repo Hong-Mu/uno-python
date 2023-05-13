@@ -57,7 +57,6 @@ class BaseGame:
         self.uno_clicked = False
         self.uno_clicked_player_index = None
 
-
     def start_game(self):
         self.deck = Deck(self)
         self.init()
@@ -65,10 +64,8 @@ class BaseGame:
         self.current_card = self.deck.draw()
         self.current_color = self.current_card.color
 
-
     def run_in_turn_start(self):
         pass
-
 
     def finish_game(self):
         self.is_started = False
@@ -105,6 +102,12 @@ class BaseGame:
 
     def get_previous_player(self):
         return self.players[self.previous_player_index]
+
+    def get_uno_clicked_player(self):
+        if self.uno_clicked_player_index is not None:
+            return self.players[self.uno_clicked_player_index]
+        else:
+            return None
 
     def draw(self):
         print(f'드로우 {self.current_player_index}')
@@ -181,3 +184,9 @@ class BaseGame:
 
     def get_winner(self):
         return self.winner
+
+    def clear_uno(self):
+        self.uno_enabled = False
+        self.uno_clicked = False
+        self.can_uno_penalty = False
+        self.uno_clicked_player_index = None

@@ -138,6 +138,7 @@ class PlayScreen:
         self.check_uno_clicked()
         self.game.run_in_turn_start()
         self.game.is_turn_start = False
+
     def draw_animation(self, screen):
         self.is_animation_running = True
         if self.animate_deck_to_player_enabled:
@@ -161,17 +162,13 @@ class PlayScreen:
 
     def animate_deck_to_player_end(self):
         if self.game.can_uno_penalty: # 우노 패널티 결과
-            self.game.penalty(self.game.previous_player_index)
-            self.game.uno_enabled = False
-            self.game.uno_clicked = False
-            self.game.can_uno_penalty = False
-            self.animate_deck_to_player_enabled = False
-            self.continue_game()
+            self.on_uno_penalty()
             
         elif self.game.skill_plus_cnt > 0: # 기술 카드 부여 결과
             self.game.penalty(self.game.next_player_index)
             print('기술 1장 부여')
             self.game.skill_plus_cnt -= 1
+
             if self.game.skill_plus_cnt > 0:
                 self.on_deck_selected()
             else:
@@ -184,6 +181,14 @@ class PlayScreen:
             self.game.next_turn()
             self.animate_deck_to_player_enabled = False
             self.continue_game()
+
+    def on_uno_penalty(self):
+        self.game.penalty(self.game.previous_player_index)
+
+        self.game.clear_uno()
+
+        self.animate_deck_to_player_enabled = False
+        self.continue_game()
 
     def animate_board_player_to_current_card(self, screen):
         if self.animate_controller.enabled:
@@ -261,20 +266,23 @@ class PlayScreen:
 
     def check_uno_clicked(self):
         if self.game.uno_enabled:
+            if len(self.game.get_previous_player().hands) != 1:
+                self.game.clear_uno()
+                return
+
             if self.game.uno_clicked:
                 if self.game.uno_clicked_player_index == self.game.previous_player_index:
-                    print('우노 버튼 해당 플레이어 클릭: 패널티 미부여')
-                    print(f'{self.game.uno_clicked_player_index} {self.game.previous_player_index}')
-                    self.game.uno_enabled = False
-                    self.game.uno_clicked = False
+                    self.game.clear_uno()
                 else:
-                    print('다른 플레이어로 인한 패널티 부여')
                     self.game.can_uno_penalty = True
                     self.on_deck_selected()
             else:
-                print('우노 미선택으로 인한 패널티 부여')
                 self.game.can_uno_penalty = True
                 self.on_deck_selected()
+
+        elif len(self.game.get_previous_player().hands) == 1:
+            self.game.can_uno_penalty = True
+            self.on_deck_selected()
     
     def check_plus_skill(self):
         if self.game.skill_plus_cnt != 0:
