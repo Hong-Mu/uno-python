@@ -1,5 +1,6 @@
 import os
 
+from screen.model.screentype import ScreenType
 from util.achievement import *
 from util.text import wrap_text
 from util.globals import *
@@ -19,6 +20,7 @@ class AchivementScreen:
         self.achivementsUtil = screen_controller.achivementsUtil
 
         self.title_rect = None
+        self.return_rect = None
         self.scroll_surface = None
 
         self.scroll_y = 0
@@ -54,6 +56,7 @@ class AchivementScreen:
         screen.fill(COLOR_WHITE)
 
         self.draw_title(screen)
+        self.draw_return(screen)
         self.draw_scroll_surface(screen)
 
 
@@ -78,6 +81,10 @@ class AchivementScreen:
             temp_topleft = (0, temp_topleft[1] + ITEM_HEIGHT)
 
         self.scroll_max = temp_topleft[1] - screen.get_height() + get_medium_margin()
+
+    def draw_return(self, screen):
+        text = get_medium_font().render('돌아가기(ESC)', True, COLOR_BLACK)
+        self.return_rect = screen.blit(text, (get_medium_margin(), get_medium_margin()))
 
     def draw_item(self, screen, achivement, topleft):
         data = self.achivementsUtil.get(achivement.name)
@@ -113,6 +120,7 @@ class AchivementScreen:
                 pos = pygame.mouse.get_pos()
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 self.run_scroll_event(event)
+                self.run_return_click_event(event)
 
 
     def run_scroll_event(self, event):
@@ -123,6 +131,17 @@ class AchivementScreen:
             if self.scroll_y + self.scroll_speed <= self.scroll_max:
                 self.scroll_y += self.scroll_speed
 
-    def run_key_event(self, event):
-        pass
+    def run_return_click_event(self, event):
+        if self.return_rect.collidepoint(pygame.mouse.get_pos()):
+            self.screen_controller.set_screen(ScreenType.START)
 
+    def run_key_event(self, event):
+        key = event.key
+        if key == pygame.K_DOWN:
+            if self.scroll_y + self.scroll_speed <= self.scroll_max:
+                self.scroll_y += self.scroll_speed
+        elif key == pygame.K_UP:
+            if self.scroll_y - self.scroll_speed >= 0:
+                self.scroll_y -= self.scroll_speed
+        elif key == pygame.K_ESCAPE:
+            self.screen_controller.set_screen(ScreenType.START)
