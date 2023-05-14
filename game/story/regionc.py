@@ -1,12 +1,13 @@
 import random
 
+from base.baseachievementgame import BaseAchievementGame
 from base.basegame import BaseGame
 from game.model.computer import Computer
 from model.region import Region
 from util.globals import *
 
 
-class GameC(BaseGame):
+class GameC(BaseAchievementGame):
     def __init__(self):
         super().__init__()
 
@@ -23,16 +24,8 @@ class GameC(BaseGame):
             self.check_story_cleared(Region.C)
             self.update_achievement(Achievement.STORY_C)
 
-            self.update_win_count()
-            self.check_win_count()
-
     def run_in_turn_start(self):
         super().run_in_turn_start()
 
         if self.turn_counter % 5 == 0:
             self.current_color = random.choice(list(COLOR_SET.keys()))
-
-    def run_periodically(self):
-        super().run_periodically()
-
-        self.check_uno_count()

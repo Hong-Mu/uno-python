@@ -88,6 +88,7 @@ class Board:
 
     def click_uno(self):
         if not self.game.uno_clicked:
+            self.game.is_uno_clicked_by_player = True
             extraDataUtil.increase(ExtraData.SINGLE_UNO_CNT)
             self.game.update_achievement(Achievement.SINGLE_UNO_CNT)
             self.game.uno_clicked = True

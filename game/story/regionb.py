@@ -1,10 +1,11 @@
+from base.baseachievementgame import BaseAchievementGame
 from base.basegame import BaseGame
 from game.model.computer import Computer
 from model.achievement import Achievement
 from model.region import Region
 
 
-class GameB(BaseGame):
+class GameB(BaseAchievementGame):
     def __init__(self):
         super().__init__()
     def init(self):
@@ -20,11 +21,3 @@ class GameB(BaseGame):
         if player == self.get_board_player():
             self.check_story_cleared(Region.B)
             self.update_achievement(Achievement.STORY_B)
-
-            self.update_win_count()
-            self.check_win_count()
-
-    def run_periodically(self):
-        super().run_periodically()
-
-        self.check_uno_count()

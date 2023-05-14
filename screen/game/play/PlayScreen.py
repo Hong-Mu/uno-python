@@ -438,6 +438,7 @@ class PlayScreen:
     def run_computer(self):
         if self.game.uno_enabled and not self.game.uno_clicked:
             if time.time() - self.game.turn_start_time >= Computer.UNO_DELAY:
+                self.game.is_uno_clicked_by_computer = True
                 self.game.uno_clicked = True
                 self.game.uno_clicked_player_index = random.randint(1, len(self.game.players) - 1)  # 랜덤 컴퓨터가 우노 버튼 클릭
 

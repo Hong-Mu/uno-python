@@ -1,10 +1,11 @@
+from base.baseachievementgame import BaseAchievementGame
 from base.basegame import BaseGame
 from game.model.computer import Computer
 from model.region import Region
 from util.globals import *
 
 
-class GameD(BaseGame):
+class GameD(BaseAchievementGame):
     def __init__(self):
         super().__init__()
         self.turn_cnt = 0
@@ -24,9 +25,6 @@ class GameD(BaseGame):
             self.check_story_cleared(Region.D)
             self.update_achievement(Achievement.STORY_D)
 
-            self.update_win_count()
-            self.check_win_count()
-
 
     def get_deck(self):
         color = list(CARD_COLOR_SET.keys())
@@ -35,8 +33,3 @@ class GameD(BaseGame):
             for v in range(1, 10):
                 cards.append(Card(c, v))
         return cards
-
-    def run_periodically(self):
-        super().run_periodically()
-
-        self.check_uno_count()

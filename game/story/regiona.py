@@ -1,5 +1,6 @@
 import random
 
+from base.baseachievementgame import BaseAchievementGame
 from base.basegame import BaseGame
 from game.model.card import Card
 from game.model.computer import Computer
@@ -10,7 +11,7 @@ from util.extradata import ExtraData
 from util.globals import *
 
 
-class GameA(BaseGame):
+class GameA(BaseAchievementGame):
     def __init__(self):
         super().__init__()
 
@@ -29,9 +30,6 @@ class GameA(BaseGame):
         if player == self.get_board_player():
             self.check_story_cleared(Region.A)
             self.update_achievement(Achievement.STORY_A)
-
-            self.update_win_count()
-            self.check_win_count()
 
     def computer_deal(self, n):
         example = []
@@ -63,7 +61,3 @@ class GameA(BaseGame):
             computer.hands.append(Card(CARD_COLOR_NONE, Skill.COMBO))
             return len(computer.hands) - 1
 
-    def run_periodically(self):
-        super().run_periodically()
-
-        self.check_uno_count()

@@ -23,7 +23,7 @@ class Deck:
         # 무색상 색상 기술 카드
         cards.extend([Card(CARD_COLOR_NONE, Skill.COLOR.value)])
 
-        for c in color[1:]:
+        for c in [color[1:]]:
             for v in value[:14]:
                 cards.append(Card(c,v))
 
@@ -43,7 +43,6 @@ class Deck:
     # 카드 드로우
     def draw(self):
         if len(self.cards) == 0:
-            # TODO: 새로 덱을 만들면 정해진 매수를 초과함 -> 이미 제출한 카드를 다시 섞어야 할듯
             self.init_deck()
 
         return self.cards.pop()

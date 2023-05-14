@@ -24,7 +24,7 @@ class BaseGame:
         self.current_color = None
 
         self.turn_time = 10
-        self.uno_count = 2  # TODO 우노 버튼을 클릭해야 할 카드 개수: 기본2
+        self.uno_count = 2
         self.skip_direction = 1
 
         self.skill_plus_cnt = 0
@@ -38,6 +38,10 @@ class BaseGame:
         self.uno_enabled = False
         self.uno_clicked = False
         self.uno_clicked_player_index = None
+
+        self.is_uno_clicked_by_computer = False
+        self.is_uno_clicked_by_player = False
+        self.is_player_skilled = False
 
         self.notify_achievements = []
 
@@ -223,6 +227,13 @@ class BaseGame:
         if cnt >= 1:
             self.update_achievement(Achievement.SINGLE_UNO_CNT)
 
+    def check_computer_uno_clicked_when_win(self):
+        if self.is_uno_clicked_by_computer:
+            self.update_achievement(Achievement.SINGLE_WIN_UNO)
+
+    def check_player_uno_clicked_when_lose(self):
+        if self.is_uno_clicked_by_player:
+            self.update_achievement(Achievement.SINGLE_LOSE_UNO)
 
     def check_story_cleared(self, region):
         if extraDataUtil.get(ExtraData.STORY_CLEARED) < region.value:
