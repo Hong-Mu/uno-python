@@ -35,3 +35,8 @@ class GameD(BaseGame):
             for v in range(1, 10):
                 cards.append(Card(c, v))
         return cards
+
+    def run_periodically(self):
+        super().run_periodically()
+
+        self.check_uno_count()

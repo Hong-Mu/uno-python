@@ -23,3 +23,8 @@ class GameB(BaseGame):
 
             self.update_win_count()
             self.check_win_count()
+
+    def run_periodically(self):
+        super().run_periodically()
+
+        self.check_uno_count()

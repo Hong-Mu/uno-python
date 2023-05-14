@@ -31,3 +31,8 @@ class GameC(BaseGame):
 
         if self.turn_counter % 5 == 0:
             self.current_color = random.choice(list(COLOR_SET.keys()))
+
+    def run_periodically(self):
+        super().run_periodically()
+
+        self.check_uno_count()

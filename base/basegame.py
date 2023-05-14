@@ -72,6 +72,9 @@ class BaseGame:
     def run_in_turn_start(self):
         pass
 
+    def run_periodically(self):
+        pass
+
     def finish_game(self):
         self.is_started = False
         self.players = []
@@ -213,6 +216,13 @@ class BaseGame:
 
         if cnt >= 10:
             self.update_achievement(Achievement.SINGLE_WIN_10)
+
+    def check_uno_count(self):
+        cnt = extraDataUtil.get(ExtraData.SINGLE_UNO_CNT)
+
+        if cnt >= 1:
+            self.update_achievement(Achievement.SINGLE_UNO_CNT)
+
 
     def check_story_cleared(self, region):
         if extraDataUtil.get(ExtraData.STORY_CLEARED) < region.value:

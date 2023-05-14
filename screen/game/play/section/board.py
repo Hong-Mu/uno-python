@@ -2,8 +2,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from model.skill import Skill
+from util.extradata import ExtraData
 from util.globals import *
 import pygame
+
+from util.singletone import extraDataUtil
 
 if TYPE_CHECKING:
     from screen.game.play.PlayScreen import PlayScreen
@@ -77,12 +80,15 @@ class Board:
 
     def run_uno_click_event(self, pos):
         if self.uno_rect.collidepoint(pos):
-            if not self.game.uno_clicked:
-                self.game.uno_clicked = True
-                self.game.uno_clicked_player_index = self.game.board_player_index
+            self.click_uno()
 
     def run_uno_key_event(self, event):
         if event.key == self.play_screen.screen_controller.setting.get(MODE_UNO_KEY):
-            if not self.game.uno_clicked:
-                self.game.uno_clicked = True
-                self.game.uno_clicked_player_index = self.game.board_player_index
+            self.click_uno()
+
+    def click_uno(self):
+        if not self.game.uno_clicked:
+            extraDataUtil.increase(ExtraData.SINGLE_UNO_CNT)
+            self.game.update_achievement(Achievement.SINGLE_UNO_CNT)
+            self.game.uno_clicked = True
+            self.game.uno_clicked_player_index = self.game.board_player_index

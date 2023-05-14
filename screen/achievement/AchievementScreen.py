@@ -1,7 +1,8 @@
 from model.achievement import Achievement
 from model.screentype import ScreenType
 from util.achievement import *
-from util.singletone import achievementsUtil
+from util.extradata import ExtraData
+from util.singletone import achievementsUtil, extraDataUtil
 from util.text import wrap_text
 from util.globals import *
 import pygame
@@ -53,7 +54,7 @@ class AchievementScreen:
 
             temp_topleft = (0, temp_topleft[1] + ITEM_HEIGHT)
 
-        self.scroll_max = temp_topleft[1] - screen.get_height() + get_medium_margin()
+        self.scroll_max = temp_topleft[1] - screen.get_height() + get_medium_margin() + 100
 
     def draw_return(self, screen):
         text = get_medium_font().render('돌아가기(ESC)', True, COLOR_BLACK)
@@ -68,6 +69,11 @@ class AchievementScreen:
         item = pygame.image.load(os.path.join(ROOT, resource))
         item = pygame.transform.scale(item, (ITEM_WIDTH, ITEM_HEIGHT))
         screen.blit(item, topleft)
+
+        # 우노 카운트
+        if achievement == Achievement.SINGLE_UNO_CNT:
+            date = get_medium_font().render(str(extraDataUtil.get(ExtraData.SINGLE_UNO_CNT)), True, COLOR_ACHIVEMENT)
+            screen.blit(date, ((ITEM_WIDTH - date.get_width()) // 2, topleft[1] + (ITEM_HEIGHT - date.get_height()) // 2 + get_small_margin()))
 
         # 날짜
         if data[PREF_ACQUIRED]:

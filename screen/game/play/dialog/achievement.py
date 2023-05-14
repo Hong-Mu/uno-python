@@ -3,8 +3,9 @@ import time
 import pygame
 
 from model.achievement import Achievement
+from util.extradata import ExtraData
 from util.globals import *
-from util.singletone import achievementsUtil
+from util.singletone import achievementsUtil, extraDataUtil
 from util.text import wrap_text
 
 ITEM_WIDTH = 65

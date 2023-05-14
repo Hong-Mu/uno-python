@@ -62,3 +62,8 @@ class GameA(BaseGame):
                 computer.hands.remove(card)
             computer.hands.append(Card(CARD_COLOR_NONE, Skill.COMBO))
             return len(computer.hands) - 1
+
+    def run_periodically(self):
+        super().run_periodically()
+
+        self.check_uno_count()

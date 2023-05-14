@@ -20,6 +20,9 @@ class ExtraDataUtil(BaseFileUtil):
     def set(self, key, value):
         super().set(key.name, value)
 
+    def increase(self, key):
+        self.set(key, self.get(key) + 1)
+
 
 class ExtraData(Enum):
     SINGLE_WIN_CNT = 0
