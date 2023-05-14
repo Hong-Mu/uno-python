@@ -151,7 +151,7 @@ class StoryScreen:
         if key == pygame.K_UP:
             self.toggle_return_button()
         elif key == pygame.K_RETURN:
-            self.screen_controller.set_screen_type(ScreenType.START)
+            self.screen_controller.set_screen(ScreenType.HOME)
 
     def run_confirm_event(self, key):
         if key == pygame.K_RIGHT:
@@ -204,7 +204,7 @@ class StoryScreen:
 
     def run_return_click_evnet(self, pos):
         if self.return_rect.collidepoint(pos):
-            self.screen_controller.set_screen_type(ScreenType.START)
+            self.screen_controller.set_screen(ScreenType.HOME)
 
     def run_confirm_click_event(self, pos):
         if self.confirm_yes_rect.collidepoint(pos):
@@ -215,10 +215,11 @@ class StoryScreen:
             self.is_story_enabled = True
 
     def move_play_screen(self):
-        self.screen_controller.set_screen_type(ScreenType.PLAY)
         self.screen_controller.set_game(self.get_selected_story()['game']())
         self.screen_controller.game.set_players([Player("You")])
         self.screen_controller.game.start_game()
+        self.screen_controller.set_screen(ScreenType.PLAY)
+
 
     def get_selected_story(self):
         return self.stories[self.current_position]

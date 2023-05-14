@@ -24,6 +24,8 @@ class AchievementScreen:
         self.scroll_speed = 50
         self.scroll_max = None
 
+    def init(self):
+        pass
 
 
     def draw(self, screen):
@@ -116,7 +118,7 @@ class AchievementScreen:
                 self.screen_controller.set_screen(ScreenType.PLAY)
                 self.screen_controller.is_paused = False
             else:
-                self.screen_controller.set_screen(ScreenType.START)
+                self.screen_controller.set_screen(ScreenType.HOME)
 
     def run_key_event(self, event):
         key = event.key
@@ -131,4 +133,4 @@ class AchievementScreen:
                 self.screen_controller.set_screen(ScreenType.PLAY)
                 self.screen_controller.is_paused = False
             else:
-                self.screen_controller.set_screen(ScreenType.START)
+                self.screen_controller.set_screen(ScreenType.HOME)

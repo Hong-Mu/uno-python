@@ -63,17 +63,12 @@ class PlayScreen:
 
         self.is_animation_running = False
 
-    def pause_game(self):  # 일시정지
-        self.game.is_game_paused = True
-        self.pause_temp_time = time.time()
-
-    def continue_game(self):  # 다시 시작
-        self.game.is_game_paused = False
-
     # 초기화 함수
     def init(self):
-        self.escape_dialog.enabled = False
-        self.escape_dialog.menu_idx = 0
+
+        if self.escape_dialog.enabled:
+            return
+        self.game = self.screen_controller.game
 
         self.game.is_game_paused = False  # 일시정지 상태
         self.pause_temp_time = None  # 일시정지 임시 시간 저장 변수
@@ -86,12 +81,6 @@ class PlayScreen:
         self.animate_deck_to_player_enabled = False
         self.animate_board_player_to_current_card_enabled = False
         self.animate_current_player_to_current_card_enabled = False
-
-        if self.escape_dialog.enabled:
-            self.pause_game()
-        else:
-            self.continue_game()
-
 
     # 모든 View
     def draw(self, screen):
@@ -133,6 +122,13 @@ class PlayScreen:
             self.achievement_dialog.draw(screen)
 
         self.check_achievements()
+
+    def pause_game(self):  # 일시정지
+        self.game.is_game_paused = True
+        self.pause_temp_time = time.time()
+
+    def continue_game(self):  # 다시 시작
+        self.game.is_game_paused = False
 
 
     def init_turn(self):

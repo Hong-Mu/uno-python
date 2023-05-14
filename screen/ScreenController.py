@@ -1,11 +1,13 @@
 from screen.achievement.AchievementScreen import AchievementScreen
 from model.screentype import ScreenType
+from screen.game.lobby.client import ClientLobbyScreen
+from screen.game.lobby.server import ServerLobbyScreen
+from screen.game.lobby.singleplay import LobbyScreen
 from util.settings import SettingsUtil
 from util.globals import *
 from screen.home.HomeScreen import HomeScreen
 from screen.setting.SettingScreen import SettingScreen
 
-from screen.game.lobby.LobbyScreen import LobbyScreen
 from screen.game.play.PlayScreen import PlayScreen
 from screen.game.story.StoryScreen import StoryScreen
 
@@ -23,7 +25,7 @@ class ScreenController:
         self.clock = pygame.time.Clock()
         self.fps = 30
 
-        self.screen_type = ScreenType.START
+        self.screen_type = ScreenType.HOME
         self.running = True
 
         # 설정 불러오기
@@ -55,17 +57,15 @@ class ScreenController:
 
     def init_instance(self):
         ScreenController.screens = {
-            ScreenType.START: HomeScreen(self),
+            ScreenType.HOME: HomeScreen(self),
             ScreenType.SETTING: SettingScreen(self),
             ScreenType.PLAY: PlayScreen(self),
-            ScreenType.LOBBY: LobbyScreen(self),
+            ScreenType.LOBBY_SINGLE: LobbyScreen(self),
+            ScreenType.LOBBY_SERVER: ServerLobbyScreen(self),
+            ScreenType.LOBBY_CLIENT: ClientLobbyScreen(self),
             ScreenType.STORY: StoryScreen(self),
             ScreenType.ACHIEVEMENT: AchievementScreen(self),
         }
-
-    # 화면 설정
-    def set_screen_type(self, type):
-        self.screen_type = type
 
     # 화면 시작
     def run(self):
@@ -142,6 +142,7 @@ class ScreenController:
     # 현재 화면 설정
     def set_screen(self, screen_type):
         self.screen_type = screen_type
+        self.get_screen().init()
 
     # 화면 선택
     def display_screen(self):

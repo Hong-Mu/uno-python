@@ -1,7 +1,7 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 
-from screen.game.play.dialog.multiplaydialog import MultiPlayDialog
+from screen.home.dialog.multiplaydialog import MultiPlayDialog
 from model.screentype import ScreenType
 from util.globals import *
 import pygame
@@ -17,15 +17,13 @@ class HomeScreen:
         self.selected_menu_index = 0
         self.menu_dict = [
             {'text': '싱글플레이', 'view': None, 'rect': None, 'action': lambda: (
-                self.screen_controller.set_screen(ScreenType.LOBBY),
-                self.screen_controller.screens[ScreenType.LOBBY].init()
+                self.screen_controller.set_screen(ScreenType.LOBBY_SINGLE),
             )},
             {'text': '멀티플레이', 'view': None, 'rect': None, 'action': lambda: (
                 self.multi_play_dialog.toggle(),
             )},
             {'text': '스토리모드', 'view': None, 'rect': None, 'action': lambda: (
-                self.screen_controller.set_screen_type(ScreenType.STORY),
-                self.screen_controller.screens[ScreenType.STORY].init()
+                self.screen_controller.set_screen(ScreenType.STORY),
             )},
             {'text': '업적', 'action': lambda: self.screen_controller.set_screen(ScreenType.ACHIEVEMENT), 'view': None, 'rect': None},
             {'text': '설정', 'action': lambda: self.screen_controller.set_screen(ScreenType.SETTING), 'view': None, 'rect': None },
@@ -39,6 +37,8 @@ class HomeScreen:
         self.draw_title(self.screen_controller.screen)
         self.draw_menu(self.screen_controller.screen, self.menu_dict)
 
+    def init(self):
+        self.multi_play_dialog.init()
 
     # 시작 화면
     def draw(self, screen):

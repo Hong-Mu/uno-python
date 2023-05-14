@@ -36,9 +36,7 @@ class GameOverDialog:
         screen.blit(name, name_rect)
 
     def run_key_event(self, event):
-        self.play_screen.init(),
-        self.screen_controller.set_screen(ScreenType.START)
+        self.screen_controller.set_screen(ScreenType.HOME)
 
     def run_click_event(self, event):
-        self.play_screen.init(),
-        self.screen_controller.set_screen(ScreenType.START)
+        self.screen_controller.set_screen(ScreenType.HOME)

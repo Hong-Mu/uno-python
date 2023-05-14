@@ -1,4 +1,4 @@
-from base.baseMenuDialog import BaseMenuDialog
+from base.dialog.baseMenuDialog import BaseMenuDialog
 from model.screentype import ScreenType
 
 
@@ -9,17 +9,14 @@ class MultiPlayDialog(BaseMenuDialog):
         
         self.title_name = "멀티플레이"
         self.menus = [
-
             {'text': '방 만들기', 'view': None, 'rect': None,
              'action': lambda: (
-                 self.screen_controller.set_screen(ScreenType.SETTING),
-                 self.screen_controller.set_paused(),
+                 self.screen_controller.set_screen(ScreenType.LOBBY_SERVER),
              )},
 
             {'text': '입장하기', 'view': None, 'rect': None,
              'action': lambda: (
-                 self.screen_controller.set_screen(ScreenType.SETTING),
-                 self.screen_controller.set_paused(),
+                 # IP 입력 창 띄우기
              )},
 
             {'text': '돌아가기', 'view': None, 'rect': None,

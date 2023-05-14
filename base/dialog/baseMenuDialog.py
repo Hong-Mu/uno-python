@@ -15,6 +15,10 @@ class BaseMenuDialog:
         self.menus = None
         self.title_name = None
 
+    def init(self):
+        self.enabled = False
+        self.menu_idx = 0
+
     def draw(self, screen: pygame.Surface):
         # background
         layout = pygame.draw.rect(screen, COLOR_WHITE, ((screen.get_width() - self.width) // 2, (screen.get_height() - self.height) // 2, self.width, self.height))

@@ -1,7 +1,7 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 
-from base.baseMenuDialog import BaseMenuDialog
+from base.dialog.baseMenuDialog import BaseMenuDialog
 from model.screentype import ScreenType
 
 if TYPE_CHECKING:
@@ -29,9 +29,9 @@ class EscapeDialog(BaseMenuDialog):
                 self.toggle()
              )},
             {'text': '종료', 'view': None, 'rect': None, 'action': lambda: (
-                self.parent.init(),
+                self.init(),
                 self.parent.game.finish_game(),
-                self.screen_controller.set_screen(ScreenType.START),
+                self.screen_controller.set_screen(ScreenType.HOME),
             )
              }
         ]

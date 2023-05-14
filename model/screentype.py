@@ -2,10 +2,12 @@ from enum import Enum
 
 
 class ScreenType(Enum):
-    START = "start"
+    HOME = "home"
     SETTING = "setting"
     PLAY = "play"
-    LOBBY = "lobby"
     STORY = "story"
     ACHIEVEMENT = "achievement"
+    LOBBY_SINGLE = "lobby"
+    LOBBY_SERVER = "lobby_server"
+    LOBBY_CLIENT = "lobby_client"
 
