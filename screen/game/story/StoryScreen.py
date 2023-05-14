@@ -9,6 +9,7 @@ from game.story.regionc import GameC
 from game.story.regiond import GameD
 from model.screentype import ScreenType
 from util.extradata import ExtraData
+from util.singletone import extraDataUtil
 
 if TYPE_CHECKING:
     from screen.ScreenController import ScreenController
@@ -68,7 +69,7 @@ class StoryScreen:
     def draw_stories(self, screen):
         width = screen.get_width() / (len(self.stories) + 1)
         for idx, story in enumerate(self.stories):
-            color = story['color'] if idx <= extraDataUtil.get(ExtraData.STORY_CLEARED.name) else COLOR_GRAY
+            color = story['color'] if idx <= extraDataUtil.get(ExtraData.STORY_CLEARED) else COLOR_GRAY
             story['rect'] = pygame.draw.circle(screen, color, (width * (idx + 1), screen.get_height() // 2), 20, 3)
 
             # 현재 위치
@@ -177,7 +178,7 @@ class StoryScreen:
 
 
     def update_current_position(self, direction):
-        self.current_position = (self.current_position + direction) % (extraDataUtil.get(ExtraData.STORY_CLEARED.name) + 1)
+        self.current_position = (self.current_position + direction) % (extraDataUtil.get(ExtraData.STORY_CLEARED) + 1)
 
     def update_confirm_idx(self, direction):
         self.confirm_idx = (self.confirm_idx + direction) % 2
@@ -197,7 +198,7 @@ class StoryScreen:
     def run_story_click_event(self, pos):
         for idx, story in enumerate(self.stories):
             if story['rect'].collidepoint(pos):
-                if idx <= extraDataUtil.get(ExtraData.STORY_CLEARED.name):
+                if idx <= extraDataUtil.get(ExtraData.STORY_CLEARED):
                     self.current_position = idx
                     self.toggle_confirm_dialog()
 

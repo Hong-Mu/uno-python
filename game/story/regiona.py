@@ -3,10 +3,11 @@ import random
 from base.basegame import BaseGame
 from game.model.card import Card
 from game.model.computer import Computer
+from model.achievement import Achievement
 from model.skill import Skill
 from model.region import Region
 from util.extradata import ExtraData
-from util.globals import extraDataUtil, CARD_COLOR_NONE
+from util.globals import *
 
 
 class GameA(BaseGame):
@@ -26,8 +27,11 @@ class GameA(BaseGame):
     def set_winner(self, player):
         super().set_winner(player)
         if player == self.get_board_player():
-            if extraDataUtil.get(ExtraData.STORY_CLEARED.name) < Region.A.value:
-                extraDataUtil.set(ExtraData.STORY_CLEARED.name, Region.A.value)
+            self.check_story_cleared(Region.A)
+            self.update_achievement(Achievement.STORY_A)
+
+            self.update_win_count()
+            self.check_win_count()
 
     def computer_deal(self, n):
         example = []

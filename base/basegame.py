@@ -2,7 +2,9 @@ import time
 
 from game.model.deck import Deck
 from model.skill import Skill
+from util.extradata import ExtraData
 from util.globals import *
+from util.singletone import achievementsUtil, extraDataUtil
 
 
 class BaseGame:
@@ -29,11 +31,15 @@ class BaseGame:
 
         self.turn_start_time = None
         self.is_turn_start = False
+        self.is_game_paused = False
+        self.is_game_end_once = False
 
         self.can_uno_penalty = False
         self.uno_enabled = False
         self.uno_clicked = False
         self.uno_clicked_player_index = None
+
+        self.notify_achievements = []
 
     def init(self):
         self.is_started = True
@@ -174,11 +180,16 @@ class BaseGame:
     def is_game_over(self) -> bool:
         for idx, player_hands in enumerate([player.hands for player in self.players]):
             if len(player_hands) == 0:
-                self.set_winner(self.players[idx])
+                if not self.is_game_end_once:
+
+                    self.set_winner(self.players[idx])
                 return True
         return False
 
     def set_winner(self, player):
+        print('승자', player.name)
+        self.is_game_end_once = True
+        self.is_game_paused = True
         self.winner = player
 
     def get_winner(self):
@@ -189,3 +200,26 @@ class BaseGame:
         self.uno_clicked = False
         self.can_uno_penalty = False
         self.uno_clicked_player_index = None
+
+    def update_win_count(self):
+        cnt = extraDataUtil.get(ExtraData.SINGLE_WIN_CNT)
+        extraDataUtil.set(ExtraData.SINGLE_WIN_CNT, cnt + 1)
+
+    def check_win_count(self):
+        cnt = extraDataUtil.get(ExtraData.SINGLE_WIN_CNT)
+
+        if cnt >= 1:
+            self.update_achievement(Achievement.SINGLE_WIN_1)
+
+        if cnt >= 10:
+            self.update_achievement(Achievement.SINGLE_WIN_10)
+
+    def check_story_cleared(self, region):
+        if extraDataUtil.get(ExtraData.STORY_CLEARED) < region.value:
+            extraDataUtil.set(ExtraData.STORY_CLEARED, region.value)
+
+    def update_achievement(self, achivement):
+        is_acquired = achievementsUtil.get(achivement)[PREF_ACQUIRED]
+        if not is_acquired:
+            print('Update', achivement)
+            self.notify_achievements.append(achivement)

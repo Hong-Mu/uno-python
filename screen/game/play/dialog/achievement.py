@@ -4,6 +4,7 @@ import pygame
 
 from model.achievement import Achievement
 from util.globals import *
+from util.singletone import achievementsUtil
 from util.text import wrap_text
 
 ITEM_WIDTH = 65
@@ -61,6 +62,8 @@ class AchievementDialog:
             temp_y += title.get_height()
 
     def show(self, achievement):
+        print('[Achievemt]', achievement)
+        achievementsUtil.set_acquired(achievement)
         self.achievement = achievement
         self.start_time = time.time()
         self.enabled = True
@@ -68,7 +71,6 @@ class AchievementDialog:
     def update_time(self):
         if time.time() - self.start_time >= self.display_time:
             self.enabled = False
-            #self.show(Achievement.SINGLE_WIN_UNO)
 
     def run_key_event(self, event):
         pass

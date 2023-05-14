@@ -44,7 +44,6 @@ class PlayScreen:
 
         # 게임 관련
         self.pause_temp_time = None  # 일시정지 임시 시간 저장 변수
-        self.stop_timer_enabled = False  # 일시정지 상태
         self.deck_select_enabled = False  # 덱 선택 가능 상태
         self.card_select_enabled = False  # 카드 선택 가능 상태
         self.select_color_enabled = False
@@ -65,18 +64,18 @@ class PlayScreen:
         self.is_animation_running = False
 
     def pause_game(self):  # 일시정지
-        self.stop_timer_enabled = True
+        self.game.is_game_paused = True
         self.pause_temp_time = time.time()
 
     def continue_game(self):  # 다시 시작
-        self.stop_timer_enabled = False
+        self.game.is_game_paused = False
 
     # 초기화 함수
     def init(self):
         self.escape_dialog.enabled = False
         self.escape_dialog.menu_idx = 0
 
-        self.stop_timer_enabled = False  # 일시정지 상태
+        self.game.is_game_paused = False  # 일시정지 상태
         self.pause_temp_time = None  # 일시정지 임시 시간 저장 변수
 
         self.deck_select_enabled = False  # 덱 선택 가능 상태
@@ -110,33 +109,30 @@ class PlayScreen:
         self.card_board.draw(screen)
         self.players_layout.draw(screen)
 
-        if self.achievement_dialog.enabled:
-            self.achievement_dialog.draw(screen)
-
-        # 게임 종료
-        if self.game.is_game_over():
-            self.game_over_dialog.draw(screen, self.game.get_winner())
-            return
-
         # 턴 시작 시 단 1번 동작
         if self.game.is_turn_start:
             self.init_turn()
 
-        # 게임 관련 동작 업데이트
-        self.check_time() # 타이머 관련 동작
+        self.check_time()  # 타이머 관련 동작
         self.game.update_uno_enabled()  # 우노 상태 확인
-
 
         # 일시정지 다이얼로그
         if self.escape_dialog.enabled:
             self.escape_dialog.draw(screen)
-            return
 
-        # 애니메이션
-        self.draw_animation(screen)
+        if not self.game.is_game_over() and not self.escape_dialog.enabled:
+            self.draw_animation(screen)
 
         if not self.is_animation_running:
             self.run_computer()
+
+        if self.game.is_game_over():
+            self.game_over_dialog.draw(screen, self.game.get_winner())
+
+        if self.achievement_dialog.enabled:
+            self.achievement_dialog.draw(screen)
+
+        self.check_achievements()
 
 
     def init_turn(self):
@@ -258,7 +254,7 @@ class PlayScreen:
 
 
     def check_time(self):
-        if self.stop_timer_enabled:  # 일시정지 상태
+        if self.game.is_game_paused:  # 일시정지 상태
             current_time = time.time()
             self.game.turn_start_time = self.game.turn_start_time + (current_time - self.pause_temp_time)
             self.pause_temp_time = current_time
@@ -484,3 +480,8 @@ class PlayScreen:
             else:
                 # 낼 카드 없을 떄
                 self.on_deck_selected()
+
+    def check_achievements(self):
+        if len(self.game.notify_achievements) > 0 and not self.achievement_dialog.enabled:
+            self.achievement_dialog.show(self.game.notify_achievements.pop())
+

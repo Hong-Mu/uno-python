@@ -1,15 +1,21 @@
 import random
 
 from base.basegame import BaseGame
-from game.model.computer import Computer
+from util.extradata import ExtraData
+from util.globals import *
 
 
 class SinglePlayGame(BaseGame):
     def __init__(self):
         super().__init__()
 
-        self.boss = None
-
     def init(self):
         super().init()
         self.deal()
+
+    def set_winner(self, player):
+        super().set_winner(player)
+        if player == self.get_board_player():
+            self.update_win_count()
+            self.check_win_count()
+

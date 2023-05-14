@@ -4,9 +4,7 @@ from datetime import datetime
 
 from base.basefileutil import BaseFileUtil
 from model.achievement import Achievement
-
-PREF_ACQUIRED = "acquired"
-PREF_TIMIESTAMP = "timestamp"
+from util.globals import PREF_ACQUIRED, PREF_TIMIESTAMP
 
 
 class AchievementsUtil(BaseFileUtil):
@@ -25,6 +23,12 @@ class AchievementsUtil(BaseFileUtil):
         self.data[achievement.name][PREF_TIMIESTAMP] = str(datetime.fromtimestamp(time.time()))
         self.save()
         self.load()
+
+    def get(self, achievement):
+        return self.data.get(achievement.name)
+
+    def set(self, key, value):
+        super().set(key.name, value)
 
 
 if __name__ == '__main__':

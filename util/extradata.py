@@ -14,6 +14,12 @@ class ExtraDataUtil(BaseFileUtil):
         for item in ExtraData:
             self.data[item.name] = 0
 
+    def get(self, extra_data):
+        return self.data.get(extra_data.name)
+
+    def set(self, key, value):
+        super().set(key.name, value)
+
 
 class ExtraData(Enum):
     SINGLE_WIN_CNT = 0

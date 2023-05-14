@@ -3,16 +3,14 @@ import os
 import pygame
 from game.model.card import Card
 from model.achievement import Achievement
-from util.achievement import AchievementsUtil
-from util.extradata import ExtraDataUtil
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-extraDataUtil = ExtraDataUtil()
-achievementsUtil = AchievementsUtil()
-
 KEY_NAME = "name"
 KEY_DESC = "description"
+
+PREF_ACQUIRED = "acquired"
+PREF_TIMIESTAMP = "timestamp"
 
 COLOR_WHITE = (255, 255, 255)
 COLOR_GRAY = (128, 128, 128)

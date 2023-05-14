@@ -1,6 +1,7 @@
 from model.achievement import Achievement
 from model.screentype import ScreenType
 from util.achievement import *
+from util.singletone import achievementsUtil
 from util.text import wrap_text
 from util.globals import *
 import pygame
@@ -59,7 +60,7 @@ class AchievementScreen:
         self.return_rect = screen.blit(text, (get_medium_margin(), get_medium_margin()))
 
     def draw_item(self, screen, achievement, topleft):
-        data = achievementsUtil.get(achievement.name)
+        data = achievementsUtil.get(achievement)
 
         # 아이콘
         file_name = achievement.value + ('_disabled' if not data[PREF_ACQUIRED] else '')
