@@ -5,7 +5,7 @@ import pygame.draw
 from game.single import SinglePlayGame
 from game.model.computer import Computer
 from game.model.player import *
-from screen.model.screentype import ScreenType
+from model.screentype import ScreenType
 from util.globals import *
 
 

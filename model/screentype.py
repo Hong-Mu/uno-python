@@ -7,4 +7,5 @@ class ScreenType(Enum):
     PLAY = "play"
     LOBBY = "lobby"
     STORY = "story"
-    ACHIVEMENT = "achivement"
+    ACHIEVEMENT = "achievement"
+

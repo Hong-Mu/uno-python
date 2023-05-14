@@ -1,11 +1,11 @@
+from base.baseachievementgame import BaseAchievementGame
 from base.basegame import BaseGame
 from game.model.computer import Computer
-from game.model.region import Region
-from util.extradata import ExtraData
-from util.globals import extraDataUtil
+from model.achievement import Achievement
+from model.region import Region
 
 
-class GameB(BaseGame):
+class GameB(BaseAchievementGame):
     def __init__(self):
         super().__init__()
     def init(self):
@@ -19,5 +19,5 @@ class GameB(BaseGame):
     def set_winner(self, player):
         super().set_winner(player)
         if player == self.get_board_player():
-            if extraDataUtil.get(ExtraData.STORY_CLEARED.name) > Region.B.value:
-                extraDataUtil.set(ExtraData.STORY_CLEARED.name, Region.B.value)
+            self.check_story_cleared(Region.B)
+            self.update_achievement(Achievement.STORY_B)

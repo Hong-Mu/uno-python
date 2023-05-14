@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from screen.model.screentype import ScreenType
+from model.screentype import ScreenType
 from util.globals import *
 from typing import TYPE_CHECKING
 

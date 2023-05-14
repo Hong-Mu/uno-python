@@ -1,13 +1,13 @@
 import random
 
+from base.baseachievementgame import BaseAchievementGame
 from base.basegame import BaseGame
 from game.model.computer import Computer
-from game.model.region import Region
-from util.extradata import ExtraData
-from util.globals import COLOR_SET, extraDataUtil
+from model.region import Region
+from util.globals import *
 
 
-class GameC(BaseGame):
+class GameC(BaseAchievementGame):
     def __init__(self):
         super().__init__()
 
@@ -21,8 +21,8 @@ class GameC(BaseGame):
     def set_winner(self, player):
         super().set_winner(player)
         if player == self.get_board_player():
-            if extraDataUtil.get(ExtraData.STORY_CLEARED.name) > Region.C.value:
-                extraDataUtil.set(ExtraData.STORY_CLEARED.name, Region.C.value)
+            self.check_story_cleared(Region.C)
+            self.update_achievement(Achievement.STORY_C)
 
     def run_in_turn_start(self):
         super().run_in_turn_start()

@@ -1,9 +1,10 @@
 import time
 
 from game.model.deck import Deck
-from game.model.skill import Skill
-from util.extradata import ExtraDataUtil
+from model.skill import Skill
+from util.extradata import ExtraData
 from util.globals import *
+from util.singletone import achievementsUtil, extraDataUtil
 
 
 class BaseGame:
@@ -23,18 +24,26 @@ class BaseGame:
         self.current_color = None
 
         self.turn_time = 10
-        self.uno_count = 2  # TODO 우노 버튼을 클릭해야 할 카드 개수: 기본2
+        self.uno_count = 2
         self.skip_direction = 1
 
         self.skill_plus_cnt = 0
 
         self.turn_start_time = None
         self.is_turn_start = False
+        self.is_game_paused = False
+        self.is_game_end_once = False
 
         self.can_uno_penalty = False
         self.uno_enabled = False
         self.uno_clicked = False
         self.uno_clicked_player_index = None
+
+        self.is_uno_clicked_by_computer = False
+        self.is_uno_clicked_by_player = False
+        self.is_player_skilled = False
+
+        self.notify_achievements = []
 
     def init(self):
         self.is_started = True
@@ -57,7 +66,6 @@ class BaseGame:
         self.uno_clicked = False
         self.uno_clicked_player_index = None
 
-
     def start_game(self):
         self.deck = Deck(self)
         self.init()
@@ -65,10 +73,11 @@ class BaseGame:
         self.current_card = self.deck.draw()
         self.current_color = self.current_card.color
 
-
     def run_in_turn_start(self):
         pass
 
+    def run_periodically(self):
+        pass
 
     def finish_game(self):
         self.is_started = False
@@ -105,6 +114,12 @@ class BaseGame:
 
     def get_previous_player(self):
         return self.players[self.previous_player_index]
+
+    def get_uno_clicked_player(self):
+        if self.uno_clicked_player_index is not None:
+            return self.players[self.uno_clicked_player_index]
+        else:
+            return None
 
     def draw(self):
         print(f'드로우 {self.current_player_index}')
@@ -172,12 +187,27 @@ class BaseGame:
     def is_game_over(self) -> bool:
         for idx, player_hands in enumerate([player.hands for player in self.players]):
             if len(player_hands) == 0:
-                self.set_winner(self.players[idx])
+                if not self.is_game_end_once:
+
+                    self.set_winner(self.players[idx])
                 return True
         return False
 
     def set_winner(self, player):
+        print('승자', player.name)
+        self.is_game_end_once = True
+        self.is_game_paused = True
         self.winner = player
 
     def get_winner(self):
         return self.winner
+
+    def clear_uno(self):
+        self.uno_enabled = False
+        self.uno_clicked = False
+        self.can_uno_penalty = False
+        self.uno_clicked_player_index = None
+
+    def check_story_cleared(self, region):
+        if extraDataUtil.get(ExtraData.STORY_CLEARED) < region.value:
+            extraDataUtil.set(ExtraData.STORY_CLEARED, region.value)

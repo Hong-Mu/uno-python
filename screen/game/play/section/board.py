@@ -1,15 +1,15 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 
-from game.model.skill import Skill
+from model.skill import Skill
+from util.extradata import ExtraData
 from util.globals import *
-import time
 import pygame
+
+from util.singletone import extraDataUtil
 
 if TYPE_CHECKING:
     from screen.game.play.PlayScreen import PlayScreen
-    from game.game import UnoGame
-    from screen.ScreenController import ScreenController
 
 class Board:
     def __init__(self, play_screen: PlayScreen):
@@ -18,7 +18,6 @@ class Board:
 
     def draw(self, screen: pygame.Surface):
         self.game = self.play_screen.game
-        print("보드")
 
         current_card = self.game.current_card
 
@@ -56,6 +55,11 @@ class Board:
         uno_rect = uno.get_rect(topright=self.background_rect.topright)
         screen.blit(uno, uno_rect)
 
+        player = self.game.get_uno_clicked_player()
+        if player is not None:
+            text = get_small_font().render(player.name, True, COLOR_BLACK)
+            screen.blit(text, (uno_rect.x - text.get_width(), 0))
+
     def draw_reverse(self, screen):
         if self.game.reverse_direction:
             surface = get_skill(Skill.REVERSE.value, 2)
@@ -76,11 +80,16 @@ class Board:
 
     def run_uno_click_event(self, pos):
         if self.uno_rect.collidepoint(pos):
-            if not self.game.uno_clicked:
-                self.game.uno_clicked = True
-                self.game.uno_clicked_player_index = self.game.board_player_index
+            self.click_uno()
 
     def run_uno_key_event(self, event):
         if event.key == self.play_screen.screen_controller.setting.get(MODE_UNO_KEY):
+            self.click_uno()
+
+    def click_uno(self):
+        if not self.game.uno_clicked:
+            self.game.is_uno_clicked_by_player = True
+            extraDataUtil.increase(ExtraData.SINGLE_UNO_CNT)
+            self.game.update_achievement(Achievement.SINGLE_UNO_CNT)
             self.game.uno_clicked = True
             self.game.uno_clicked_player_index = self.game.board_player_index

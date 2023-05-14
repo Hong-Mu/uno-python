@@ -1,7 +1,5 @@
-from screen.achivement.AchivementScreen import AchivementScreen
-from screen.model.screentype import ScreenType
-from util.achievement import AchievementsUtil
-from util.extradata import ExtraDataUtil
+from screen.achievement.AchievementScreen import AchievementScreen
+from model.screentype import ScreenType
 from util.settings import SettingsUtil
 from util.globals import *
 from screen.home.HomeScreen import HomeScreen
@@ -31,9 +29,6 @@ class ScreenController:
         # 설정 불러오기
         self.setting = SettingsUtil()
         self.screen = pygame.display.set_mode(self.setting.get_resolution())
-
-        # 업적
-        self.achivementsUtil = AchievementsUtil()
 
         self.init_instance()
 
@@ -65,7 +60,7 @@ class ScreenController:
             ScreenType.PLAY: PlayScreen(self),
             ScreenType.LOBBY: LobbyScreen(self),
             ScreenType.STORY: StoryScreen(self),
-            ScreenType.ACHIVEMENT: AchivementScreen(self),
+            ScreenType.ACHIEVEMENT: AchievementScreen(self),
         }
 
     # 화면 설정

@@ -4,11 +4,11 @@ import random
 from typing import TYPE_CHECKING
 
 from game.model.computer import Computer
-from game.model.skill import Skill
+from model.skill import Skill
 from game.story.regiona import GameA
+from screen.game.play.dialog.achievement import AchievementDialog
 from screen.game.play.dialog.escapeDialog import EscapeDialog
 from screen.game.play.dialog.gameOverDialog import GameOverDialog
-from screen.game.play.dialog.multiplaydialog import MultiPlayDialog
 from screen.game.play.section.playersLayout import PlayersLayout
 from util.globals import *
 from screen.animate.animate import AnimateController
@@ -36,6 +36,7 @@ class PlayScreen:
 
         self.escape_dialog = EscapeDialog(self)
         self.game_over_dialog = GameOverDialog(self)
+        self.achievement_dialog = AchievementDialog(self)
 
         # 카드보드 관련 변수
         self.my_cards_selected_index = 0
@@ -43,7 +44,6 @@ class PlayScreen:
 
         # 게임 관련
         self.pause_temp_time = None  # 일시정지 임시 시간 저장 변수
-        self.stop_timer_enabled = False  # 일시정지 상태
         self.deck_select_enabled = False  # 덱 선택 가능 상태
         self.card_select_enabled = False  # 카드 선택 가능 상태
         self.select_color_enabled = False
@@ -64,18 +64,18 @@ class PlayScreen:
         self.is_animation_running = False
 
     def pause_game(self):  # 일시정지
-        self.stop_timer_enabled = True
+        self.game.is_game_paused = True
         self.pause_temp_time = time.time()
 
     def continue_game(self):  # 다시 시작
-        self.stop_timer_enabled = False
+        self.game.is_game_paused = False
 
     # 초기화 함수
     def init(self):
         self.escape_dialog.enabled = False
         self.escape_dialog.menu_idx = 0
 
-        self.stop_timer_enabled = False  # 일시정지 상태
+        self.game.is_game_paused = False  # 일시정지 상태
         self.pause_temp_time = None  # 일시정지 임시 시간 저장 변수
 
         self.deck_select_enabled = False  # 덱 선택 가능 상태
@@ -109,35 +109,38 @@ class PlayScreen:
         self.card_board.draw(screen)
         self.players_layout.draw(screen)
 
-        # 게임 종료
-        if self.game.is_game_over():
-            self.game_over_dialog.draw(screen, self.game.get_winner())
-            return
-
         # 턴 시작 시 단 1번 동작
         if self.game.is_turn_start:
             self.init_turn()
 
-        # 게임 관련 동작 업데이트
-        self.check_time() # 타이머 관련 동작
+        self.check_time()  # 타이머 관련 동작
         self.game.update_uno_enabled()  # 우노 상태 확인
 
         # 일시정지 다이얼로그
         if self.escape_dialog.enabled:
             self.escape_dialog.draw(screen)
-            return
 
-        # 애니메이션
-        self.draw_animation(screen)
+        if not self.game.is_game_over() and not self.escape_dialog.enabled:
+            self.draw_animation(screen)
 
         if not self.is_animation_running:
             self.run_computer()
+
+        if self.game.is_game_over():
+            self.game_over_dialog.draw(screen, self.game.get_winner())
+
+        if self.achievement_dialog.enabled:
+            self.achievement_dialog.draw(screen)
+
+        self.check_achievements()
+
 
     def init_turn(self):
         self.select_color_enabled = False
         self.check_uno_clicked()
         self.game.run_in_turn_start()
         self.game.is_turn_start = False
+
     def draw_animation(self, screen):
         self.is_animation_running = True
         if self.animate_deck_to_player_enabled:
@@ -161,17 +164,13 @@ class PlayScreen:
 
     def animate_deck_to_player_end(self):
         if self.game.can_uno_penalty: # 우노 패널티 결과
-            self.game.penalty(self.game.previous_player_index)
-            self.game.uno_enabled = False
-            self.game.uno_clicked = False
-            self.game.can_uno_penalty = False
-            self.animate_deck_to_player_enabled = False
-            self.continue_game()
+            self.on_uno_penalty()
             
         elif self.game.skill_plus_cnt > 0: # 기술 카드 부여 결과
             self.game.penalty(self.game.next_player_index)
             print('기술 1장 부여')
             self.game.skill_plus_cnt -= 1
+
             if self.game.skill_plus_cnt > 0:
                 self.on_deck_selected()
             else:
@@ -184,6 +183,14 @@ class PlayScreen:
             self.game.next_turn()
             self.animate_deck_to_player_enabled = False
             self.continue_game()
+
+    def on_uno_penalty(self):
+        self.game.penalty(self.game.previous_player_index)
+
+        self.game.clear_uno()
+
+        self.animate_deck_to_player_enabled = False
+        self.continue_game()
 
     def animate_board_player_to_current_card(self, screen):
         if self.animate_controller.enabled:
@@ -247,7 +254,7 @@ class PlayScreen:
 
 
     def check_time(self):
-        if self.stop_timer_enabled:  # 일시정지 상태
+        if self.game.is_game_paused:  # 일시정지 상태
             current_time = time.time()
             self.game.turn_start_time = self.game.turn_start_time + (current_time - self.pause_temp_time)
             self.pause_temp_time = current_time
@@ -261,20 +268,23 @@ class PlayScreen:
 
     def check_uno_clicked(self):
         if self.game.uno_enabled:
+            if len(self.game.get_previous_player().hands) != 1:
+                self.game.clear_uno()
+                return
+
             if self.game.uno_clicked:
                 if self.game.uno_clicked_player_index == self.game.previous_player_index:
-                    print('우노 버튼 해당 플레이어 클릭: 패널티 미부여')
-                    print(f'{self.game.uno_clicked_player_index} {self.game.previous_player_index}')
-                    self.game.uno_enabled = False
-                    self.game.uno_clicked = False
+                    self.game.clear_uno()
                 else:
-                    print('다른 플레이어로 인한 패널티 부여')
                     self.game.can_uno_penalty = True
                     self.on_deck_selected()
             else:
-                print('우노 미선택으로 인한 패널티 부여')
                 self.game.can_uno_penalty = True
                 self.on_deck_selected()
+
+        elif len(self.game.get_previous_player().hands) == 1:
+            self.game.can_uno_penalty = True
+            self.on_deck_selected()
     
     def check_plus_skill(self):
         if self.game.skill_plus_cnt != 0:
@@ -345,6 +355,11 @@ class PlayScreen:
         if self.game.verify_new_card(card):
             self.screen_controller.play_effect()
             self.animate_board_player_to_current_card_enabled = True
+            # 스킬 사용 업적
+
+            for skill in Skill:
+                if card.value == skill.value:
+                    self.game.is_player_skilled = True
 
             # 제출할 카드 저장
             self.board_player_to_current_card_idx = idx
@@ -428,6 +443,7 @@ class PlayScreen:
     def run_computer(self):
         if self.game.uno_enabled and not self.game.uno_clicked:
             if time.time() - self.game.turn_start_time >= Computer.UNO_DELAY:
+                self.game.is_uno_clicked_by_computer = True
                 self.game.uno_clicked = True
                 self.game.uno_clicked_player_index = random.randint(1, len(self.game.players) - 1)  # 랜덤 컴퓨터가 우노 버튼 클릭
 
@@ -470,3 +486,8 @@ class PlayScreen:
             else:
                 # 낼 카드 없을 떄
                 self.on_deck_selected()
+
+    def check_achievements(self):
+        if len(self.game.notify_achievements) > 0 and not self.achievement_dialog.enabled:
+            self.achievement_dialog.show(self.game.notify_achievements.pop())
+

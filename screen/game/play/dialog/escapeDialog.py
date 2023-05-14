@@ -1,14 +1,11 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 
-import pygame
-
 from base.baseMenuDialog import BaseMenuDialog
-from screen.model.screentype import ScreenType
-from util.globals import *
+from model.screentype import ScreenType
 
 if TYPE_CHECKING:
-    from screen.game.play.PlayScreen import PlayScreen
+    pass
 
 
 class EscapeDialog(BaseMenuDialog):
@@ -20,6 +17,11 @@ class EscapeDialog(BaseMenuDialog):
             {'text': '설정', 'view': None, 'rect': None,
              'action': lambda: (
                  self.screen_controller.set_screen(ScreenType.SETTING),
+                 self.screen_controller.set_paused(),
+             )},
+            {'text': '업적', 'view': None, 'rect': None,
+             'action': lambda: (
+                 self.screen_controller.set_screen(ScreenType.ACHIEVEMENT),
                  self.screen_controller.set_paused(),
              )},
             {'text': '돌아가기', 'view': None, 'rect': None,

@@ -1,12 +1,11 @@
+from base.baseachievementgame import BaseAchievementGame
 from base.basegame import BaseGame
-from game.model.card import Card
 from game.model.computer import Computer
-from game.model.region import Region
-from util.extradata import ExtraData
-from util.globals import extraDataUtil, CARD_COLOR_SET
+from model.region import Region
+from util.globals import *
 
 
-class GameD(BaseGame):
+class GameD(BaseAchievementGame):
     def __init__(self):
         super().__init__()
         self.turn_cnt = 0
@@ -23,8 +22,8 @@ class GameD(BaseGame):
     def set_winner(self, player):
         super().set_winner(player)
         if player == self.get_board_player():
-            if extraDataUtil.get(ExtraData.STORY_CLEARED.name) > Region.D.value:
-                extraDataUtil.set(ExtraData.STORY_CLEARED.name, Region.D.value)
+            self.check_story_cleared(Region.D)
+            self.update_achievement(Achievement.STORY_D)
 
 
     def get_deck(self):
