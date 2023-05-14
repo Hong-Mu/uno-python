@@ -33,7 +33,7 @@ class BaseMenuDialog:
         for idx, menu in enumerate(self.menus):
             color = COLOR_GRAY if idx != self.menu_idx else COLOR_BLACK
             text = get_medium_font().render(menu['text'], True, color)
-            rect = get_rect(text, screen.get_width() // 2, screen.get_height() // 2 + text.get_height() * idx)
+            rect = get_rect(text, screen.get_width() // 2, (screen.get_height() - (len(self.menus) * text.get_height())) // 2 + text.get_height() * idx)
             menu.update({'view': text, 'rect': rect})
             screen.blit(text, rect)
 
