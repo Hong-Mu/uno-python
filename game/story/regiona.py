@@ -41,7 +41,7 @@ class GameA(BaseGame):
             example.append(card)
 
         self.boss.deal(example)
-        self.get_board_player().deal(self.deck.deal(7))
+        self.get_board_player().deal(self.deck.deal())
 
     def roulette_wheel_selection(self, cards):
         non_int_values = [card for card in cards if not isinstance(card.value, int)]

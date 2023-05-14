@@ -63,7 +63,6 @@ class AchievementDialog:
 
     def show(self, achievement):
         print('[Achievemt]', achievement)
-        achievementsUtil.set_acquired(achievement)
         self.achievement = achievement
         self.start_time = time.time()
         self.enabled = True

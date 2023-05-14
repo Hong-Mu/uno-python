@@ -218,8 +218,8 @@ class BaseGame:
         if extraDataUtil.get(ExtraData.STORY_CLEARED) < region.value:
             extraDataUtil.set(ExtraData.STORY_CLEARED, region.value)
 
-    def update_achievement(self, achivement):
-        is_acquired = achievementsUtil.get(achivement)[PREF_ACQUIRED]
+    def update_achievement(self, achievement):
+        is_acquired = achievementsUtil.get(achievement)[PREF_ACQUIRED]
         if not is_acquired:
-            print('Update', achivement)
-            self.notify_achievements.append(achivement)
+            achievementsUtil.set_acquired(achievement)
+            self.notify_achievements.append(achievement)
