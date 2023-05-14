@@ -208,39 +208,6 @@ class BaseGame:
         self.can_uno_penalty = False
         self.uno_clicked_player_index = None
 
-    def update_win_count(self):
-        cnt = extraDataUtil.get(ExtraData.SINGLE_WIN_CNT)
-        extraDataUtil.set(ExtraData.SINGLE_WIN_CNT, cnt + 1)
-
-    def check_win_count(self):
-        cnt = extraDataUtil.get(ExtraData.SINGLE_WIN_CNT)
-
-        if cnt >= 1:
-            self.update_achievement(Achievement.SINGLE_WIN_1)
-
-        if cnt >= 10:
-            self.update_achievement(Achievement.SINGLE_WIN_10)
-
-    def check_uno_count(self):
-        cnt = extraDataUtil.get(ExtraData.SINGLE_UNO_CNT)
-
-        if cnt >= 1:
-            self.update_achievement(Achievement.SINGLE_UNO_CNT)
-
-    def check_computer_uno_clicked_when_win(self):
-        if self.is_uno_clicked_by_computer:
-            self.update_achievement(Achievement.SINGLE_WIN_UNO)
-
-    def check_player_uno_clicked_when_lose(self):
-        if self.is_uno_clicked_by_player:
-            self.update_achievement(Achievement.SINGLE_LOSE_UNO)
-
     def check_story_cleared(self, region):
         if extraDataUtil.get(ExtraData.STORY_CLEARED) < region.value:
             extraDataUtil.set(ExtraData.STORY_CLEARED, region.value)
-
-    def update_achievement(self, achievement):
-        is_acquired = achievementsUtil.get(achievement)[PREF_ACQUIRED]
-        if not is_acquired:
-            achievementsUtil.set_acquired(achievement)
-            self.notify_achievements.append(achievement)

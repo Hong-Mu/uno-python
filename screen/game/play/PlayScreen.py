@@ -355,6 +355,11 @@ class PlayScreen:
         if self.game.verify_new_card(card):
             self.screen_controller.play_effect()
             self.animate_board_player_to_current_card_enabled = True
+            # 스킬 사용 업적
+
+            for skill in Skill:
+                if card.value == skill.value:
+                    self.game.is_player_skilled = True
 
             # 제출할 카드 저장
             self.board_player_to_current_card_idx = idx

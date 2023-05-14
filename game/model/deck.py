@@ -23,7 +23,7 @@ class Deck:
         # 무색상 색상 기술 카드
         cards.extend([Card(CARD_COLOR_NONE, Skill.COLOR.value)])
 
-        for c in [color[1:]]:
+        for c in color[1:]:
             for v in value[:14]:
                 cards.append(Card(c,v))
 
