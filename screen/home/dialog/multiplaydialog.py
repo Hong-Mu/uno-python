@@ -16,12 +16,12 @@ class MultiPlayDialog(BaseMenuDialog):
 
             {'text': '입장하기', 'view': None, 'rect': None,
              'action': lambda: (
-                 # IP 입력 창 띄우기
+                 self.parent.input_address_dialog.show()
              )},
 
             {'text': '돌아가기', 'view': None, 'rect': None,
              'action': lambda: (
-                self.toggle()
+                self.dismiss()
              )},
         ]
 

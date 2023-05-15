@@ -27,6 +27,9 @@ class BaseDialog:
         self.title_color = COLOR_BLACK
         self.title_rect = None
 
+    def init(self):
+        self.dismiss()
+
     def draw(self, screen):
         self.screen = screen
 
@@ -63,6 +66,7 @@ class BaseDialog:
     def show(self):
         self.parent.disable_event()
         self.enabled = True
+        print(self.enabled)
 
     def dismiss(self):
         self.parent.enable_event()

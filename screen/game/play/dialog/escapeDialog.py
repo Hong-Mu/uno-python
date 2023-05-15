@@ -26,7 +26,7 @@ class EscapeDialog(BaseMenuDialog):
              )},
             {'text': '돌아가기', 'view': None, 'rect': None,
              'action': lambda: (
-                self.toggle()
+                self.dismiss()
              )},
             {'text': '종료', 'view': None, 'rect': None, 'action': lambda: (
                 self.init(),
@@ -36,10 +36,11 @@ class EscapeDialog(BaseMenuDialog):
              }
         ]
 
-    def toggle(self):
-        super().toggle()
+    def show(self):
+        print('show')
+        super().show()
+        self.parent.pause_game()
 
-        if self.enabled:
-            self.parent.pause_game()
-        else:
-            self.parent.continue_game()
+    def dismiss(self):
+        super().dismiss()
+        self.parent.continue_game()

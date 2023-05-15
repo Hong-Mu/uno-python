@@ -27,6 +27,8 @@ class AchievementScreen:
     def init(self):
         pass
 
+    def on_destroy(self):
+        pass
 
     def draw(self, screen):
         screen.fill(COLOR_WHITE)

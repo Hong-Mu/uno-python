@@ -39,6 +39,8 @@ class SettingScreen:
     def init(self):
         pass
 
+    def on_destroy(self):
+        pass
 
     def draw(self, screen: pygame.Surface):
         screen.fill(COLOR_WHITE)

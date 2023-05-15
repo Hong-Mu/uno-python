@@ -1,5 +1,5 @@
-from enum import Enum
 
 
-class SocketEvent(Enum):
+class SocketEvent:
+    JOIN = "join"
     TIME = "time"

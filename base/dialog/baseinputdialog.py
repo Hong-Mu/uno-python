@@ -5,11 +5,17 @@ from util.globals import *
 
 
 class BaseInputDialog(BaseDialog):
-    def __init__(self, parent):
+    def __init__(self, parent, on_confirm=None):
         super().__init__(parent)
 
         self.input = ''
+
+        self.on_confirm = on_confirm
         self.confirm_rect = None
+
+    def init(self):
+        super().init()
+        self.input = ''
 
     def draw(self, surface):
         super().draw(surface)
@@ -35,7 +41,10 @@ class BaseInputDialog(BaseDialog):
 
         key = event.key
         if key == pygame.K_RETURN:
-            self.dismiss()
+            if self.on_confirm:
+                self.on_confirm()
+            else:
+                self.dismiss()
         elif key == pygame.K_BACKSPACE:
             self.input = self.input[:-1]
         elif event.unicode.isalnum():
@@ -45,7 +54,11 @@ class BaseInputDialog(BaseDialog):
     def run_click_event(self, event):
         super().run_click_event(event)
         pos = self.get_pos()
+
         if self.confirm_rect.collidepoint(pos):
-            self.dismiss()
+            if self.on_confirm:
+                self.on_confirm()
+            else:
+                self.dismiss()
 
 

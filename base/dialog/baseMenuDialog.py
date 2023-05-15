@@ -1,25 +1,17 @@
+from base.dialog.base import BaseDialog
 from util.globals import *
 
 
 
-class BaseMenuDialog:
+class BaseMenuDialog(BaseDialog):
     def __init__(self, parent):
-        self.parent = parent
-        self.screen_controller = parent.screen_controller
-
-        self.enabled = False
-        self.width = 500
-        self.height = 300
+        super().__init__(parent)
+        
         self.menu_idx = 0
-
         self.menus = None
-        self.title_name = None
 
-    def init(self):
-        self.enabled = False
-        self.menu_idx = 0
-
-    def draw(self, screen: pygame.Surface):
+    def draw(self, screen):
+        super().draw(screen)
         # background
         layout = pygame.draw.rect(screen, COLOR_WHITE, ((screen.get_width() - self.width) // 2, (screen.get_height() - self.height) // 2, self.width, self.height))
 
@@ -42,6 +34,7 @@ class BaseMenuDialog:
             screen.blit(text, rect)
 
     def run_key_event(self, event):
+        super().run_key_event(event)
         if event.key == pygame.K_UP:
             self.menu_idx = (self.menu_idx - 1) % len(self.menus)
         elif event.key == pygame.K_DOWN:
@@ -50,10 +43,8 @@ class BaseMenuDialog:
             self.menus[self.menu_idx]['action']()
 
     def run_click_event(self, event):
+        super().run_click_event(event)
         for menu in self.menus:
             if menu['rect'] and menu['rect'].collidepoint(pygame.mouse.get_pos()):
                 menu['action']()
-
-    def toggle(self):
-        self.enabled = not self.enabled
 

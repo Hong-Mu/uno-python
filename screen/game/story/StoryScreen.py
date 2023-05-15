@@ -48,6 +48,9 @@ class StoryScreen:
         self.is_confirm_enabled = False
         self.is_return_enabled = False
 
+    def on_destroy(self):
+        pass
+
     def draw(self, screen: pygame.Surface):
         self.draw_background(screen)
         self.draw_stories(screen)

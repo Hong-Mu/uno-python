@@ -4,13 +4,20 @@ from base.dialog.baseinputdialog import BaseInputDialog
 from util.globals import *
 
 
-class InputNameDialog(BaseInputDialog):
+class InputAddressDialog(BaseInputDialog):
     def __init__(self, parent, on_confirm=None):
         super().__init__(parent, on_confirm)
         
-        self.title = '이름 입력'
-        self.input = 'player'
+        self.title = '주소 입력'
+        self.input = '127.0.0.1'
 
+    def init(self):
+        super().init()
+        self.input = '127.0.0.1'
+
+    def show(self):
+        self.init()
+        super().show()
 
     def draw(self, surface):
         super().draw(surface)

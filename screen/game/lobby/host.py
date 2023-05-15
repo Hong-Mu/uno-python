@@ -1,15 +1,23 @@
 import socket
 import requests
 
+from gamesocket.server import GameServer
 from model.screentype import ScreenType
 from screen.game.lobby.base.multiplay import BaseMultiPlayLobbyScreen
 from screen.game.lobby.dialog.inputname import InputNameDialog
 from screen.game.lobby.dialog.inputpassword import InputPasswordDialog
 
 
-class ServerLobbyScreen(BaseMultiPlayLobbyScreen):
+class HostLobbyScreen(BaseMultiPlayLobbyScreen):
     def __init__(self, screen_controller):
         super().__init__(screen_controller)
+
+        self.server = screen_controller.server
+
+        self.input_password_dialog = InputPasswordDialog(self)
+        self.input_name_dialog = InputNameDialog(self)
+
+
         self.menus = [
             {'text': '게임 시작', 'view': None, 'rect': None, 'action': lambda: (
 
@@ -31,11 +39,16 @@ class ServerLobbyScreen(BaseMultiPlayLobbyScreen):
             )},
         ]
 
-        self.input_password_dialog = InputPasswordDialog(self)
-        self.input_name_dialog = InputNameDialog(self)
+
 
     def init(self):
         super().init()
+        self.server.enabled = True
+
+    def on_destroy(self):
+        super().on_destroy()
+        self.server.enabled = False
+
 
     def draw(self, screen):
         super().draw(screen)

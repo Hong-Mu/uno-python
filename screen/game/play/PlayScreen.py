@@ -3,6 +3,7 @@ from __future__ import annotations
 import random
 from typing import TYPE_CHECKING
 
+from base.basescreen import BaseScreen
 from game.model.computer import Computer
 from model.skill import Skill
 from game.story.regiona import GameA
@@ -20,12 +21,11 @@ if TYPE_CHECKING:
     from screen.ScreenController import ScreenController
 
 
-class PlayScreen:
+class PlayScreen(BaseScreen):
 
-    def __init__(self, screen_controller: ScreenController):
+    def __init__(self, screen_controller):
+        super().__init__(screen_controller)
 
-        # 의존성 객체
-        self.screen_controller = screen_controller
         self.animate_controller = AnimateController()
         self.game = None
         
@@ -65,6 +65,7 @@ class PlayScreen:
 
     # 초기화 함수
     def init(self):
+        super().init()
 
         if self.escape_dialog.enabled:
             return
@@ -84,7 +85,8 @@ class PlayScreen:
 
     # 모든 View
     def draw(self, screen):
-        screen.fill(COLOR_WHITE)
+        super().draw(screen)
+
         self.game = self.screen_controller.game
 
         if not self.game.is_started:
@@ -286,42 +288,32 @@ class PlayScreen:
         if self.game.skill_plus_cnt != 0:
             self.on_deck_selected()
 
-    def run_events(self, events):
-        if not self.game.is_started:
-            return
-
-        for event in events:
-            if event.type == pygame.KEYDOWN:
-                self.run_key_event(event)
-
-            elif event.type == pygame.MOUSEBUTTONUP:
-                self.run_click_event(pygame.mouse.get_pos())
-
     def run_key_event(self, event):
-        if self.game.is_game_over():
-            self.game_over_dialog.run_key_event(event)
+        if self.event_enabled:
+            if self.game.is_game_over():
+                self.game_over_dialog.run_key_event(event)
 
-        elif event.key == pygame.K_ESCAPE:
-            self.escape_dialog.toggle()
+            elif event.key == pygame.K_ESCAPE:
+                self.escape_dialog.show()
 
+            if self.select_color_enabled and self.game.board_player_index == self.game.current_player_index:
+                self.card_board.run_slect_color_key_event(event)
 
-        if self.escape_dialog.enabled:
+            elif self.card_select_enabled:
+                self.card_board.run_my_cards_select_key_event(event)
+
+            elif self.players_layout.select_enabled:
+                self.players_layout.run_select_key_event(event)
+
+            if self.game.uno_enabled:
+                self.board.run_uno_key_event(event)
+
+        elif self.escape_dialog.enabled:
             self.escape_dialog.run_key_event(event)
 
-        elif self.select_color_enabled and self.game.board_player_index == self.game.current_player_index:
-            self.card_board.run_slect_color_key_event(event)
-
-        elif self.card_select_enabled:
-            self.card_board.run_my_cards_select_key_event(event)
-
-        elif self.players_layout.select_enabled:
-            self.players_layout.run_select_key_event(event)
-
-        if self.game.uno_enabled:
-            self.board.run_uno_key_event(event)
-
     # 클릭 이벤트
-    def run_click_event(self, pos):
+    def run_click_event(self, event):
+        pos = pygame.mouse.get_pos()
 
         if self.game.is_game_over():
             self.game_over_dialog.run_click_event(None)
@@ -486,4 +478,3 @@ class PlayScreen:
     def check_achievements(self):
         if len(self.game.notify_achievements) > 0 and not self.achievement_dialog.enabled:
             self.achievement_dialog.show(self.game.notify_achievements.pop())
-

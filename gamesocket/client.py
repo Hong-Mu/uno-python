@@ -5,36 +5,42 @@ from gamesocket.event import SocketEvent
 
 class GameClient:
     def __init__(self):
-        self.ip = None
-        self.port = None
-
         self.sio = None
-        self.app = None
+        self.enabled = False
+        self.is_running = False
 
-        self.handlers = None
+    def connect(self, ip='localhost', port=8003, listener=None):
+        try:
+            self.sio = socketio.Client()
+            self.set_on_message_listener(listener)
+            self.sio.connect(f'http://{ip}:{port}')
+            print('[Client] connected to server..!')
+        except Exception as e:
+            raise Exception(e)
 
-    def init(self, ip, port):
-        self.ip = ip
-        self.port = port
+    def stop(self):
+        self.sio.disconnect()
+        self.is_running = False
 
-        self.sio = socketio.Client()
-
-        self.sio.connect(f'http://{ip}:{port}')
-
-        for event in SocketEvent:
-            self.sio.on(event.value, self.event_handler)
-
-    def event_handler(self, sid, data):
-        print(sid)
-        print(data)
+    def set_on_message_listener(self, listener):
+        @self.sio.on('*')
+        async def catch_all(event, data):
+            print(event, data)
+            await listener(event, data)
 
     def emit(self, event, data):
-        print(f'[Client] {event.value} : {data}')
-        self.sio.emit(event.value, data)
+        print(f'[Client] [Emit]{event} : {data}')
+        self.sio.emit(event, data)
 
 
 if __name__ == '__main__':
     client = GameClient()
-    client.init('127.0.0.1', 8002)
+    try:
+        client.connect('localhost', 8003, lambda e, d: (
+            print('Listener', e, d)
+        ))
+        client.emit(SocketEvent.TIME, {'hi': ''})
+    except Exception as e:
+        print(e)
 
-    client.emit(SocketEvent.TIME, {'hi': ''})
+
