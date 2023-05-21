@@ -7,6 +7,8 @@ class ClientLobbyScreen(BaseMultiPlayLobbyScreen):
     def __init__(self, screen_controller):
         super().__init__(screen_controller)
 
+        self.client = screen_controller.client
+
         self.input_name_dialog = InputNameDialog(self)
 
         self.menus = [
@@ -21,11 +23,17 @@ class ClientLobbyScreen(BaseMultiPlayLobbyScreen):
     def init(self):
         super().init()
 
+    def on_destroy(self):
+        super().on_destroy()
+        self.client.disable()
+
+
     def draw(self, screen):
         super().draw(screen)
 
         if self.input_name_dialog.enabled:
             self.input_name_dialog.draw(screen)
+
 
     def run_key_event(self, event):
         if self.event_enabled:

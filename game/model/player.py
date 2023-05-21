@@ -1,7 +1,8 @@
 class Player:
-    def __init__(self, name):
+    def __init__(self, name, sid=None):
         self.name = name
         self.hands = []
+        self.sid = sid
     
     def deal(self, cards):
         self.hands = cards

@@ -5,10 +5,10 @@ from util.globals import *
 
 
 class InputPasswordDialog(BaseInputDialog):
-    def __init__(self, parent):
-        super().__init__(parent)
+    def __init__(self, parent, on_confirm=None):
+        super().__init__(parent, on_confirm)
         
-        self.title = '비밀번호 설정'
+        self.title = '비밀번호'
 
 
     def draw(self, surface):

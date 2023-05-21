@@ -1,7 +1,7 @@
 import asyncio
 
-from gamesocket.client import GameClient
-from gamesocket.server import GameServer
+from game_socket.client import GameClient
+from game_socket.server import GameServer
 from screen.achievement.AchievementScreen import AchievementScreen
 from model.screentype import ScreenType
 from screen.game.lobby.client import ClientLobbyScreen
@@ -27,7 +27,10 @@ class ScreenController:
         self.game = None
 
         self.server = GameServer()
+        self.server.set_on_disconnect_listener(self.on_client_disconnected)
+
         self.client = GameClient()
+        self.client.set_on_disconnect_listener(self.on_server_disconnected)
 
         self.clock = pygame.time.Clock()
         self.fps = 30
@@ -98,11 +101,22 @@ class ScreenController:
             if self.server.is_running:
                 self.server.stop()
 
-    async def on_client_message(self, event, sid, data):
-        print('[on_client_message]', event, sid, data)
+        if self.client.enabled:
+            if not self.client.is_running:
+                self.get_screen(ScreenType.HOME).connect()
+        else:
+            if self.client.is_running:
+                self.client.stop()
 
-    async def on_server_message(self, event, data):
-        print('[on_client_message]', event, data)
+    async def on_client_message(self, event, sid, data): # 클라이언트로부터의 메세지
+        print('[on_client_message]', event, sid, data)
+        self.get_screen(ScreenType.LOBBY_SERVER).on_client_message(event, sid, data)
+
+
+    def on_server_message(self, event, data):
+        print('[on_server_message]', event, data)
+        self.get_screen(ScreenType.HOME).on_server_message(event, data)
+
 
 
     def update_setting(self):
@@ -201,3 +215,10 @@ class ScreenController:
 
     def play_effect(self):
         self.effect.play()
+
+
+    def on_client_disconnected(self, sid):
+        print(f'on_client_disconnected {sid}')
+
+    def on_server_disconnected(self):
+        print('on_client_disconnected')

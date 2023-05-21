@@ -2,7 +2,8 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from base.basescreen import BaseScreen
-from gamesocket.event import SocketEvent
+from game_socket.event import SocketEvent
+from screen.game.lobby.dialog.inputpassword import InputPasswordDialog
 from screen.home.dialog.inputaddress import InputAddressDialog
 from screen.home.dialog.multiplaydialog import MultiPlayDialog
 from model.screentype import ScreenType
@@ -22,7 +23,13 @@ class HomeScreen(BaseScreen):
 
         self.multi_play_dialog = MultiPlayDialog(self)
 
-        self.input_address_dialog = InputAddressDialog(self, on_confirm=self.connect)
+        self.input_address_dialog = InputAddressDialog(self, on_confirm=lambda: (
+            self.client.enable()
+        ))
+
+        self.input_password_dialog = InputPasswordDialog(self, on_confirm=lambda: (
+            self.client.emit(SocketEvent.AUTH, {'password': self.input_password_dialog.input})
+        ))
 
         self.dialogs.extend([
             self.multi_play_dialog,
@@ -51,6 +58,9 @@ class HomeScreen(BaseScreen):
     def init(self):
         super().init()
         self.multi_play_dialog.init()
+        self.multi_play_dialog.dismiss()
+        self.input_address_dialog.dismiss()
+        self.input_password_dialog.dismiss()
 
     # 시작 화면
     def draw(self, screen):
@@ -67,6 +77,9 @@ class HomeScreen(BaseScreen):
 
         if self.input_address_dialog.enabled:
             self.input_address_dialog.draw(screen)
+
+        if self.input_password_dialog.enabled:
+            self.input_password_dialog.draw(screen)
 
     def draw_title(self, screen):
         self.title = get_large_font().render("Uno Game", True, COLOR_BLACK)
@@ -95,6 +108,9 @@ class HomeScreen(BaseScreen):
         elif self.input_address_dialog.enabled:
             self.input_address_dialog.run_key_event(event)
 
+        elif self.input_password_dialog.enabled:
+            self.input_password_dialog.run_key_event(event)
+
 
     def run_click_event(self, event):
         if self.event_enabled:
@@ -105,6 +121,9 @@ class HomeScreen(BaseScreen):
 
         elif self.input_address_dialog.enabled:
             self.input_address_dialog.run_click_event(event)
+
+        elif self.input_password_dialog.enabled:
+            self.input_password_dialog.run_click_event(event)
 
     def run_menu_click_event(self, event):
         for menu in self.menu_dict:
@@ -128,9 +147,25 @@ class HomeScreen(BaseScreen):
         for dialog in self.dialogs:
             dialog.enabled = False
 
+
     def connect(self):
-        try:
-            self.client.connect(ip=self.input_address_dialog.input, listener=self.screen_controller.on_server_message)
-            self.client.emit(SocketEvent.JOIN, {'passwrod': 0})
-        except Exception as e:
-            print(e)
+        self.client.start(ip=self.input_address_dialog.input, listener=self.screen_controller.on_server_message)
+
+    def on_server_message(self, event, data): # 서버에서 메세지 수신
+        print(f'[Home] on_server_message {event}, {data}')
+
+        if event == SocketEvent.AUTH:
+            self.handle_auth_event(data)
+        elif event == SocketEvent.JOIN:
+            self.handle_join_evnet(data)
+
+    def handle_auth_event(self, data):
+        print(f'[Home] handle_auth_event: {data}')
+        if 'result' in data:
+            print('비밀번호가 일치하지 않습니다.')
+        else:
+            self.input_password_dialog.show()
+
+    def handle_join_evnet(self, data):
+        print(f'[Home] handle_join_event: {data}')
+        self.screen_controller.set_screen(ScreenType.LOBBY_CLIENT)
