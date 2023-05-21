@@ -4,7 +4,6 @@ class SocketEvent:
     JOIN = "join"
     AUTH = "auth"
     SLOT = "slot"
-    NAME = "name"
 
     ANIM_DECK_TO_PLAYER = "anim_deck_to_board_player"
     """
@@ -28,7 +27,6 @@ class SocketEvent:
     }
     """
 
-    # 턴 시작 및 수시로 전달할 정보
     ALL_DATA = "all_data"
 
     """
@@ -38,6 +36,9 @@ class SocketEvent:
         current_card: ?,
         current_color: ?,
         is_reverse: False,
+        is_running: True,
+        is_turn_start: False
+        winner: None,
         players: [
             {
                 sid: sdfdsfsdfdsf,

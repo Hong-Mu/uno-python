@@ -76,7 +76,3 @@ class ClientLobbyScreen(BaseMultiPlayLobbyScreen):
                 if data[idx]['sid'] == self.client.my_socket_id:
                     self.input_name_dialog.input = data[idx]['name']
 
-        elif event == SocketEvent.NAME:
-            pass
-            #self.input_name_dialog.input = data
-

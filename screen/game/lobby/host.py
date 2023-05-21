@@ -175,11 +175,6 @@ class HostLobbyScreen(BaseMultiPlayLobbyScreen):
                 'host': self.input_name_dialog.input
             })
 
-
-            if player is not None:
-                if player.sid == sent_sid:
-                    self.server.emit(SocketEvent.NAME, sent_sid, data=slot['player'].name)
-
         self.server.emit(SocketEvent.SLOT, data=str(temp))
 
     def handle_name_event(self, sid, data):
