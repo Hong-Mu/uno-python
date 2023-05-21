@@ -13,7 +13,7 @@ class BaseMultiPlayLobbyScreen(BaseLobbyScreen):
         super().init_slot()
         self.player_slots = []
         for idx in range(5):
-            self.player_slots.append({'name': f'Slot{idx}', 'rect': None, 'enabled': False if idx >= 1 else True})
+            self.player_slots.append({'name': f'Slot{idx}', 'rect': None, 'enabled': False if idx >= 1 else True, 'player': None})
 
     def draw(self, surface):
         super().draw(surface)
