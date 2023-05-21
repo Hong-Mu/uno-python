@@ -5,6 +5,8 @@ class ScreenType(Enum):
     HOME = "home"
     SETTING = "setting"
     PLAY = "play"
+    PLAY_HOST = "play_host"
+    PLAY_CLIENT = "play_client"
     STORY = "region"
     ACHIEVEMENT = "achievement"
     LOBBY_SINGLE = "lobby"

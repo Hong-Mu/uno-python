@@ -4,7 +4,7 @@ import pygame
 import socketio
 from aiohttp import web
 
-from game_socket.event import SocketEvent
+from game_socket.socketevent import SocketEvent
 from util.globals import COLOR_WHITE
 
 

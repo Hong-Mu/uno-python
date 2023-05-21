@@ -2,7 +2,7 @@ import asyncio
 
 import socketio
 
-from game_socket.event import SocketEvent
+from game_socket.socketevent import SocketEvent
 
 
 class GameClient:
@@ -11,6 +11,8 @@ class GameClient:
         self.client_task = None
         self.enabled = False
         self.is_running = False
+
+        self.my_socket_id = None
 
 
     def start(self, ip='localhost', port=8003, listener=None):

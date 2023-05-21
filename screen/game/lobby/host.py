@@ -2,7 +2,7 @@ import socket
 import requests
 
 from game.model.player import Player
-from game_socket.event import SocketEvent
+from game_socket.socketevent import SocketEvent
 from game_socket.server import GameServer
 from model.screentype import ScreenType
 from screen.game.lobby.base.multiplay import BaseMultiPlayLobbyScreen
@@ -33,6 +33,9 @@ class HostLobbyScreen(BaseMultiPlayLobbyScreen):
             )},
             {'text': '비밀번호 설정', 'view': None, 'rect': None, 'action': lambda: (
                 self.input_password_dialog.show()
+            )},
+            {'text': '스토리 모드 설정', 'view': None, 'rect': None, 'action': lambda: (
+
             )},
             {'text': '돌아가기', 'view': None, 'rect': None, 'action': lambda: (
                 self.screen_controller.set_screen(ScreenType.HOME)
@@ -135,7 +138,7 @@ class HostLobbyScreen(BaseMultiPlayLobbyScreen):
                 self.player_slots[idx]['name'] = player.name
                 self.player_slots[idx]['player'] = player
                 print('플레이어 추가 완료!', player.name, len(self.client_players))
-                self.server.emit(SocketEvent.JOIN, sid, {'result': True})
+                self.server.emit(SocketEvent.JOIN, sid, {'result': True, 'sid': sid})
                 break
         if not slot_available:
             self.server.emit(SocketEvent.JOIN, sid, {'result': False, 'message': '접속 가능한 슬롯이 없습니다.'})
@@ -162,14 +165,17 @@ class HostLobbyScreen(BaseMultiPlayLobbyScreen):
     def send_slot_and_palyers(self, sent_sid):
         temp = []
         for idx, slot in enumerate(self.player_slots):
+            player = slot['player']
+
             temp.append({
+                'sid': None if player is None else player.sid,
                 'name': slot['name'],
                 'rect': None,
                 'enabled': slot['enabled'],
                 'host': self.input_name_dialog.input
             })
 
-            player = slot['player']
+
             if player is not None:
                 if player.sid == sent_sid:
                     self.server.emit(SocketEvent.NAME, sent_sid, data=slot['player'].name)
@@ -179,7 +185,7 @@ class HostLobbyScreen(BaseMultiPlayLobbyScreen):
     def handle_name_event(self, sid, data):
         for idx, slot in enumerate(self.player_slots):
             player = self.player_slots[idx]['player']
-            if player is not None :
+            if player is not None:
                 if player.sid == sid:
                     player.name = data['name']
                     self.player_slots[idx]['name'] = player.name

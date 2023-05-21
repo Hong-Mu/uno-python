@@ -7,6 +7,8 @@ from model.screentype import ScreenType
 from screen.game.lobby.client import ClientLobbyScreen
 from screen.game.lobby.host import HostLobbyScreen
 from screen.game.lobby.singleplay import LobbyScreen
+from screen.game.play.client_play_screen import ClientPlayScreen
+from screen.game.play.host_play_screen import HostPlayScreen
 from screen.game.play.single_play_screen import SinglePlayScreen
 from util.settings import SettingsUtil
 from util.globals import *
@@ -69,6 +71,8 @@ class ScreenController:
             ScreenType.HOME: HomeScreen(self),
             ScreenType.SETTING: SettingScreen(self),
             ScreenType.PLAY: SinglePlayScreen(self),
+            ScreenType.PLAY_HOST: HostPlayScreen(self),
+            ScreenType.PLAY_CLIENT: ClientPlayScreen(self),
             ScreenType.LOBBY_SINGLE: LobbyScreen(self),
             ScreenType.LOBBY_SERVER: HostLobbyScreen(self),
             ScreenType.LOBBY_CLIENT: ClientLobbyScreen(self),

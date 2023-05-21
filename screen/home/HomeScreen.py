@@ -2,7 +2,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from base.basescreen import BaseScreen
-from game_socket.event import SocketEvent
+from game_socket.socketevent import SocketEvent
 from screen.game.lobby.dialog.inputpassword import InputPasswordDialog
 from screen.home.dialog.inputaddress import InputAddressDialog
 from screen.home.dialog.multiplaydialog import MultiPlayDialog
@@ -181,6 +181,7 @@ class HomeScreen(BaseScreen):
         print(f'[Home] handle_join_event: {data}')
         if 'result' in data:
             if data['result']:
+                self.client.my_socket_id = data['sid']
                 self.screen_controller.set_screen(ScreenType.LOBBY_CLIENT)
             else:
                 self.input_address_dialog.description = data['message']

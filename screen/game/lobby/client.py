@@ -1,4 +1,4 @@
-from game_socket.event import SocketEvent
+from game_socket.socketevent import SocketEvent
 from model.screentype import ScreenType
 import ast
 from screen.game.lobby.base.multiplay import BaseMultiPlayLobbyScreen
@@ -73,6 +73,10 @@ class ClientLobbyScreen(BaseMultiPlayLobbyScreen):
                 slot['name'] = data[idx]['name'] if idx != 0 else data[idx]['host']
                 slot['enabled'] = data[idx]['enabled']
 
+                if data[idx]['sid'] == self.client.my_socket_id:
+                    self.input_name_dialog.input = data[idx]['name']
+
         elif event == SocketEvent.NAME:
-            self.input_name_dialog.input = data
+            pass
+            #self.input_name_dialog.input = data
 

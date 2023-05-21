@@ -16,6 +16,9 @@ class LobbyScreen(BaseLobbyScreen):
             {'text': '플레이', 'view': None, 'rect': None, 'action': lambda: (
                 self.input_name_dialog.show(),
             )},
+            {'text': '스토리 모드 설정', 'view': None, 'rect': None, 'action': lambda: (
+
+            )},
             {'text': '돌아가기', 'view': None, 'rect': None, 'action': lambda: (
                 self.screen_controller.set_screen(ScreenType.HOME)
             )},
