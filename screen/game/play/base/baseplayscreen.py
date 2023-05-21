@@ -21,14 +21,14 @@ if TYPE_CHECKING:
     from screen.ScreenController import ScreenController
 
 
-class PlayScreen(BaseScreen):
+class BasePlayScreen(BaseScreen):
 
     def __init__(self, screen_controller):
         super().__init__(screen_controller)
 
         self.animate_controller = AnimateController()
         self.game = None
-        
+
         # 레이아웃 모음
         self.players_layout = PlayersLayout(self)
         self.board = Board(self)
@@ -55,7 +55,7 @@ class PlayScreen(BaseScreen):
         self.animate_view = None
         self.animate_destination_x = None
         self.animate_destination_y = None
-        
+
         # 애니메이션 종류
         self.animate_deck_to_player_enabled = False
         self.animate_board_player_to_current_card_enabled = False
@@ -132,7 +132,6 @@ class PlayScreen(BaseScreen):
     def continue_game(self):  # 다시 시작
         self.game.is_game_paused = False
 
-
     def init_turn(self):
         self.select_color_enabled = False
         self.check_uno_clicked()
@@ -152,7 +151,6 @@ class PlayScreen(BaseScreen):
         else:
             self.is_animation_running = False
 
-
     def animate_deck_to_player(self, screen):
         if self.animate_controller.enabled:
             self.pause_game()
@@ -161,10 +159,10 @@ class PlayScreen(BaseScreen):
             self.animate_deck_to_player_end()
 
     def animate_deck_to_player_end(self):
-        if self.game.can_uno_penalty: # 우노 패널티 결과
+        if self.game.can_uno_penalty:  # 우노 패널티 결과
             self.on_uno_penalty()
-            
-        elif self.game.skill_plus_cnt > 0: # 기술 카드 부여 결과
+
+        elif self.game.skill_plus_cnt > 0:  # 기술 카드 부여 결과
             self.game.penalty(self.game.next_player_index)
             print('기술 1장 부여')
             self.game.skill_plus_cnt -= 1
@@ -176,7 +174,7 @@ class PlayScreen(BaseScreen):
                 self.game.next_turn(turn)
                 self.animate_deck_to_player_enabled = False
                 self.continue_game()
-        else: # 일반 드로우
+        else:  # 일반 드로우
             self.game.draw()
             self.game.next_turn()
             self.animate_deck_to_player_enabled = False
@@ -197,7 +195,6 @@ class PlayScreen(BaseScreen):
         else:
             self.animate_board_player_to_current_card_end()
 
-
     def animate_board_player_to_current_card_end(self):
         self.game.play(self.board_player_to_current_card_idx)
         self.run_card(self.game.current_card)
@@ -211,7 +208,6 @@ class PlayScreen(BaseScreen):
             self.animate_controller.draw(screen)
         else:
             self.animate_current_player_to_current_card_end()
-
 
     def animate_current_player_to_current_card_end(self):
         self.game.play(self.to_computer_play_idx)
@@ -244,12 +240,11 @@ class PlayScreen(BaseScreen):
             self.select_color_enabled = True
         elif card.value == Skill.COMBO.value:
             self.combo_enabled = True
-            self.game.toggle_turn_direction() # 리버스
+            self.game.toggle_turn_direction()  # 리버스
             self.game.skill_plus_cnt = 2
             self.on_deck_selected()
         else:
             self.game.next_turn()
-
 
     def check_time(self):
         if self.game.is_game_paused:  # 일시정지 상태
@@ -260,7 +255,6 @@ class PlayScreen(BaseScreen):
         elif (time.time() - self.game.turn_start_time) > self.game.turn_time:  # 턴 종료
             self.on_deck_selected()
 
-        
         # 나의 턴 확인
         self.card_select_enabled = self.game.board_player_index == self.game.current_player_index
 
@@ -283,7 +277,7 @@ class PlayScreen(BaseScreen):
         elif len(self.game.get_previous_player().hands) == 1:
             self.game.can_uno_penalty = True
             self.on_deck_selected()
-    
+
     def check_plus_skill(self):
         if self.game.skill_plus_cnt != 0:
             self.on_deck_selected()
@@ -373,7 +367,7 @@ class PlayScreen(BaseScreen):
         self.screen_controller.play_effect()
 
         self.animate_deck_to_player_enabled = True
-        
+
         # 좌표 및 애니메이션 아이템 지정
         self.set_animate_view_to_card_back()
         start_x, start_y = self.animate_view_rect.topleft
@@ -381,9 +375,9 @@ class PlayScreen(BaseScreen):
 
         # 애니메이션 시작
         self.animate_controller.start(
-            self.animate_view, 
-            self.animate_view_rect, 
-            start_x, 
+            self.animate_view,
+            self.animate_view_rect,
+            start_x,
             start_y,
             self.animate_destination_x, self.animate_destination_y
         )
