@@ -60,7 +60,13 @@ class HomeScreen(BaseScreen):
         self.multi_play_dialog.init()
         self.multi_play_dialog.dismiss()
         self.input_address_dialog.dismiss()
+
+        self.input_password_dialog.init()
         self.input_password_dialog.dismiss()
+
+    def on_destroy(self):
+        super().on_destroy()
+        pass
 
     # 시작 화면
     def draw(self, screen):
@@ -161,11 +167,21 @@ class HomeScreen(BaseScreen):
 
     def handle_auth_event(self, data):
         print(f'[Home] handle_auth_event: {data}')
+        if 'type' in data:
+            if data['type'] == 'request':
+                self.input_password_dialog.show()
+
         if 'result' in data:
-            print('비밀번호가 일치하지 않습니다.')
-        else:
-            self.input_password_dialog.show()
+            if not data['result']:
+                self.input_password_dialog.description = data['message']
+
+
 
     def handle_join_evnet(self, data):
         print(f'[Home] handle_join_event: {data}')
-        self.screen_controller.set_screen(ScreenType.LOBBY_CLIENT)
+        if 'result' in data:
+            if data['result']:
+                self.screen_controller.set_screen(ScreenType.LOBBY_CLIENT)
+            else:
+                self.input_address_dialog.description = data['message']
+                self.client.disable()

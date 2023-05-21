@@ -9,9 +9,11 @@ class BaseInputDialog(BaseDialog):
         super().__init__(parent)
 
         self.input = ''
+        self.description = ''
 
         self.on_confirm = on_confirm
         self.confirm_rect = None
+        self.description_rect = None
 
     def init(self):
         super().init()
@@ -21,6 +23,7 @@ class BaseInputDialog(BaseDialog):
         super().draw(surface)
         self.draw_input_box(self.layout)
         self.draw_confirm(self.layout)
+        self.draw_description(self.layout)
 
     def draw_input_box(self, layout):
         input = get_small_font().render(self.input, True, COLOR_BLACK)
@@ -31,9 +34,14 @@ class BaseInputDialog(BaseDialog):
         layout.blit(background, background.get_rect(center=(self.layout_rect.w // 2, self.layout_rect.h // 2)))
         layout.blit(input, input.get_rect(center=(self.layout_rect.w // 2, self.layout_rect.h // 2)))
 
+
     def draw_confirm(self, layout):
         text = get_medium_font().render('확인', True, COLOR_BLACK)
         self.confirm_rect = layout.blit(text, text.get_rect(midbottom=(self.layout_rect.w // 2, self.layout_rect.h - get_medium_margin())))
+
+    def draw_description(self, layout):
+        text = get_medium_font().render(self.description, True, COLOR_BLACK)
+        self.description_rect = layout.blit(text, text.get_rect(midbottom=(self.layout_rect.w // 2, self.layout_rect.h - self.confirm_rect.h - get_medium_margin())))
 
 
     def run_key_event(self, event):

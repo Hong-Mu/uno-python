@@ -17,7 +17,10 @@ class HostLobbyScreen(BaseMultiPlayLobbyScreen):
         self.server = screen_controller.server
 
         self.input_password_dialog = InputPasswordDialog(self)
-        self.input_name_dialog = InputNameDialog(self)
+        self.input_name_dialog = InputNameDialog(self, on_confirm=lambda : (
+            self.send_slot_and_palyers(None),
+            self.input_name_dialog.dismiss()
+        ))
 
         self.client_players = []
 
@@ -47,9 +50,13 @@ class HostLobbyScreen(BaseMultiPlayLobbyScreen):
     def init(self):
         super().init()
         self.server.enabled = True
+        self.client_players = []
+        self.init_slot()
 
     def on_destroy(self):
         super().on_destroy()
+        for player in self.client_players:
+            self.server.disconnect(player.sid)
         self.server.enabled = False
 
 
@@ -100,27 +107,75 @@ class HostLobbyScreen(BaseMultiPlayLobbyScreen):
         for idx, player in enumerate(self.client_players):
             if player.sid == sid:
                 self.client_players.pop(idx)
-                self.player_slots[idx]['name'] = f'slot{idx}'
+                self.player_slots[idx]['name'] = f'Slot{idx}'
 
     def on_client_message(self, event, sid, data):
         if event == SocketEvent.JOIN:
             self.handle_join_event(sid, data)
         elif event == SocketEvent.AUTH:
             self.handle_auth_event(sid, data)
+        elif event == SocketEvent.SLOT:
+            self.handle_slot_event(sid, data)
+        elif event == SocketEvent.NAME:
+            self.handle_name_event(sid, data)
 
     def handle_join_event(self, sid, data):
         if len(self.input_password_dialog.input.strip()) == 0:
-            self.server.emit(SocketEvent.JOIN, sid, {})
-            idx = len(self.client_players)
-            player = Player(name=f'Player{idx + 1}', sid=sid)
-            self.client_players.append(player)
-            self.player_slots[idx]['name'] = player.name
+            self.add_player(sid)
         else:
-            self.server.emit(SocketEvent.AUTH, sid, {})
+            self.server.emit(SocketEvent.AUTH, sid, {'type': 'request'})
+
+    def add_player(self, sid):
+        slot_available = False
+        for idx, slot in enumerate(self.player_slots):
+            if slot['enabled'] and slot['name'].startswith('Slot'):
+                slot_available = True
+                player = Player(name=f'Player{idx + 1}', sid=sid)
+                self.client_players.append(player)
+                self.player_slots[idx]['name'] = player.name
+                self.player_slots[idx]['player'] = player
+                print('플레이어 추가 완료!', player.name, len(self.client_players))
+                self.server.emit(SocketEvent.JOIN, sid, {'result': True})
+                break
+        if not slot_available:
+            self.server.emit(SocketEvent.JOIN, sid, {'result': False, 'message': '접속 가능한 슬롯이 없습니다.'})
 
     def handle_auth_event(self, sid, data):
         if self.input_password_dialog.input == data['password']:
-            self.server.emit(SocketEvent.JOIN, sid, {})
+            self.add_player(sid)
         else:
-            self.server.emit(SocketEvent.AUTH, sid, {'result': False})
+            self.server.emit(SocketEvent.AUTH, sid, {'result': False, 'message': '비밀번호가 일치하지 않습니다.' })
 
+    def toggle_player_enabled(self, idx):
+        super().toggle_player_enabled(idx)
+        self.send_slot_and_palyers(None)
+
+    def handle_slot_event(self, sid, data):
+        self.send_slot_and_palyers(sid)
+    def send_slot_and_palyers(self, sent_sid):
+        temp = []
+        for idx, slot in enumerate(self.player_slots):
+            temp.append({
+                'name': slot['name'],
+                'rect': None,
+                'enabled':  slot['enabled'],
+                'host': self.input_name_dialog.input
+            })
+
+            if 'player' in slot:
+                if slot['player'].sid == sent_sid:
+                    self.server.emit(SocketEvent.NAME, sent_sid, data=slot['player'].name)
+
+        self.server.emit(SocketEvent.SLOT, data=str(temp))
+
+
+
+    def handle_name_event(self, sid, data):
+        for idx, slot in enumerate(self.player_slots):
+            if 'player' in self.player_slots[idx]:
+                player = self.player_slots[idx]['player']
+                if player.sid == sid:
+                    player.name = data['name']
+                    self.player_slots[idx]['name'] = player.name
+
+        self.send_slot_and_palyers(sid)

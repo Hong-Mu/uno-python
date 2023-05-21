@@ -63,6 +63,9 @@ class GameServer:
         self.is_running = False
         asyncio.create_task(self.site.stop())
 
+    def disconnect(self, sid):
+        asyncio.create_task(self.sio.disconnect(sid))
+
     async def run(self, ip, port, listener):
         self.set_on_message_listener(listener)
 

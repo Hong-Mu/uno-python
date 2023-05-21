@@ -116,6 +116,7 @@ class ScreenController:
     def on_server_message(self, event, data):
         print('[on_server_message]', event, data)
         self.get_screen(ScreenType.HOME).on_server_message(event, data)
+        self.get_screen(ScreenType.LOBBY_CLIENT).on_server_message(event, data)
 
 
 
@@ -218,7 +219,9 @@ class ScreenController:
 
 
     def on_client_disconnected(self, sid):
-        print(f'on_client_disconnected {sid}')
+        self.get_screen(ScreenType.LOBBY_SERVER).on_client_disconnected(sid)
+
 
     def on_server_disconnected(self):
-        print('on_client_disconnected')
+        print('on_server_disconnected')
+        self.get_screen(ScreenType.LOBBY_CLIENT).on_server_disconnected()

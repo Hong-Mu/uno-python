@@ -124,12 +124,12 @@ class BaseLobbyScreen:
             self.menu_enabled = True
             self.slot_select_enabled = False
         elif key == pygame.K_RETURN:
-            self.toggle_player_enabled()
+            self.toggle_player_enabled(self.slot_idx)
 
-    def toggle_player_enabled(self):
-        if self.slot_idx == 0:
+    def toggle_player_enabled(self, idx):
+        if idx == 0:
             return
-        self.player_slots[self.slot_idx]['enabled'] = not self.player_slots[self.slot_idx]['enabled']
+        self.player_slots[idx]['enabled'] = not self.player_slots[idx]['enabled']
 
     def run_click_event(self, event):
         self.run_menu_click_event(event)
@@ -145,9 +145,7 @@ class BaseLobbyScreen:
         pos = pygame.mouse.get_pos()
         for idx, slot in enumerate(self.player_slots):
             if slot['rect'].collidepoint(pos):
-                if idx == 0:
-                    return
-                slot['enabled'] = not slot['enabled']
+                self.toggle_player_enabled(idx)
 
     def disable_event(self):
         self.event_enabled = False

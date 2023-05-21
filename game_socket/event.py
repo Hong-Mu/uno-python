@@ -3,6 +3,6 @@
 class SocketEvent:
     JOIN = "join"
     AUTH = "auth"
-    PLAYERS = "players"
+    SLOT = "slot"
     NAME = "name"
     TIME = "time"

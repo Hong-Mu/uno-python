@@ -1,4 +1,6 @@
+from game_socket.event import SocketEvent
 from model.screentype import ScreenType
+import ast
 from screen.game.lobby.base.multiplay import BaseMultiPlayLobbyScreen
 from screen.game.lobby.dialog.inputname import InputNameDialog
 
@@ -9,11 +11,14 @@ class ClientLobbyScreen(BaseMultiPlayLobbyScreen):
 
         self.client = screen_controller.client
 
-        self.input_name_dialog = InputNameDialog(self)
+        self.input_name_dialog = InputNameDialog(self, on_confirm=lambda: (
+            self.send_name_refresh(),
+            self.input_name_dialog.dismiss()
+        ))
 
         self.menus = [
             {'text': '닉네임 설정', 'view': None, 'rect': None, 'action': lambda: (
-                self.input_name_dialog.show()
+                self.input_name_dialog.show(),
             )},
             {'text': '돌아가기', 'view': None, 'rect': None, 'action': lambda: (
                 self.screen_controller.set_screen(ScreenType.HOME)
@@ -23,8 +28,11 @@ class ClientLobbyScreen(BaseMultiPlayLobbyScreen):
     def init(self):
         super().init()
 
+        self.client.emit(SocketEvent.SLOT, {'type': 'request'})
+
     def on_destroy(self):
         super().on_destroy()
+        print('ClientLobbyScreen: onDestroy')
         self.client.disable()
 
 
@@ -48,3 +56,23 @@ class ClientLobbyScreen(BaseMultiPlayLobbyScreen):
 
         elif self.input_name_dialog.enabled:
             self.input_name_dialog.run_click_event(event)
+
+    def on_server_disconnected(self):
+        self.screen_controller.set_screen(ScreenType.HOME)
+
+    def toggle_player_enabled(self, idx): # 선택 비활성화
+        pass
+
+    def send_name_refresh(self):
+        self.client.emit(SocketEvent.NAME, {'name': self.input_name_dialog.input})
+
+    def on_server_message(self, event, data):
+        if event == SocketEvent.SLOT:
+            data = ast.literal_eval(data)
+            for idx, slot in enumerate(self.player_slots):
+                slot['name'] = data[idx]['name'] if idx != 0 else data[idx]['host']
+                slot['enabled'] = data[idx]['enabled']
+
+        elif event == SocketEvent.NAME:
+            self.input_name_dialog.input = data
+
