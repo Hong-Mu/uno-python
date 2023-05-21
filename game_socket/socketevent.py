@@ -30,6 +30,7 @@ class SocketEvent:
     ALL_DATA = "all_data"
 
     """
+    컴퓨터 프레이어의 경우 임의 sid 생성 및 전달
     {
         time: 3,
         turn: sid,

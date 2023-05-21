@@ -212,6 +212,8 @@ class ScreenController:
         # 공통 이벤트 처리
         for event in events:
             if event.type == pygame.QUIT: # 종료 이벤트
+                self.client.disable()
+                self.server.enabled = False
                 self.running = False
 
         # 화면에 이벤트 전달
