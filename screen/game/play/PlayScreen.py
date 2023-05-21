@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING
 from base.basescreen import BaseScreen
 from game.model.computer import Computer
 from model.skill import Skill
-from game.story.regiona import GameA
+from game.region.regiona import GameA
 from screen.game.play.dialog.achievement import AchievementDialog
 from screen.game.play.dialog.escapeDialog import EscapeDialog
 from screen.game.play.dialog.gameOverDialog import GameOverDialog

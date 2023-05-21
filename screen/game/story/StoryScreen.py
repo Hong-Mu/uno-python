@@ -2,10 +2,10 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from game.model.player import Player
-from game.single.singlea import SingleA
-from game.single.singleb import SingleB
-from game.single.singlec import SingleC
-from game.single.singled import SingleD
+from game.story.singlea import SingleA
+from game.story.singleb import SingleB
+from game.story.singlec import SingleC
+from game.story.singled import SingleD
 
 from model.region import Region
 from model.screentype import ScreenType

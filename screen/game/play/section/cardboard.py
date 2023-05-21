@@ -145,7 +145,7 @@ class CardBoard:
     def run_my_cards_select_key_event(self, event):
         if self.play_screen.is_animation_running:
             return
-        
+
         if event.key == pygame.K_LEFT:
             if not self.play_screen.deck_select_enabled:
                 self.play_screen.my_cards_selected_index = (self.play_screen.my_cards_selected_index - 1) % len(self.game.get_board_player().hands)
