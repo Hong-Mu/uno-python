@@ -11,7 +11,7 @@ from util.extradata import ExtraData
 from util.globals import *
 
 
-class GameA(BaseGame):
+class SingleA(BaseAchievementGame):
     def __init__(self):
         super().__init__()
 

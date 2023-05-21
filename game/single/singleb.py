@@ -5,7 +5,7 @@ from model.achievement import Achievement
 from model.region import Region
 
 
-class GameB(BaseGame):
+class SingleB(BaseAchievementGame):
     def __init__(self):
         super().__init__()
     def init(self):

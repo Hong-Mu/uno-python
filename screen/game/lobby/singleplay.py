@@ -1,6 +1,6 @@
 from game.model.computer import Computer
 from game.model.player import Player
-from game.single import SinglePlayGame
+from game.single.single import SinglePlayGame
 from model.screentype import ScreenType
 from screen.game.lobby.base.base import BaseLobbyScreen
 from screen.game.lobby.dialog.inputname import InputNameDialog
