@@ -203,7 +203,7 @@ class HostLobbyScreen(BaseMultiPlayLobbyScreen):
                 if player is None:
                     players.append(Computer(f'Computer{idx}'))
                 else:
-                    players.extend(self.client_players)
+                    players.append(player)
 
         self.screen_controller.set_game(MultiPlayGame())
         self.screen_controller.game.set_players(players)

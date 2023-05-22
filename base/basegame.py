@@ -30,7 +30,7 @@ class BaseGame:
         self.skill_plus_cnt = 0
 
         self.turn_start_time = None
-        self.is_turn_start = False
+        self.is_turn_start = True
         self.is_game_paused = False
         self.is_game_end_once = False
 
@@ -59,7 +59,7 @@ class BaseGame:
         self.skill_plus_cnt = 0
 
         self.turn_start_time = time.time()
-        self.is_turn_start = False
+        self.is_turn_start = True
 
         self.can_uno_penalty = False
         self.uno_enabled = False
@@ -113,7 +113,7 @@ class BaseGame:
         return self.players[self.next_player_index]
 
     def get_previous_player(self):
-        return self.players[self.previous_player_index]
+        return self.players[self.previous_player_index if self.previous_player_index is not None else -1]
 
     def get_uno_clicked_player(self):
         if self.uno_clicked_player_index is not None:

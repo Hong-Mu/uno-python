@@ -10,6 +10,9 @@ class HostPlayScreen(BasePlayScreen):
 
         self.server = screen_controller.server
 
+    def init(self):
+        super().init()
+
     def init_turn(self):
         super().init_turn()
         self.send_data_to_clients()

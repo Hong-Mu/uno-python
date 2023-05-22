@@ -74,7 +74,7 @@ class ClientLobbyScreen(BaseMultiPlayLobbyScreen):
         if event == SocketEvent.SLOT:
             data = ast.literal_eval(data)
             for idx, slot in enumerate(self.player_slots):
-                slot['name'] = data[idx]['name'] if idx != 0 else data[idx]['host']
+                slot['name'] = data[idx]['name']
                 slot['enabled'] = data[idx]['enabled']
 
                 if data[idx]['sid'] == self.client.my_socket_id:
@@ -83,8 +83,16 @@ class ClientLobbyScreen(BaseMultiPlayLobbyScreen):
         elif event == SocketEvent.START:
             self.play([dict_to_player(p) for p in data])
 
+
     def play(self, players):
+        players = self.rotate_list_to_id(players, self.client.my_socket_id)
+
         self.screen_controller.set_game(ClientGame())
         self.screen_controller.game.set_players(players)
         self.screen_controller.game.start_game()
         self.screen_controller.set_screen(ScreenType.PLAY_CLIENT)
+
+    def rotate_list_to_id(self, players, target_id):
+        index = next((i for i, player in enumerate(players) if player.sid == target_id), -1)
+        rotated_lst = players[index:] + players[:index]
+        return rotated_lst

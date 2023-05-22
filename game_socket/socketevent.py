@@ -6,6 +6,7 @@ class SocketEvent:
     AUTH = "auth"
     SLOT = "slot"
     START = "start"
+    ALL_DATA = "all_data"
 
     ANIM_DECK_TO_PLAYER = "anim_deck_to_board_player"
     """
@@ -31,7 +32,7 @@ class SocketEvent:
     INPUT_DECK = "input_deck"
     INPUT_UNO = "input_uno"
 
-    ALL_DATA = "all_data"
+
 
     """
     컴퓨터 프레이어의 경우 임의 sid 생성 및 전달
