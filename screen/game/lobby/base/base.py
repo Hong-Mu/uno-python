@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import pygame.draw
 
+from base.toast import Toast
 from util.globals import *
 
 
@@ -24,6 +25,8 @@ class BaseLobbyScreen:
         self.slot_height = None
 
         self.init_slot()
+
+        self.toast = Toast(self)
 
     def init(self):
         pass

@@ -74,6 +74,9 @@ class HostLobbyScreen(BaseMultiPlayLobbyScreen):
         elif self.input_name_dialog.enabled:
             self.input_name_dialog.draw(screen)
 
+        if self.toast.enabled:
+            self.toast.draw(screen)
+
     def run_key_event(self, event):
         if self.event_enabled:
             super().run_key_event(event)
@@ -148,6 +151,7 @@ class HostLobbyScreen(BaseMultiPlayLobbyScreen):
                 self.server.emit(SocketEvent.JOIN, sid, {'result': True, 'sid': sid})
                 break
         if not slot_available:
+            self.toast.show('접속 가능한 슬롯이 없습니다!')
             self.server.emit(SocketEvent.JOIN, sid, {'result': False, 'message': '접속 가능한 슬롯이 없습니다.'})
 
     def handle_auth_event(self, sid, data):
