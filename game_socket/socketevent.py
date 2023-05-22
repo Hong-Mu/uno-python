@@ -47,14 +47,13 @@ class SocketEvent:
         
         is_reverse: False,
         is_turn_start: False,
-        is_running: True,
         winner: None,
         
+        skip_sids: [],
         players: [
             {
                 sid: sdfdsfsdfdsf,
                 name: sfsdfsdfdsfdsf,
-                is_penalty: False
                 cards: [
                     {
                         color: ??

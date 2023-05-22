@@ -114,12 +114,14 @@ class ScreenController:
     async def on_client_message(self, event, sid, data): # 클라이언트로부터의 메세지
         print('[on_client_message]', event, sid, data)
         self.get_screen(ScreenType.LOBBY_SERVER).on_client_message(event, sid, data)
+        self.get_screen(ScreenType.PLAY_HOST).on_client_message(event, sid, data)
 
 
     def on_server_message(self, event, data):
         print('[on_server_message]', event, data)
         self.get_screen(ScreenType.HOME).on_server_message(event, data)
         self.get_screen(ScreenType.LOBBY_CLIENT).on_server_message(event, data)
+        self.get_screen(ScreenType.PLAY_CLIENT).on_server_message(event, data)
 
 
 
@@ -225,8 +227,10 @@ class ScreenController:
 
     def on_client_disconnected(self, sid):
         self.get_screen(ScreenType.LOBBY_SERVER).on_client_disconnected(sid)
+        self.get_screen(ScreenType.PLAY_HOST).on_client_disconnected(sid)
 
 
     def on_server_disconnected(self):
         print('on_server_disconnected')
         self.get_screen(ScreenType.LOBBY_CLIENT).on_server_disconnected()
+        self.get_screen(ScreenType.PLAY_CLIENT).on_server_disconnected()

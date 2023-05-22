@@ -4,11 +4,10 @@ from game.model.card import Card
 
 
 class Player:
-    def __init__(self, name, sid=None, is_host=False):
+    def __init__(self, name, sid=None):
         self.name = name
         self.hands = []
         self.sid = sid
-        self.is_host = is_host
     
     def deal(self, cards):
         self.hands = cards
@@ -30,9 +29,8 @@ def player_to_dict(player):
 def dict_to_player(player_dict):
     name = player_dict.get("name")
     sid = player_dict.get("sid")
-    is_host = player_dict.get("is_host")
 
-    player = Player(name, sid, is_host)
+    player = Player(name, sid)
 
     hands = player_dict.get("hands", [])
     for card_dict in hands:

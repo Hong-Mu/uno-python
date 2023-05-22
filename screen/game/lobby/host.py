@@ -195,7 +195,7 @@ class HostLobbyScreen(BaseMultiPlayLobbyScreen):
         self.send_slot_and_palyers(sid)
 
     def play(self):
-        players = [Player(self.input_name_dialog.input)]
+        players = [Player(self.input_name_dialog.input, sid='host')]
 
         for idx, slot in enumerate(self.player_slots):
             player = slot['player']

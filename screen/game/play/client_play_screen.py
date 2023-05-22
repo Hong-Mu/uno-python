@@ -14,3 +14,10 @@ class ClientPlayScreen(BasePlayScreen):
 
     def run_computer(self): # 동작 제거
         pass
+
+    def on_server_message(self, event, data):
+        print('=====수신=====')
+        print(data)
+
+    def on_server_disconnected(self):
+        pass
