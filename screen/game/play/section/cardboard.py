@@ -7,7 +7,6 @@ import time
 import pygame
 
 if TYPE_CHECKING:
-    from game.game import UnoGame
     from screen.game.play.PlayScreen import PlayScreen
 
 class CardBoard:
@@ -144,6 +143,9 @@ class CardBoard:
 
     # 카드 선택 키 이벤트
     def run_my_cards_select_key_event(self, event):
+        if self.play_screen.is_animation_running:
+            return
+
         if event.key == pygame.K_LEFT:
             if not self.play_screen.deck_select_enabled:
                 self.play_screen.my_cards_selected_index = (self.play_screen.my_cards_selected_index - 1) % len(self.game.get_board_player().hands)
@@ -172,6 +174,8 @@ class CardBoard:
             self.play_screen.on_deck_selected()
 
     def run_board_cards_select_click_event(self, pos):
+        if self.play_screen.is_animation_running:
+            return
         for idx, rect in enumerate(self.card_rects):
             if rect.collidepoint(pos):
                 self.play_screen.on_card_selected(idx)

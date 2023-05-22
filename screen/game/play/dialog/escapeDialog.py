@@ -1,7 +1,7 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 
-from base.baseMenuDialog import BaseMenuDialog
+from base.dialog.baseMenuDialog import BaseMenuDialog
 from model.screentype import ScreenType
 
 if TYPE_CHECKING:
@@ -26,20 +26,21 @@ class EscapeDialog(BaseMenuDialog):
              )},
             {'text': '돌아가기', 'view': None, 'rect': None,
              'action': lambda: (
-                self.toggle()
+                self.dismiss()
              )},
             {'text': '종료', 'view': None, 'rect': None, 'action': lambda: (
-                self.parent.init(),
+                self.init(),
                 self.parent.game.finish_game(),
-                self.screen_controller.set_screen(ScreenType.START),
+                self.screen_controller.set_screen(ScreenType.HOME),
             )
              }
         ]
 
-    def toggle(self):
-        super().toggle()
+    def show(self):
+        print('show')
+        super().show()
+        self.parent.pause_game()
 
-        if self.enabled:
-            self.parent.pause_game()
-        else:
-            self.parent.continue_game()
+    def dismiss(self):
+        super().dismiss()
+        self.parent.continue_game()

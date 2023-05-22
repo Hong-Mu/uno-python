@@ -36,6 +36,11 @@ class SettingScreen:
         self.mode_select_enabled = False
 
 
+    def init(self):
+        pass
+
+    def on_destroy(self):
+        pass
 
     def draw(self, screen: pygame.Surface):
         screen.fill(COLOR_WHITE)
@@ -117,7 +122,7 @@ class SettingScreen:
                     self.controller.set_screen(ScreenType.PLAY)
                     self.controller.is_paused = False
                 else:
-                    self.controller.set_screen(ScreenType.START)
+                    self.controller.set_screen(ScreenType.HOME)
             elif self.get_selected_type() == MODE_CLEAR:
                 self.setting.clear()
         else:
@@ -152,7 +157,7 @@ class SettingScreen:
                         self.controller.set_screen(ScreenType.PLAY)
                         self.controller.is_paused = False
                     else:
-                        self.controller.set_screen(ScreenType.START)
+                        self.controller.set_screen(ScreenType.HOME)
 
     def run_mode_click_event(self, pos):
         for setting in self.settings:

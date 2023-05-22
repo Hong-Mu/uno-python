@@ -3,9 +3,10 @@ from __future__ import annotations
 import random
 from typing import TYPE_CHECKING
 
+from base.basescreen import BaseScreen
 from game.model.computer import Computer
 from model.skill import Skill
-from game.story.regiona import GameA
+from game.region.regiona import GameA
 from screen.game.play.dialog.achievement import AchievementDialog
 from screen.game.play.dialog.escapeDialog import EscapeDialog
 from screen.game.play.dialog.gameOverDialog import GameOverDialog
@@ -20,15 +21,14 @@ if TYPE_CHECKING:
     from screen.ScreenController import ScreenController
 
 
-class PlayScreen:
+class BasePlayScreen(BaseScreen):
 
-    def __init__(self, screen_controller: ScreenController):
+    def __init__(self, screen_controller):
+        super().__init__(screen_controller)
 
-        # 의존성 객체
-        self.screen_controller = screen_controller
         self.animate_controller = AnimateController()
         self.game = None
-        
+
         # 레이아웃 모음
         self.players_layout = PlayersLayout(self)
         self.board = Board(self)
@@ -55,7 +55,7 @@ class PlayScreen:
         self.animate_view = None
         self.animate_destination_x = None
         self.animate_destination_y = None
-        
+
         # 애니메이션 종류
         self.animate_deck_to_player_enabled = False
         self.animate_board_player_to_current_card_enabled = False
@@ -63,17 +63,13 @@ class PlayScreen:
 
         self.is_animation_running = False
 
-    def pause_game(self):  # 일시정지
-        self.game.is_game_paused = True
-        self.pause_temp_time = time.time()
-
-    def continue_game(self):  # 다시 시작
-        self.game.is_game_paused = False
-
     # 초기화 함수
     def init(self):
-        self.escape_dialog.enabled = False
-        self.escape_dialog.menu_idx = 0
+        super().init()
+
+        if self.escape_dialog.enabled:
+            return
+        self.game = self.screen_controller.game
 
         self.game.is_game_paused = False  # 일시정지 상태
         self.pause_temp_time = None  # 일시정지 임시 시간 저장 변수
@@ -87,15 +83,10 @@ class PlayScreen:
         self.animate_board_player_to_current_card_enabled = False
         self.animate_current_player_to_current_card_enabled = False
 
-        if self.escape_dialog.enabled:
-            self.pause_game()
-        else:
-            self.continue_game()
-
-
     # 모든 View
     def draw(self, screen):
-        screen.fill(COLOR_WHITE)
+        super().draw(screen)
+
         self.game = self.screen_controller.game
 
         if not self.game.is_started:
@@ -134,6 +125,12 @@ class PlayScreen:
 
         self.check_achievements()
 
+    def pause_game(self):  # 일시정지
+        self.game.is_game_paused = True
+        self.pause_temp_time = time.time()
+
+    def continue_game(self):  # 다시 시작
+        self.game.is_game_paused = False
 
     def init_turn(self):
         self.select_color_enabled = False
@@ -154,7 +151,6 @@ class PlayScreen:
         else:
             self.is_animation_running = False
 
-
     def animate_deck_to_player(self, screen):
         if self.animate_controller.enabled:
             self.pause_game()
@@ -163,10 +159,10 @@ class PlayScreen:
             self.animate_deck_to_player_end()
 
     def animate_deck_to_player_end(self):
-        if self.game.can_uno_penalty: # 우노 패널티 결과
+        if self.game.can_uno_penalty:  # 우노 패널티 결과
             self.on_uno_penalty()
-            
-        elif self.game.skill_plus_cnt > 0: # 기술 카드 부여 결과
+
+        elif self.game.skill_plus_cnt > 0:  # 기술 카드 부여 결과
             self.game.penalty(self.game.next_player_index)
             print('기술 1장 부여')
             self.game.skill_plus_cnt -= 1
@@ -178,7 +174,7 @@ class PlayScreen:
                 self.game.next_turn(turn)
                 self.animate_deck_to_player_enabled = False
                 self.continue_game()
-        else: # 일반 드로우
+        else:  # 일반 드로우
             self.game.draw()
             self.game.next_turn()
             self.animate_deck_to_player_enabled = False
@@ -199,7 +195,6 @@ class PlayScreen:
         else:
             self.animate_board_player_to_current_card_end()
 
-
     def animate_board_player_to_current_card_end(self):
         self.game.play(self.board_player_to_current_card_idx)
         self.run_card(self.game.current_card)
@@ -213,7 +208,6 @@ class PlayScreen:
             self.animate_controller.draw(screen)
         else:
             self.animate_current_player_to_current_card_end()
-
 
     def animate_current_player_to_current_card_end(self):
         self.game.play(self.to_computer_play_idx)
@@ -246,12 +240,11 @@ class PlayScreen:
             self.select_color_enabled = True
         elif card.value == Skill.COMBO.value:
             self.combo_enabled = True
-            self.game.toggle_turn_direction() # 리버스
+            self.game.toggle_turn_direction()  # 리버스
             self.game.skill_plus_cnt = 2
             self.on_deck_selected()
         else:
             self.game.next_turn()
-
 
     def check_time(self):
         if self.game.is_game_paused:  # 일시정지 상태
@@ -262,7 +255,6 @@ class PlayScreen:
         elif (time.time() - self.game.turn_start_time) > self.game.turn_time:  # 턴 종료
             self.on_deck_selected()
 
-        
         # 나의 턴 확인
         self.card_select_enabled = self.game.board_player_index == self.game.current_player_index
 
@@ -285,47 +277,37 @@ class PlayScreen:
         elif len(self.game.get_previous_player().hands) == 1:
             self.game.can_uno_penalty = True
             self.on_deck_selected()
-    
+
     def check_plus_skill(self):
         if self.game.skill_plus_cnt != 0:
             self.on_deck_selected()
 
-    def run_events(self, events):
-        if not self.game.is_started:
-            return
-
-        for event in events:
-            if event.type == pygame.KEYDOWN:
-                self.run_key_event(event)
-
-            elif event.type == pygame.MOUSEBUTTONUP:
-                self.run_click_event(pygame.mouse.get_pos())
-
     def run_key_event(self, event):
-        if self.game.is_game_over():
-            self.game_over_dialog.run_key_event(event)
+        if self.event_enabled:
+            if self.game.is_game_over():
+                self.game_over_dialog.run_key_event(event)
 
-        elif event.key == pygame.K_ESCAPE:
-            self.escape_dialog.toggle()
+            elif event.key == pygame.K_ESCAPE:
+                self.escape_dialog.show()
 
+            if self.select_color_enabled and self.game.board_player_index == self.game.current_player_index:
+                self.card_board.run_slect_color_key_event(event)
 
-        if self.escape_dialog.enabled:
+            elif self.card_select_enabled:
+                self.card_board.run_my_cards_select_key_event(event)
+
+            elif self.players_layout.select_enabled:
+                self.players_layout.run_select_key_event(event)
+
+            if self.game.uno_enabled:
+                self.board.run_uno_key_event(event)
+
+        elif self.escape_dialog.enabled:
             self.escape_dialog.run_key_event(event)
 
-        elif self.select_color_enabled and self.game.board_player_index == self.game.current_player_index:
-            self.card_board.run_slect_color_key_event(event)
-
-        elif self.card_select_enabled:
-            self.card_board.run_my_cards_select_key_event(event)
-
-        elif self.players_layout.select_enabled:
-            self.players_layout.run_select_key_event(event)
-
-        if self.game.uno_enabled:
-            self.board.run_uno_key_event(event)
-
     # 클릭 이벤트
-    def run_click_event(self, pos):
+    def run_click_event(self, event):
+        pos = pygame.mouse.get_pos()
 
         if self.game.is_game_over():
             self.game_over_dialog.run_click_event(None)
@@ -385,7 +367,7 @@ class PlayScreen:
         self.screen_controller.play_effect()
 
         self.animate_deck_to_player_enabled = True
-        
+
         # 좌표 및 애니메이션 아이템 지정
         self.set_animate_view_to_card_back()
         start_x, start_y = self.animate_view_rect.topleft
@@ -393,9 +375,9 @@ class PlayScreen:
 
         # 애니메이션 시작
         self.animate_controller.start(
-            self.animate_view, 
-            self.animate_view_rect, 
-            start_x, 
+            self.animate_view,
+            self.animate_view_rect,
+            start_x,
             start_y,
             self.animate_destination_x, self.animate_destination_y
         )
@@ -490,4 +472,3 @@ class PlayScreen:
     def check_achievements(self):
         if len(self.game.notify_achievements) > 0 and not self.achievement_dialog.enabled:
             self.achievement_dialog.show(self.game.notify_achievements.pop())
-

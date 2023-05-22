@@ -7,7 +7,7 @@ from model.region import Region
 from util.globals import *
 
 
-class GameC(BaseAchievementGame):
+class SingleC(BaseAchievementGame):
     def __init__(self):
         super().__init__()
 

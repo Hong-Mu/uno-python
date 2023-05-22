@@ -1,12 +1,19 @@
+import asyncio
+
+from game_socket.client import GameClient
+from game_socket.server import GameServer
 from screen.achievement.AchievementScreen import AchievementScreen
 from model.screentype import ScreenType
+from screen.game.lobby.client import ClientLobbyScreen
+from screen.game.lobby.host import HostLobbyScreen
+from screen.game.lobby.singleplay import LobbyScreen
+from screen.game.play.client_play_screen import ClientPlayScreen
+from screen.game.play.host_play_screen import HostPlayScreen
+from screen.game.play.single_play_screen import SinglePlayScreen
 from util.settings import SettingsUtil
 from util.globals import *
 from screen.home.HomeScreen import HomeScreen
 from screen.setting.SettingScreen import SettingScreen
-
-from screen.game.lobby.LobbyScreen import LobbyScreen
-from screen.game.play.PlayScreen import PlayScreen
 from screen.game.story.StoryScreen import StoryScreen
 
 import pygame
@@ -20,10 +27,16 @@ class ScreenController:
 
         self.game = None
 
+        self.server = GameServer()
+        self.server.set_on_disconnect_listener(self.on_client_disconnected)
+
+        self.client = GameClient()
+        self.client.set_on_disconnect_listener(self.on_server_disconnected)
+
         self.clock = pygame.time.Clock()
         self.fps = 30
 
-        self.screen_type = ScreenType.START
+        self.screen_type = ScreenType.HOME
         self.running = True
 
         # 설정 불러오기
@@ -55,21 +68,22 @@ class ScreenController:
 
     def init_instance(self):
         ScreenController.screens = {
-            ScreenType.START: HomeScreen(self),
+            ScreenType.HOME: HomeScreen(self),
             ScreenType.SETTING: SettingScreen(self),
-            ScreenType.PLAY: PlayScreen(self),
-            ScreenType.LOBBY: LobbyScreen(self),
+            ScreenType.PLAY: SinglePlayScreen(self),
+            ScreenType.PLAY_HOST: HostPlayScreen(self),
+            ScreenType.PLAY_CLIENT: ClientPlayScreen(self),
+            ScreenType.LOBBY_SINGLE: LobbyScreen(self),
+            ScreenType.LOBBY_SERVER: HostLobbyScreen(self),
+            ScreenType.LOBBY_CLIENT: ClientLobbyScreen(self),
             ScreenType.STORY: StoryScreen(self),
             ScreenType.ACHIEVEMENT: AchievementScreen(self),
         }
 
-    # 화면 설정
-    def set_screen_type(self, type):
-        self.screen_type = type
-
     # 화면 시작
-    def run(self):
+    async def run(self):
         while self.running:
+            await asyncio.sleep(0.01)
             self.dt = self.clock.tick(self.fps)
 
             self.display_screen()
@@ -78,7 +92,36 @@ class ScreenController:
             self.update_bgm()
             self.update_setting()
 
+            self.update_socket()
+
         pygame.quit()
+
+    def update_socket(self):
+        if self.server.enabled:
+            if not self.server.is_running:
+                self.server.start(listener=self.on_client_message)
+        else:
+            if self.server.is_running:
+                self.server.stop()
+
+        if self.client.enabled:
+            if not self.client.is_running:
+                self.get_screen(ScreenType.HOME).connect()
+        else:
+            if self.client.is_running:
+                self.client.stop()
+
+    async def on_client_message(self, event, sid, data): # 클라이언트로부터의 메세지
+        print('[on_client_message]', event, sid, data)
+        self.get_screen(ScreenType.LOBBY_SERVER).on_client_message(event, sid, data)
+
+
+    def on_server_message(self, event, data):
+        print('[on_server_message]', event, data)
+        self.get_screen(ScreenType.HOME).on_server_message(event, data)
+        self.get_screen(ScreenType.LOBBY_CLIENT).on_server_message(event, data)
+
+
 
     def update_setting(self):
         if self.screen.get_size() != self.setting.get_resolution():
@@ -136,16 +179,22 @@ class ScreenController:
         self.running = False
 
     # 현재 화면 불러옴
-    def get_screen(self):
-        return ScreenController.screens.get(self.screen_type)
+    def get_screen(self, screen_type):
+        return ScreenController.screens.get(screen_type)
 
     # 현재 화면 설정
     def set_screen(self, screen_type):
         self.screen_type = screen_type
+        for key in self.screens.keys():
+            if key == screen_type:
+                self.get_screen(key).init()
+            else:
+                self.get_screen(key).on_destroy()
+
 
     # 화면 선택
     def display_screen(self):
-        self.get_screen().draw(self.screen)
+        self.get_screen(self.screen_type).draw(self.screen)
         self.draw_cursor()
 
     # 마우스 커서
@@ -163,10 +212,21 @@ class ScreenController:
         # 공통 이벤트 처리
         for event in events:
             if event.type == pygame.QUIT: # 종료 이벤트
+                self.client.disable()
+                self.server.enabled = False
                 self.running = False
 
         # 화면에 이벤트 전달
-        self.get_screen().run_events(events)
+        self.get_screen(self.screen_type).run_events(events)
 
     def play_effect(self):
         self.effect.play()
+
+
+    def on_client_disconnected(self, sid):
+        self.get_screen(ScreenType.LOBBY_SERVER).on_client_disconnected(sid)
+
+
+    def on_server_disconnected(self):
+        print('on_server_disconnected')
+        self.get_screen(ScreenType.LOBBY_CLIENT).on_server_disconnected()

@@ -3,7 +3,7 @@ import unittest
 
 from game.game import UnoGame
 from game.model.card import Card
-from game.story.regionA import RegionA
+from game.region.regionA import RegionA
 
 class RegionATest(unittest.TestCase):
     def test_percent(self):

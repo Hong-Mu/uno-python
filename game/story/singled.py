@@ -5,7 +5,7 @@ from model.region import Region
 from util.globals import *
 
 
-class GameD(BaseAchievementGame):
+class SingleD(BaseAchievementGame):
     def __init__(self):
         super().__init__()
         self.turn_cnt = 0
