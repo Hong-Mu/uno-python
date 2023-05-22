@@ -61,7 +61,8 @@ class GameServer:
     def stop(self):
         print('[Server] stop')
         self.is_running = False
-        asyncio.create_task(self.site.stop())
+        if self.site is not None:
+            asyncio.create_task(self.site.stop())
 
     def disconnect(self, sid):
         asyncio.create_task(self.sio.disconnect(sid))
