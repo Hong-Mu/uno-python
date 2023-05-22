@@ -437,7 +437,7 @@ class BasePlayScreen(BaseScreen):
                     get_card_width(MY_BOARD_CARD_PERCENT) // 1 + get_extra_small_margin())
 
     def run_computer(self):
-        if self.game.uno_enabled and not self.game.uno_clicked:
+        if self.game.uno_enabled and not self.game.uno_clicked and not self.select_color_enabled:
             if time.time() - self.game.turn_start_time >= Computer.UNO_DELAY:
                 computer_player_idxs = [idx for idx, p in enumerate(self.game.players) if p.name.startswith('Computer')]
                 if len(computer_player_idxs) > 0:
@@ -491,3 +491,8 @@ class BasePlayScreen(BaseScreen):
     def check_achievements(self):
         if len(self.game.notify_achievements) > 0 and not self.achievement_dialog.enabled:
             self.achievement_dialog.show(self.game.notify_achievements.pop())
+
+    def update_color(self, color):
+        self.game.current_color = color
+        self.game.next_turn()
+

@@ -19,7 +19,7 @@ class ClientPlayScreen(BasePlayScreen):
         self.card_select_enabled = self.game.board_player_index == self.game.current_player_index
 
     def init_turn(self):
-        self.select_color_enabled = False
+        pass
 
     def run_computer(self):
         pass  # Clear
@@ -42,13 +42,15 @@ class ClientPlayScreen(BasePlayScreen):
 
     def on_server_message(self, event, data):
         if event == SocketEvent.ALL_DATA:
-            self.hanle_data(data)
+            self.handle_data(data)
         elif event == SocketEvent.ANIM_PLAYER_TO_CURRENT_CARD:
             self.handle_player_to_current_card(data)
         elif event == SocketEvent.ANIM_DECK_TO_PLAYER:
             self.handle_deck_to_player(data)
+        elif event == SocketEvent.SKILL_COLOR:
+            self.handle_skill_color(data)
 
-    def hanle_data(self, data):
+    def handle_data(self, data):
         self.game.players = self.rotate_list_to_id([dict_to_player(p) for p in data['players']], self.client.my_socket_id)
 
         self.game.turn_start_time = data['turn_start_time']
@@ -138,3 +140,15 @@ class ClientPlayScreen(BasePlayScreen):
         self.game.skill_plus_cnt = data['skill_plus_cnt']
         super().on_deck_selected()
 
+
+    def handle_skill_color(self, data):
+        self.select_color_enabled = True
+        print('========================색상 선택 활성화====================')
+
+
+    def update_color(self, color):
+        self.select_color_enabled = False
+        self.client.emit(SocketEvent.SKILL_COLOR, {
+            'type': None,
+            'color': color
+        })

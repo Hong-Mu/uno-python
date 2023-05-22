@@ -1,6 +1,7 @@
 from game.model.player import player_to_dict
 from game_socket.socketevent import SocketEvent
 from screen.game.play.base.baseplayscreen import BasePlayScreen
+from util.globals import CARD_COLOR_NONE
 
 
 class HostPlayScreen(BasePlayScreen):
@@ -31,6 +32,8 @@ class HostPlayScreen(BasePlayScreen):
             self.handle_input_deck(sid, data)
         elif event == SocketEvent.INPUT_UNO:
             self.handle_input_uno(sid, data)
+        elif event == SocketEvent.SKILL_COLOR:
+            self.handle_skill_color(sid, data)
 
     def handle_input_card(self, sid, data):
         player = self.get_player_by_sid(sid)
@@ -39,6 +42,11 @@ class HostPlayScreen(BasePlayScreen):
         if self.game.verify_new_card(card):
             self.to_computer_play_idx = data['idx']
             self.start_player_to_deck(data['idx'])
+
+            if card.color == CARD_COLOR_NONE:
+                self.server.emit(SocketEvent.SKILL_COLOR, sid, data={  # 색상 선택 요청
+                    'type': 'request'
+                })
 
     def handle_input_deck(self, sid, data):
         self.on_deck_selected()
@@ -111,3 +119,9 @@ class HostPlayScreen(BasePlayScreen):
             'player': self.game.players[self.destination_player_idx].sid,
             'skill_plus_cnt': self.game.skill_plus_cnt
         })
+
+    def handle_skill_color(self, sid, data):
+        color = data['color']
+        self.game.current_color = color
+        self.game.next_turn()
+

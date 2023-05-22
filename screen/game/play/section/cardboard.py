@@ -60,6 +60,7 @@ class CardBoard:
                 surface.fill(COLOR_TRANSPARENT_RED)
                 screen.blit(surface, self.background_rect.topleft)
 
+        print(self.play_screen.select_color_enabled)
         if self.play_screen.select_color_enabled and self.game.board_player_index == self.game.current_player_index:
             self.draw_select_color(screen)
 
@@ -87,9 +88,7 @@ class CardBoard:
     def run_select_color_click_event(self, pos):
         for color in self.select_colors:
             if color['rect'].collidepoint(pos):
-                print('충돌')
-                self.game.current_color = color['type']
-                self.game.next_turn()
+                self.play_screen.update_color(color['type'])
 
     def run_slect_color_key_event(self, event):
         if event.key == pygame.K_RIGHT:
@@ -97,8 +96,7 @@ class CardBoard:
         elif event.key == pygame.K_LEFT:
             self.color_index = (self.color_index - 1) % len(self.select_colors)
         elif event.key == pygame.K_RETURN:
-            self.game.current_color = self.select_colors[self.color_index]['type']
-            self.game.next_turn()
+            self.play_screen.update_color(self.select_colors[self.color_index]['type'])
 
     # 나의 카드
     def draw_my_cards(self, screen: pygame.Surface, cards):

@@ -33,6 +33,16 @@ class SocketEvent:
     INPUT_DECK = "input_deck"
     INPUT_UNO = "input_uno"
 
+    SKILL_COLOR = "skill_color"
+    """
+    {
+        type: request
+    }
+    {
+        type: None
+        color: dsfdsf
+    }
+    """
 
 
     """
