@@ -37,7 +37,7 @@ class HostPlayScreen(BasePlayScreen):
             self.start_player_to_deck()
 
     def handle_input_deck(self, sid, data):
-        pass
+        self.on_deck_selected()
 
     def handle_input_uno(self, sid, data):
         pass
