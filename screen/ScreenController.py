@@ -167,7 +167,7 @@ class ScreenController:
 
 
     def update_bgm(self):
-        if self.screen_type == ScreenType.PLAY:
+        if self.screen_type in [ScreenType.PLAY, ScreenType.PLAY_HOST, ScreenType.PLAY_CLIENT]:
             if not self.is_bgm_playing:
                 self.is_bgm_playing = True
                 self.bgm.play(-1)
