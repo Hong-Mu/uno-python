@@ -72,6 +72,8 @@ class HostPlayScreen(BasePlayScreen):
                 'value': self.game.current_card.value,
             },
 
+            'escape_enabled': self.escape_dialog.enabled,
+
             'current_color': self.game.current_color,
 
             'is_uno':  self.game.uno_clicked,

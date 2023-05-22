@@ -13,6 +13,11 @@ class ClientPlayScreen(BasePlayScreen):
 
         self.client = screen_controller.client
 
+    def draw(self, screen):
+        super().draw(screen)
+
+        if self.toast.enabled:
+            self.toast.draw(screen)
 
 
     def check_time(self): # 동작 제거
@@ -63,6 +68,9 @@ class ClientPlayScreen(BasePlayScreen):
 
         self.game.can_uno_penalty = data['can_uno_penalty']
         self.game.skill_plus_cnt = data['skill_plus_cnt']
+
+        if data['escape_enabled'] and not self.toast.enabled:
+            self.toast.show('호스트에 의해 게임이 일시정지 되었습니다.!')
 
         self.game.reverse_direction = data['is_reverse']
         self.game.is_started = data['is_started']
@@ -152,3 +160,9 @@ class ClientPlayScreen(BasePlayScreen):
             'type': None,
             'color': color
         })
+
+    def pause_game(self):
+        pass
+
+    def continue_game(self):
+        pass

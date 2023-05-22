@@ -53,6 +53,8 @@ class SocketEvent:
         previous_sid: sid,
         next_sid: sid,
         
+        escape_enabled: True,
+        
         can_uno_penalty: False,
         skill_plus_cnt: 0,
         
