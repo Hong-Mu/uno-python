@@ -109,6 +109,8 @@ class HomeScreen(BaseScreen):
 
     def run_key_event(self, event):
         if self.event_enabled:
+            if self.client.enabled:
+                self.client.disable()
             self.run_menu_key_event(event)
 
         elif self.multi_play_dialog.enabled:
@@ -176,7 +178,7 @@ class HomeScreen(BaseScreen):
 
         if 'result' in data:
             if not data['result']:
-                self.input_password_dialog.description = data['message']
+                self.toast.show(data['message'])
 
 
 
