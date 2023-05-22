@@ -439,11 +439,11 @@ class BasePlayScreen(BaseScreen):
     def run_computer(self):
         if self.game.uno_enabled and not self.game.uno_clicked:
             if time.time() - self.game.turn_start_time >= Computer.UNO_DELAY:
-                computer_players = [p for p in self.game.players if p is Computer]
-                if len(computer_players) > 0:
+                computer_player_idxs = [idx for idx, p in enumerate(self.game.players) if p.name.startswith('Computer')]
+                if len(computer_player_idxs) > 0:
                     self.game.is_uno_clicked_by_computer = True
                     self.game.uno_clicked = True
-                    self.game.uno_clicked_player_index = random.randint(1, len(computer_players) - 1)  # 랜덤 컴퓨터가 우노 버튼 클릭
+                    self.game.uno_clicked_player_index = random.choice(computer_player_idxs)
 
         if type(self.game.get_current_player()) is Computer:
 
