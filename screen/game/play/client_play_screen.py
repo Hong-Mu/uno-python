@@ -12,15 +12,25 @@ class ClientPlayScreen(BasePlayScreen):
         super().__init__(screen_controller)
 
         self.client = screen_controller.client
+        self.paused_by_host = False
 
     def draw(self, screen):
         super().draw(screen)
+
+        if self.paused_by_host:
+            super().pause_game()
+            if not self.toast.enabled:
+                self.toast.show('호스트에 의해 게임이 일시정지 되었습니다.!')
+        else:
+            super().continue_game()
 
         if self.toast.enabled:
             self.toast.draw(screen)
 
 
     def check_time(self): # 동작 제거
+        if self.paused_by_host:
+            super().check_time()
         self.card_select_enabled = self.game.board_player_index == self.game.current_player_index
 
     def init_turn(self):
@@ -69,8 +79,9 @@ class ClientPlayScreen(BasePlayScreen):
         self.game.can_uno_penalty = data['can_uno_penalty']
         self.game.skill_plus_cnt = data['skill_plus_cnt']
 
-        if data['escape_enabled'] and not self.toast.enabled:
-            self.toast.show('호스트에 의해 게임이 일시정지 되었습니다.!')
+
+        self.paused_by_host = data['escape_enabled']
+
 
         self.game.reverse_direction = data['is_reverse']
         self.game.is_started = data['is_started']
@@ -89,6 +100,9 @@ class ClientPlayScreen(BasePlayScreen):
 
             if p.sid == data['uno_sid']:
                 self.game.uno_clicked_player_index = idx
+
+        if self.game.board_player_index != self.game.current_player_index:
+            self.select_color_enabled = False
 
     def on_server_disconnected(self):
         pass

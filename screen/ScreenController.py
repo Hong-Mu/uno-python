@@ -50,11 +50,13 @@ class ScreenController:
         self.effect = pygame.mixer.Sound('./resource/sound/effect.mp3')
 
         self.is_paused = False  # 설정에서 돌아오기 위한 용도
+        self.paused_type = None
 
     def set_game(self, game):
         self.game = game
 
-    def set_paused(self):
+    def set_paused(self, type):
+        self.paused_type = type
         self.is_paused = True
 
     def init_pygame(self):

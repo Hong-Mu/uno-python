@@ -16,13 +16,13 @@ class EscapeDialog(BaseMenuDialog):
         self.menus = [
             {'text': '설정', 'view': None, 'rect': None,
              'action': lambda: (
+                 self.screen_controller.set_paused(self.screen_controller.screen_type),
                  self.screen_controller.set_screen(ScreenType.SETTING),
-                 self.screen_controller.set_paused(),
              )},
             {'text': '업적', 'view': None, 'rect': None,
              'action': lambda: (
+                 self.screen_controller.set_paused(self.screen_controller.screen_type),
                  self.screen_controller.set_screen(ScreenType.ACHIEVEMENT),
-                 self.screen_controller.set_paused(),
              )},
             {'text': '돌아가기', 'view': None, 'rect': None,
              'action': lambda: (
