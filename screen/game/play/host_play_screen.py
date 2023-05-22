@@ -56,6 +56,9 @@ class HostPlayScreen(BasePlayScreen):
             'previous_sid': self.game.get_previous_player().sid,
             'next_sid': self.game.get_next_player().sid,
 
+            'can_uno_penalty': self.game.can_uno_penalty,
+            'skill_plus_cnt': self.game.skill_plus_cnt,
+
             'current_card': {
                 'color': self.game.current_card.color,
                 'value': self.game.current_card.value,
@@ -105,5 +108,6 @@ class HostPlayScreen(BasePlayScreen):
         super().on_deck_selected()
 
         self.server.emit(SocketEvent.ANIM_DECK_TO_PLAYER, data={
-            'player': self.destination_player_idx
+            'player': self.game.players[self.destination_player_idx].sid,
+            'skill_plus_cnt': self.game.skill_plus_cnt
         })

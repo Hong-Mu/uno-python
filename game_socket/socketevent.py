@@ -43,6 +43,9 @@ class SocketEvent:
         previous_sid: sid,
         next_sid: sid,
         
+        can_uno_penalty: False,
+        skill_plus_cnt: 0,
+        
         current_card: ?,
         current_color: ?,
         

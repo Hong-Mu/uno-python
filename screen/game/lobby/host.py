@@ -114,13 +114,16 @@ class HostLobbyScreen(BaseMultiPlayLobbyScreen):
                 pass
 
     def on_client_disconnected(self, sid):
-        for idx, player in enumerate(self.client_players):
-            if player.sid == sid:
-                self.remove_player(idx)
+        for idx, slot in enumerate(self.player_slots):
+            print(slot)
+            player = slot['player']
+            if player is not None:
+                print(player.sid, sid)
+                if player.sid == sid:
+                    self.client_players.remove(player)
+                    slot['name'] = f'Slot{idx}'
+                    slot['player'] = None
 
-    def remove_player(self, idx):
-        self.client_players.pop(idx)
-        self.player_slots[idx]['name'] = f'Slot{idx}'
 
     def on_client_message(self, event, sid, data):
         if event == SocketEvent.JOIN:
@@ -165,7 +168,6 @@ class HostLobbyScreen(BaseMultiPlayLobbyScreen):
         if player != None:
             print('퇴장')
             self.server.disconnect(player.sid)
-            self.player_slots[idx]['player'] = None
             return
         super().toggle_player_enabled(idx)
         self.send_slot_and_palyers(None)

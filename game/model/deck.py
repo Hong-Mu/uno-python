@@ -19,7 +19,7 @@ class Deck:
 
         # 무색상 +4 기술 카드
         cards = []
-        cards.extend([Card(CARD_COLOR_NONE, Skill.PLUS_4.value)])
+        cards.extend([Card(CARD_COLOR_NONE, Skill.PLUS_4.value)] * 100)
         # 무색상 색상 기술 카드
         cards.extend([Card(CARD_COLOR_NONE, Skill.COLOR.value)])
 

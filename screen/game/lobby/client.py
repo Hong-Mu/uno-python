@@ -62,6 +62,7 @@ class ClientLobbyScreen(BaseMultiPlayLobbyScreen):
             self.input_name_dialog.run_click_event(event)
 
     def on_server_disconnected(self):
+        self.client.disable()
         self.screen_controller.set_screen(ScreenType.HOME)
 
     def toggle_player_enabled(self, idx): # 선택 비활성화
@@ -72,16 +73,22 @@ class ClientLobbyScreen(BaseMultiPlayLobbyScreen):
 
     def on_server_message(self, event, data):
         if event == SocketEvent.SLOT:
-            data = ast.literal_eval(data)
-            for idx, slot in enumerate(self.player_slots):
-                slot['name'] = data[idx]['name']
-                slot['enabled'] = data[idx]['enabled']
-
-                if data[idx]['sid'] == self.client.my_socket_id:
-                    self.input_name_dialog.input = data[idx]['name']
-
+            self.handle_slot_event(data)
         elif event == SocketEvent.START:
             self.play([dict_to_player(p) for p in data])
+
+    def handle_slot_event(self, data):
+        data = ast.literal_eval(data)
+
+        for idx, slot in enumerate(self.player_slots):
+            player = data[idx]
+
+            slot['name'] = player['name']
+            slot['enabled'] = player['enabled']
+
+            if player['sid'] == self.client.my_socket_id:
+                slot['name'] = player['host']
+                self.input_name_dialog.input = player['name']
 
 
     def play(self, players):

@@ -14,7 +14,7 @@ class SingleB(BaseAchievementGame):
         self.players.extend(computers)
 
         cnt = len(self.deck.cards) // len(self.players)
-        self.deal(2)
+        self.deal(cnt)
 
     def set_winner(self, player):
         super().set_winner(player)

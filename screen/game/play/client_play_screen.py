@@ -59,6 +59,9 @@ class ClientPlayScreen(BasePlayScreen):
 
         self.game.uno_clicked = data['is_uno']
 
+        self.game.can_uno_penalty = data['can_uno_penalty']
+        self.game.skill_plus_cnt = data['skill_plus_cnt']
+
         self.game.reverse_direction = data['is_reverse']
         self.game.is_started = data['is_started']
 
@@ -76,6 +79,7 @@ class ClientPlayScreen(BasePlayScreen):
 
             if p.sid == data['uno_sid']:
                 self.game.uno_clicked_player_index = idx
+
     def on_server_disconnected(self):
         pass
 
@@ -131,4 +135,6 @@ class ClientPlayScreen(BasePlayScreen):
 
     def handle_deck_to_player(self, data):
         sid = data['player']
+        self.game.skill_plus_cnt = data['skill_plus_cnt']
         super().on_deck_selected()
+

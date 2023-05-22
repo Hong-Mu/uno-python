@@ -231,6 +231,5 @@ class ScreenController:
 
 
     def on_server_disconnected(self):
-        print('on_server_disconnected')
         self.get_screen(ScreenType.LOBBY_CLIENT).on_server_disconnected()
         self.get_screen(ScreenType.PLAY_CLIENT).on_server_disconnected()
