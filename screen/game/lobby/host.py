@@ -1,7 +1,10 @@
+import json
 import socket
 import requests
 
-from game.model.player import Player
+from game.model.computer import Computer
+from game.model.player import Player, player_to_dict
+from game.multi.multi import MultiPlayGame
 from game_socket.socketevent import SocketEvent
 from game_socket.server import GameServer
 from model.screentype import ScreenType
@@ -26,7 +29,7 @@ class HostLobbyScreen(BaseMultiPlayLobbyScreen):
 
         self.menus = [
             {'text': '게임 시작', 'view': None, 'rect': None, 'action': lambda: (
-
+                self.play(),
             )},
             {'text': '닉네임 설정', 'view': None, 'rect': None, 'action': lambda: (
                 self.input_name_dialog.show()
@@ -38,6 +41,7 @@ class HostLobbyScreen(BaseMultiPlayLobbyScreen):
 
             )},
             {'text': '돌아가기', 'view': None, 'rect': None, 'action': lambda: (
+                self.close_connection(),
                 self.screen_controller.set_screen(ScreenType.HOME)
             )},
             {'text': f'외부IP: {self.get_external_ip()}', 'view': None, 'rect': None, 'action': lambda: (
@@ -56,6 +60,9 @@ class HostLobbyScreen(BaseMultiPlayLobbyScreen):
 
     def on_destroy(self):
         super().on_destroy()
+
+
+    def close_connection(self):
         for player in self.client_players:
             self.server.disconnect(player.sid)
         self.server.enabled = False
@@ -186,3 +193,23 @@ class HostLobbyScreen(BaseMultiPlayLobbyScreen):
                     self.player_slots[idx]['name'] = player.name
 
         self.send_slot_and_palyers(sid)
+
+    def play(self):
+        players = [Player(self.input_name_dialog.input)]
+
+        for idx, slot in enumerate(self.player_slots):
+            player = slot['player']
+            if slot['enabled']:
+                if player is None:
+                    players.append(Computer(f'Computer{idx}'))
+                else:
+                    players.extend(self.client_players)
+
+        self.screen_controller.set_game(MultiPlayGame())
+        self.screen_controller.game.set_players(players)
+        self.screen_controller.game.start_game()
+        self.screen_controller.set_screen(ScreenType.PLAY_HOST)
+
+        temp = [player_to_dict(p) for p in players]
+
+        self.server.emit(SocketEvent.START, data=temp)

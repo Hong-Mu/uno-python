@@ -1,17 +1,10 @@
-from __future__ import annotations
-from typing import TYPE_CHECKING
-
-
 from util.globals import *
 import time
 import pygame
 
-if TYPE_CHECKING:
-    from screen.game.play.PlayScreen import PlayScreen
-
 class CardBoard:
     def __init__(self, play_screen):
-        self.play_screen: PlayScreen = play_screen
+        self.play_screen = play_screen
 
         self.game = None
         self.board = play_screen.board
@@ -40,7 +33,8 @@ class CardBoard:
         name = get_small_font().render(self.game.get_board_player().name, True, COLOR_BLACK)
         name_rect = get_top_center_rect(name, self.background_rect, x=-name.get_width() // 2)
         screen.blit(name, name_rect)
-        
+
+        # 남은 시간 표시
         if self.game.board_player_index == self.game.current_player_index:
             self.timer = get_medium_font().render(str(int(self.game.turn_time + 1 - (time.time() - self.game.turn_start_time))), True, COLOR_RED)
             self.timer_rect = (self.background_rect.right - self.timer.get_width() - get_small_margin(), self.background_rect.top)
