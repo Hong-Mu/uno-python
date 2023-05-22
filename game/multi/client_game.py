@@ -12,3 +12,4 @@ class ClientGame(BaseGame):
 
     def get_skipped_player_indexs(self):
         return [idx for idx, p in enumerate(self.players) if p.sid in self.skip_sids]
+

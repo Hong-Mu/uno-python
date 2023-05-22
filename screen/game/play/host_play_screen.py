@@ -21,6 +21,25 @@ class HostPlayScreen(BasePlayScreen):
         pass
 
     def on_client_message(self, event, sid, data):
+        if event == SocketEvent.INPUT_CURRENT_CARD:
+            self.handle_input_card(sid, data)
+        elif event == SocketEvent.INPUT_DECK:
+            self.handle_input_deck(sid, data)
+        elif event == SocketEvent.INPUT_UNO:
+            self.handle_input_uno(sid, data)
+
+    def handle_input_card(self, sid, data):
+        player = self.get_player_by_sid(sid)
+        card = player.hands[data['idx']]
+
+        if self.game.verify_new_card(card):
+            self.to_computer_play_idx = data['idx']
+            self.start_player_to_deck()
+
+    def handle_input_deck(self, sid, data):
+        pass
+
+    def handle_input_uno(self, sid, data):
         pass
 
     def send_data_to_clients(self):
@@ -48,3 +67,7 @@ class HostPlayScreen(BasePlayScreen):
         }
 
         self.server.emit(SocketEvent.ALL_DATA, data=temp)
+
+    def get_player_by_sid(self, sid):
+        return next((p for p in self.game.players if p.sid == sid))
+

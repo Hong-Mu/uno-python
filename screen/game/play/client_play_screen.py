@@ -1,3 +1,5 @@
+import pygame
+
 from game.model.card import Card
 from game.model.player import dict_to_player
 from game_socket.socketevent import SocketEvent
@@ -12,13 +14,29 @@ class ClientPlayScreen(BasePlayScreen):
         self.client = screen_controller.client
 
     def check_time(self): # 동작 제거
-        pass
+        self.card_select_enabled = self.game.board_player_index == self.game.current_player_index
 
     def init_turn(self):
-        pass
+        self.select_color_enabled = False
 
-    def run_computer(self): # 동작 제거
-        pass
+    def run_computer(self):
+        pass  # Clear
+
+    def on_card_selected(self, idx):
+        hands = self.game.get_board_player().hands
+        card = hands[idx]
+
+        self.client.emit(SocketEvent.INPUT_CURRENT_CARD, {
+            'idx': idx,
+            'color': card.color,
+            'value': card.value,
+        })
+
+    def on_deck_selected(self):
+        self.client.emit(SocketEvent.INPUT_DECK, {})
+
+    def click_uno(self):
+        self.client.emit(SocketEvent.INPUT_UNO, {})
 
     def on_server_message(self, event, data):
         if event == SocketEvent.ALL_DATA:

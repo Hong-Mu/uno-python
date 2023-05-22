@@ -3,6 +3,7 @@ from __future__ import annotations
 import random
 from typing import TYPE_CHECKING
 
+from base.baseachievementgame import BaseAchievementGame
 from base.basescreen import BaseScreen
 from game.model.computer import Computer
 from model.skill import Skill
@@ -11,11 +12,14 @@ from screen.game.play.dialog.achievement import AchievementDialog
 from screen.game.play.dialog.escapeDialog import EscapeDialog
 from screen.game.play.dialog.gameOverDialog import GameOverDialog
 from screen.game.play.section.playersLayout import PlayersLayout
+from util.extradata import ExtraData
 from util.globals import *
 from screen.animate.animate import AnimateController
 from screen.game.play.section.board import Board
 from screen.game.play.section.cardboard import CardBoard
 import time
+
+from util.singletone import extraDataUtil
 
 if TYPE_CHECKING:
     from screen.ScreenController import ScreenController
@@ -356,6 +360,9 @@ class BasePlayScreen(BaseScreen):
 
             self.animate_controller.start(surface, rect, start_x, start_y, end_x, end_y)
 
+    def click_uno(self):
+        self.game.click_uno()
+
     # 에러 방지를 위한 함수
     def resolve_error(self):
         # 보드 카드 이전 인덱스 초과 시 처리
@@ -450,24 +457,25 @@ class BasePlayScreen(BaseScreen):
                 self.to_computer_play_idx = self.game.get_combo()
 
             if self.to_computer_play_idx is not None:
-                self.screen_controller.play_effect()
-                self.animate_current_player_to_current_card_enabled = True
-
-                # 이동 애니메이션
-
-                player_rect = self.players_layout.players[self.game.current_player_index - 1]
-
-                start_x, start_y = player_rect.topleft
-                end_x, end_y = self.board.current_card_rect.topleft
-
-                surface = get_card_back(2)
-                rect = surface.get_rect()
-                rect.topleft = start_x, start_y
-
-                self.animate_controller.start(surface, rect, start_x, start_y, end_x, end_y)
+                self.start_player_to_deck()
             else:
                 # 낼 카드 없을 떄
                 self.on_deck_selected()
+
+    def start_player_to_deck(self):
+        self.screen_controller.play_effect()
+        self.animate_current_player_to_current_card_enabled = True
+
+        player_rect = self.players_layout.players[self.game.current_player_index - 1]
+
+        start_x, start_y = player_rect.topleft
+        end_x, end_y = self.board.current_card_rect.topleft
+
+        surface = get_card_back(2)
+        rect = surface.get_rect()
+        rect.topleft = start_x, start_y
+
+        self.animate_controller.start(surface, rect, start_x, start_y, end_x, end_y)
 
     def check_achievements(self):
         if len(self.game.notify_achievements) > 0 and not self.achievement_dialog.enabled:
