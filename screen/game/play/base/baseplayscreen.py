@@ -339,26 +339,29 @@ class BasePlayScreen(BaseScreen):
         card = hands[idx]
         # 유효성 확인
         if self.game.verify_new_card(card):
-            self.screen_controller.play_effect()
-            self.animate_board_player_to_current_card_enabled = True
-            # 스킬 사용 업적
+            self.start_board_player_to_current_card(card, idx)
 
-            for skill in Skill:
-                if card.value == skill.value:
-                    self.game.is_player_skilled = True
+    def start_board_player_to_current_card(self, card, idx):
+        self.screen_controller.play_effect()
+        self.animate_board_player_to_current_card_enabled = True
+        # 스킬 사용 업적
 
-            # 제출할 카드 저장
-            self.board_player_to_current_card_idx = idx
+        for skill in Skill:
+            if card.value == skill.value:
+                self.game.is_player_skilled = True
 
-            # 이동 애니메이션
-            start_x, start_y = self.card_board.card_rects[idx].topleft
-            end_x, end_y = self.board.current_card_rect.topleft
+        # 제출할 카드 저장
+        self.board_player_to_current_card_idx = idx
 
-            surface = get_card(card, 2)
-            rect = surface.get_rect()
-            rect.topleft = start_x, start_y
+        # 이동 애니메이션
+        start_x, start_y = self.card_board.card_rects[idx].topleft
+        end_x, end_y = self.board.current_card_rect.topleft
 
-            self.animate_controller.start(surface, rect, start_x, start_y, end_x, end_y)
+        surface = get_card(card, 2)
+        rect = surface.get_rect()
+        rect.topleft = start_x, start_y
+
+        self.animate_controller.start(surface, rect, start_x, start_y, end_x, end_y)
 
     def click_uno(self):
         self.game.click_uno()
@@ -390,11 +393,13 @@ class BasePlayScreen(BaseScreen):
         )
 
     def set_deck_to_plyer_destination(self):
+        self.destination_player_idx = 0
         if self.game.can_uno_penalty:
             # 이전 플레이어 목적지 지정
             if self.game.previous_player_index == self.game.board_player_index:
                 self.set_board_destination()
             else:
+                self.destination_player_idx = self.game.previous_player_index
                 player_rect = self.players_layout.players[self.game.previous_player_index - 1]
                 self.animate_destination_x, self.animate_destination_y = player_rect.topleft
         elif self.game.skill_plus_cnt > 0:
@@ -402,6 +407,7 @@ class BasePlayScreen(BaseScreen):
             if self.game.next_player_index == self.game.board_player_index:
                 self.set_board_destination()
             else:
+                self.destination_player_idx = self.game.next_player_index
                 player_rect = self.players_layout.players[self.game.next_player_index - 1]
                 self.animate_destination_x, self.animate_destination_y = player_rect.topleft
         else:
@@ -409,6 +415,7 @@ class BasePlayScreen(BaseScreen):
             if self.game.current_player_index == self.game.board_player_index:
                 self.set_board_destination()
             else:
+                self.destination_player_idx = self.game.current_player_index
                 player_rect = self.players_layout.players[self.game.current_player_index - 1]
                 self.animate_destination_x, self.animate_destination_y = player_rect.topleft
 
@@ -459,15 +466,17 @@ class BasePlayScreen(BaseScreen):
                 self.to_computer_play_idx = self.game.get_combo()
 
             if self.to_computer_play_idx is not None:
-                self.start_player_to_deck()
+                self.start_player_to_deck(self.to_computer_play_idx)
             else:
                 # 낼 카드 없을 떄
                 self.on_deck_selected()
 
-    def start_player_to_deck(self):
+    def start_player_to_deck(self, idx):
         self.screen_controller.play_effect()
         self.animate_current_player_to_current_card_enabled = True
 
+        print(self.game.current_player_index)
+        print(len(self.players_layout.players))
         player_rect = self.players_layout.players[self.game.current_player_index - 1]
 
         start_x, start_y = player_rect.topleft

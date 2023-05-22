@@ -8,9 +8,6 @@ import pygame
 from game.model.player import Player
 from util.globals import *
 
-if TYPE_CHECKING:
-    from game.game import UnoGame
-
 
 class PlayersLayout:
     def __init__(self, play_screen):
@@ -45,7 +42,6 @@ class PlayersLayout:
 
         self.left = screen.get_width() - self.width
 
-        self.players = []
         temp_player_layouts = []
         cnt = 0
         for idx, player in enumerate(players):

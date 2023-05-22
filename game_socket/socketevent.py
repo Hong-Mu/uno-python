@@ -8,7 +8,7 @@ class SocketEvent:
     START = "start"
     ALL_DATA = "all_data"
 
-    ANIM_DECK_TO_PLAYER = "anim_deck_to_board_player"
+    ANIM_DECK_TO_PLAYER = "anim_deck_to_player"
     """
     {
         player: sid
@@ -19,6 +19,7 @@ class SocketEvent:
     """
     {
         player: sid
+        idx: 
     }
     """
 
@@ -39,6 +40,8 @@ class SocketEvent:
     {
         game_turn_start_time: 0,
         turn_sid: sid,
+        previous_sid: sid,
+        next_sid: sid,
         
         current_card: ?,
         current_color: ?,

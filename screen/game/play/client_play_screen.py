@@ -13,6 +13,8 @@ class ClientPlayScreen(BasePlayScreen):
 
         self.client = screen_controller.client
 
+
+
     def check_time(self): # 동작 제거
         self.card_select_enabled = self.game.board_player_index == self.game.current_player_index
 
@@ -41,8 +43,10 @@ class ClientPlayScreen(BasePlayScreen):
     def on_server_message(self, event, data):
         if event == SocketEvent.ALL_DATA:
             self.hanle_data(data)
-        else:
-            print('불일치')
+        elif event == SocketEvent.ANIM_PLAYER_TO_CURRENT_CARD:
+            self.handle_player_to_current_card(data)
+        elif event == SocketEvent.ANIM_DECK_TO_PLAYER:
+            self.handle_deck_to_player(data)
 
     def hanle_data(self, data):
         self.game.players = self.rotate_list_to_id([dict_to_player(p) for p in data['players']], self.client.my_socket_id)
@@ -64,6 +68,12 @@ class ClientPlayScreen(BasePlayScreen):
             if p.sid == data['turn_sid']:
                 self.game.current_player_index = idx
 
+            if p.sid == data['next_sid']:
+                self.game.next_player_index = idx
+
+            if p.sid == data['previous_sid']:
+                self.game.previous_player_index = idx
+
             if p.sid == data['uno_sid']:
                 self.game.uno_clicked_player_index = idx
     def on_server_disconnected(self):
@@ -73,3 +83,52 @@ class ClientPlayScreen(BasePlayScreen):
         index = next((i for i, player in enumerate(players) if player.sid == target_id), -1)
         rotated_lst = players[index:] + players[:index]
         return rotated_lst
+
+    def handle_player_to_current_card(self, data):
+        player_idx = self.get_player_idx_by_sid(data['player'])
+
+        print(player_idx, self.game.board_player_index)
+        if player_idx == self.game.board_player_index:
+            card = self.game.get_board_player().hands[data['idx']]
+            self.start_board_player_to_current_card(card, data['idx'])
+        else:
+            self.start_player_to_deck(0)
+
+    def animate_deck_to_player(self, screen):
+        if self.animate_controller.enabled:
+            self.animate_controller.draw(screen)
+        else:
+            self.animate_deck_to_player_end()
+
+    def animate_deck_to_player_end(self):
+        self.animate_deck_to_player_enabled = False
+
+    def animate_board_player_to_current_card(self, screen):
+        if self.animate_controller.enabled:
+            self.animate_controller.draw(screen)
+        else:
+            self.animate_board_player_to_current_card_end()
+
+    def animate_board_player_to_current_card_end(self):
+        self.animate_board_player_to_current_card_enabled = False
+
+    def animate_current_player_to_current_card(self, screen):
+        if self.animate_controller.enabled:
+            self.animate_controller.draw(screen)
+        else:
+            self.animate_current_player_to_current_card_end()
+
+    def animate_current_player_to_current_card_end(self):
+        self.animate_current_player_to_current_card_enabled = False
+
+    def get_player_idx_by_sid(self, sid):
+        for idx, p in enumerate(self.game.players):
+            if p.sid == sid:
+                return idx
+        return -1
+    def get_player_by_sid(self, sid):
+        return next((p for p in self.game.players if p.sid == sid))
+
+    def handle_deck_to_player(self, data):
+        sid = data['player']
+        super().on_deck_selected()

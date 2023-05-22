@@ -38,7 +38,7 @@ class HostPlayScreen(BasePlayScreen):
 
         if self.game.verify_new_card(card):
             self.to_computer_play_idx = data['idx']
-            self.start_player_to_deck()
+            self.start_player_to_deck(data['idx'])
 
     def handle_input_deck(self, sid, data):
         self.on_deck_selected()
@@ -53,6 +53,8 @@ class HostPlayScreen(BasePlayScreen):
         temp = {
             'turn_start_time': self.game.turn_start_time,
             'turn_sid': self.game.get_current_player().sid,
+            'previous_sid': self.game.get_previous_player().sid,
+            'next_sid': self.game.get_next_player().sid,
 
             'current_card': {
                 'color': self.game.current_card.color,
@@ -82,3 +84,26 @@ class HostPlayScreen(BasePlayScreen):
     def get_player_by_sid(self, sid):
         return next((p for p in self.game.players if p.sid == sid))
 
+
+    def start_player_to_deck(self, idx):
+        super().start_player_to_deck(idx)
+
+        self.server.emit(SocketEvent.ANIM_PLAYER_TO_CURRENT_CARD, data={
+            'player': self.game.get_current_player().sid,
+            'idx': idx,
+        })
+
+    def start_board_player_to_current_card(self, card, idx):
+        super().start_board_player_to_current_card(card, idx)
+
+        self.server.emit(SocketEvent.ANIM_PLAYER_TO_CURRENT_CARD, data={
+            'player': self.game.get_board_player().sid,
+            'idx': idx,
+        })
+
+    def on_deck_selected(self):
+        super().on_deck_selected()
+
+        self.server.emit(SocketEvent.ANIM_DECK_TO_PLAYER, data={
+            'player': self.destination_player_idx
+        })
