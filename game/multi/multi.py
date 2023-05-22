@@ -12,4 +12,4 @@ class MultiPlayGame(BaseGame):
 
     def init(self):
         super().init()
-        self.deal()
+        self.deal(3)

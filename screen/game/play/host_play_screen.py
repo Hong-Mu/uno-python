@@ -17,6 +17,10 @@ class HostPlayScreen(BasePlayScreen):
         super().init_turn()
         self.send_data_to_clients()
 
+    def run_computer(self):
+        super().run_computer()
+        self.send_data_to_clients()
+
     def on_client_disconnected(self, sid):
         pass
 
@@ -40,7 +44,9 @@ class HostPlayScreen(BasePlayScreen):
         self.on_deck_selected()
 
     def handle_input_uno(self, sid, data):
-        pass
+        if self.game.uno_enabled and not self.game.uno_clicked:
+            self.game.uno_clicked = True
+            self.game.uno_clicked_player_index = self.get_player_idx_by_sid(sid)
 
     def send_data_to_clients(self):
         temp_skip_sids = [p.sid for idx, p in enumerate(self.game.players) if idx in self.game.get_skipped_player_indexs()]
@@ -68,6 +74,11 @@ class HostPlayScreen(BasePlayScreen):
 
         self.server.emit(SocketEvent.ALL_DATA, data=temp)
 
+    def get_player_idx_by_sid(self, sid):
+        for idx, p in enumerate(self.game.players):
+            if p.sid == sid:
+                return idx
+        return -1
     def get_player_by_sid(self, sid):
         return next((p for p in self.game.players if p.sid == sid))
 
