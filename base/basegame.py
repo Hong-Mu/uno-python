@@ -1,3 +1,4 @@
+from __future__ import annotations
 import time
 
 from game.model.deck import Deck
@@ -5,7 +6,6 @@ from model.skill import Skill
 from util.extradata import ExtraData
 from util.globals import *
 from util.singletone import achievementsUtil, extraDataUtil
-
 
 class BaseGame:
     def __init__(self):
@@ -30,7 +30,7 @@ class BaseGame:
         self.skill_plus_cnt = 0
 
         self.turn_start_time = None
-        self.is_turn_start = False
+        self.is_turn_start = True
         self.is_game_paused = False
         self.is_game_end_once = False
 
@@ -59,7 +59,7 @@ class BaseGame:
         self.skill_plus_cnt = 0
 
         self.turn_start_time = time.time()
-        self.is_turn_start = False
+        self.is_turn_start = True
 
         self.can_uno_penalty = False
         self.uno_enabled = False
@@ -113,7 +113,7 @@ class BaseGame:
         return self.players[self.next_player_index]
 
     def get_previous_player(self):
-        return self.players[self.previous_player_index]
+        return self.players[self.previous_player_index if self.previous_player_index is not None else -1]
 
     def get_uno_clicked_player(self):
         if self.uno_clicked_player_index is not None:
@@ -192,6 +192,13 @@ class BaseGame:
                     self.set_winner(self.players[idx])
                 return True
         return False
+
+    def click_uno(self):
+        if not self.uno_clicked:
+            self.is_uno_clicked_by_player = True
+            extraDataUtil.increase(ExtraData.SINGLE_UNO_CNT)
+            self.uno_clicked = True
+            self.uno_clicked_player_index = self.board_player_index
 
     def set_winner(self, player):
         print('승자', player.name)

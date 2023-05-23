@@ -87,6 +87,9 @@ class HomeScreen(BaseScreen):
         if self.input_password_dialog.enabled:
             self.input_password_dialog.draw(screen)
 
+        if self.toast.enabled:
+            self.toast.draw(screen)
+
     def draw_title(self, screen):
         self.title = get_large_font().render("Uno Game", True, COLOR_BLACK)
         self.title_rect = get_rect(self.title, screen.get_width() // 2, screen.get_height() // 5)
@@ -106,6 +109,8 @@ class HomeScreen(BaseScreen):
 
     def run_key_event(self, event):
         if self.event_enabled:
+            if self.client.enabled:
+                self.client.disable()
             self.run_menu_key_event(event)
 
         elif self.multi_play_dialog.enabled:
@@ -173,7 +178,7 @@ class HomeScreen(BaseScreen):
 
         if 'result' in data:
             if not data['result']:
-                self.input_password_dialog.description = data['message']
+                self.toast.show(data['message'])
 
 
 
@@ -184,5 +189,7 @@ class HomeScreen(BaseScreen):
                 self.client.my_socket_id = data['sid']
                 self.screen_controller.set_screen(ScreenType.LOBBY_CLIENT)
             else:
-                self.input_address_dialog.description = data['message']
+                self.toast.show(data['message'])
                 self.client.disable()
+                #self.input_address_dialog.description = data['message']
+

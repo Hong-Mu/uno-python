@@ -5,3 +5,7 @@ venu/
 uno_setting.json
 achievements.json
 extradata.json
+build/
+dist/
+main.exe
+main.spec

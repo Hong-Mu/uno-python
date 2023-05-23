@@ -119,7 +119,7 @@ class SettingScreen:
         elif key == pygame.K_RETURN:
             if self.get_selected_type() == MODE_RETURN:
                 if self.controller.is_paused:
-                    self.controller.set_screen(ScreenType.PLAY)
+                    self.controller.set_screen(self.controller.paused_type)
                     self.controller.is_paused = False
                 else:
                     self.controller.set_screen(ScreenType.HOME)
@@ -154,7 +154,7 @@ class SettingScreen:
                     self.setting.clear()
                 elif setting['type'] == MODE_RETURN:
                     if self.controller.is_paused:
-                        self.controller.set_screen(ScreenType.PLAY)
+                        self.controller.set_screen(self.controller.paused_type)
                         self.controller.is_paused = False
                     else:
                         self.controller.set_screen(ScreenType.HOME)

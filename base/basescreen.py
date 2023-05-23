@@ -1,5 +1,6 @@
 import pygame
 
+from base.toast import Toast
 from util.globals import COLOR_WHITE
 
 
@@ -9,6 +10,8 @@ class BaseScreen:
         self.screen = None
 
         self.event_enabled = True
+
+        self.toast = Toast(self)
 
     def init(self):
         pass

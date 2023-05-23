@@ -1,6 +1,7 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 
+from base.baseachievementgame import BaseAchievementGame
 from model.skill import Skill
 from util.extradata import ExtraData
 from util.globals import *
@@ -8,11 +9,9 @@ import pygame
 
 from util.singletone import extraDataUtil
 
-if TYPE_CHECKING:
-    from screen.game.play.PlayScreen import PlayScreen
 
 class Board:
-    def __init__(self, play_screen: PlayScreen):
+    def __init__(self, play_screen):
         self.play_screen = play_screen
         self.game = None
 
@@ -80,16 +79,9 @@ class Board:
 
     def run_uno_click_event(self, pos):
         if self.uno_rect.collidepoint(pos):
-            self.click_uno()
+            self.play_screen.click_uno()
 
     def run_uno_key_event(self, event):
         if event.key == self.play_screen.screen_controller.setting.get(MODE_UNO_KEY):
-            self.click_uno()
+            self.play_screen.click_uno()
 
-    def click_uno(self):
-        if not self.game.uno_clicked:
-            self.game.is_uno_clicked_by_player = True
-            extraDataUtil.increase(ExtraData.SINGLE_UNO_CNT)
-            self.game.update_achievement(Achievement.SINGLE_UNO_CNT)
-            self.game.uno_clicked = True
-            self.game.uno_clicked_player_index = self.game.board_player_index

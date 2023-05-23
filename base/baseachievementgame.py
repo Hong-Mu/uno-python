@@ -21,6 +21,10 @@ class BaseAchievementGame(BaseGame):
         else:
             self.check_player_uno_clicked_when_lose()
 
+    def click_uno(self):
+        super().click_uno()
+        self.update_achievement(Achievement.SINGLE_UNO_CNT)
+
     def run_periodically(self):
         super().run_periodically()
         self.check_uno_count()

@@ -50,11 +50,13 @@ class ScreenController:
         self.effect = pygame.mixer.Sound('./resource/sound/effect.mp3')
 
         self.is_paused = False  # 설정에서 돌아오기 위한 용도
+        self.paused_type = None
 
     def set_game(self, game):
         self.game = game
 
-    def set_paused(self):
+    def set_paused(self, type):
+        self.paused_type = type
         self.is_paused = True
 
     def init_pygame(self):
@@ -114,12 +116,14 @@ class ScreenController:
     async def on_client_message(self, event, sid, data): # 클라이언트로부터의 메세지
         print('[on_client_message]', event, sid, data)
         self.get_screen(ScreenType.LOBBY_SERVER).on_client_message(event, sid, data)
+        self.get_screen(ScreenType.PLAY_HOST).on_client_message(event, sid, data)
 
 
     def on_server_message(self, event, data):
         print('[on_server_message]', event, data)
         self.get_screen(ScreenType.HOME).on_server_message(event, data)
         self.get_screen(ScreenType.LOBBY_CLIENT).on_server_message(event, data)
+        self.get_screen(ScreenType.PLAY_CLIENT).on_server_message(event, data)
 
 
 
@@ -165,7 +169,7 @@ class ScreenController:
 
 
     def update_bgm(self):
-        if self.screen_type == ScreenType.PLAY:
+        if self.screen_type in [ScreenType.PLAY, ScreenType.PLAY_HOST, ScreenType.PLAY_CLIENT]:
             if not self.is_bgm_playing:
                 self.is_bgm_playing = True
                 self.bgm.play(-1)
@@ -225,8 +229,9 @@ class ScreenController:
 
     def on_client_disconnected(self, sid):
         self.get_screen(ScreenType.LOBBY_SERVER).on_client_disconnected(sid)
+        self.get_screen(ScreenType.PLAY_HOST).on_client_disconnected(sid)
 
 
     def on_server_disconnected(self):
-        print('on_server_disconnected')
         self.get_screen(ScreenType.LOBBY_CLIENT).on_server_disconnected()
+        self.get_screen(ScreenType.PLAY_CLIENT).on_server_disconnected()

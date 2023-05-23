@@ -25,7 +25,7 @@ class Deck:
 
         for c in color[1:]:
             for v in value[:14]:
-                cards.append(Card(c,v))
+                cards.append(Card(c, v))
 
         self.cards = cards
 

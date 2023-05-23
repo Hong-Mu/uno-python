@@ -117,7 +117,7 @@ class AchievementScreen:
     def run_return_click_event(self, event):
         if self.return_rect.collidepoint(pygame.mouse.get_pos()):
             if self.screen_controller.is_paused:
-                self.screen_controller.set_screen(ScreenType.PLAY)
+                self.screen_controller.set_screen(self.screen_controller.paused_type)
                 self.screen_controller.is_paused = False
             else:
                 self.screen_controller.set_screen(ScreenType.HOME)
@@ -132,7 +132,7 @@ class AchievementScreen:
                 self.scroll_y -= self.scroll_speed
         elif key == pygame.K_ESCAPE:
             if self.screen_controller.is_paused:
-                self.screen_controller.set_screen(ScreenType.PLAY)
+                self.screen_controller.set_screen(self.screen_controller.paused_type)
                 self.screen_controller.is_paused = False
             else:
                 self.screen_controller.set_screen(ScreenType.HOME)
