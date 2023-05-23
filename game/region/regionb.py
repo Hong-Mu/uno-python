@@ -10,8 +10,5 @@ class GameB(BaseGame):
         super().__init__()
     def init(self):
         super().init()
-        computers = [Computer(f"Computer{i}") for i in range(3)]
-        self.players.extend(computers)
-
         cnt = len(self.deck.cards) // len(self.players)
         self.deal(cnt)

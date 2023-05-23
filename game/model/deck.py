@@ -21,7 +21,7 @@ class Deck:
         cards = []
         cards.extend([Card(CARD_COLOR_NONE, Skill.PLUS_4.value)])
         # 무색상 색상 기술 카드
-        cards.extend([Card(CARD_COLOR_NONE, Skill.COLOR.value)] * 100)
+        cards.extend([Card(CARD_COLOR_NONE, Skill.COLOR.value)])
 
         for c in color[1:]:
             for v in value[:14]:

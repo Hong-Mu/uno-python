@@ -13,9 +13,6 @@ class GameD(BaseGame):
     def init(self):
         super().init()
         self.turn_cnt = 0
-        computers = [Computer(f"Computer{i}") for i in range(5)]
-        self.players.extend(computers)
-
         self.deck.set_cards(self.get_deck())
         self.deal()
 

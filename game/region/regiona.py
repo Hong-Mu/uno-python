@@ -15,25 +15,23 @@ class GameA(BaseGame):
     def __init__(self):
         super().__init__()
 
-        self.boss = None
-
     def init(self):
         super().init()
+        for c in self.players:
+            if c.name.startswith('Computer'):
+                self.computer_deal(c, 7)
+        self.get_board_player().deal(self.deck.deal(7))
 
-        self.boss = Computer('Computer0')
-
-        self.players.append(self.boss)
-        self.computer_deal(7)
-
-    def computer_deal(self, n):
+    def computer_deal(self, computer, n):
         example = []
         for _ in range(n):
             card = self.roulette_wheel_selection(self.deck.cards)
             self.deck.cards.remove(card)
             example.append(card)
 
-        self.boss.deal(example)
-        self.get_board_player().deal(self.deck.deal(7))
+        computer.deal(example)
+
+
 
     def roulette_wheel_selection(self, cards):
         non_int_values = [card for card in cards if not isinstance(card.value, int)]
@@ -52,6 +50,6 @@ class GameA(BaseGame):
         if len(temp) > 0:
             for card in temp:
                 computer.hands.remove(card)
-            computer.hands.append(Card(CARD_COLOR_NONE, Skill.COMBO))
+            computer.hands.append(Card(CARD_COLOR_NONE, Skill.COMBO.value))
             return len(computer.hands) - 1
 

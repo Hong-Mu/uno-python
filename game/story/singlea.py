@@ -23,7 +23,7 @@ class SingleA(BaseAchievementGame):
         self.boss = Computer('Computer0')
 
         self.players.append(self.boss)
-        self.computer_deal(7)
+        self.computer_deal(23)
 
     def set_winner(self, player):
         super().set_winner(player)
@@ -58,6 +58,6 @@ class SingleA(BaseAchievementGame):
         if len(temp) > 0:
             for card in temp:
                 computer.hands.remove(card)
-            computer.hands.append(Card(CARD_COLOR_NONE, Skill.COMBO))
+            computer.hands.append(Card(CARD_COLOR_NONE, Skill.COMBO.value))
             return len(computer.hands) - 1
 

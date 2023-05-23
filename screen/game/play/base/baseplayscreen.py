@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING
 from base.baseachievementgame import BaseAchievementGame
 from base.basescreen import BaseScreen
 from game.model.computer import Computer
+from game.story.singlea import SingleA
 from model.skill import Skill
 from game.region.regiona import GameA
 from screen.game.play.dialog.achievement import AchievementDialog
@@ -462,8 +463,8 @@ class BasePlayScreen(BaseScreen):
 
             self.to_computer_play_idx = computer.to_play(self.game)
 
-            if self.game is GameA:
-                self.to_computer_play_idx = self.game.get_combo()
+            if type(self.game) in [GameA, SingleA]:
+                self.to_computer_play_idx = self.game.get_combo(computer)
 
             if self.to_computer_play_idx is not None:
                 self.start_player_to_deck(self.to_computer_play_idx)

@@ -14,8 +14,6 @@ class GameC(BaseGame):
 
     def init(self):
         super().init()
-        computers = [Computer(f"Computer{i}") for i in range(2)]
-        self.players.extend(computers)
         self.deal()
 
     def run_in_turn_start(self):
