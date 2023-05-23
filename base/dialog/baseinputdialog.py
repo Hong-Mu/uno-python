@@ -55,7 +55,7 @@ class BaseInputDialog(BaseDialog):
                 self.dismiss()
         elif key == pygame.K_BACKSPACE:
             self.input = self.input[:-1]
-        elif event.unicode.isalnum():
+        else:
             self.input += event.unicode
 
 
