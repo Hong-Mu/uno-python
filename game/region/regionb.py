@@ -15,9 +15,3 @@ class GameB(BaseGame):
 
         cnt = len(self.deck.cards) // len(self.players)
         self.deal(cnt)
-
-    def set_winner(self, player):
-        super().set_winner(player)
-        if player == self.get_board_player():
-            self.check_story_cleared(Region.B)
-            self.update_achievement(Achievement.STORY_B)

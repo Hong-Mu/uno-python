@@ -25,12 +25,6 @@ class GameA(BaseGame):
         self.players.append(self.boss)
         self.computer_deal(7)
 
-    def set_winner(self, player):
-        super().set_winner(player)
-        if player == self.get_board_player():
-            self.check_story_cleared(Region.A)
-            self.update_achievement(Achievement.STORY_A)
-
     def computer_deal(self, n):
         example = []
         for _ in range(n):

@@ -19,12 +19,6 @@ class GameD(BaseGame):
         self.deck.set_cards(self.get_deck())
         self.deal()
 
-    def set_winner(self, player):
-        super().set_winner(player)
-        if player == self.get_board_player():
-            self.check_story_cleared(Region.D)
-            self.update_achievement(Achievement.STORY_D)
-
 
     def get_deck(self):
         color = list(CARD_COLOR_SET.keys())

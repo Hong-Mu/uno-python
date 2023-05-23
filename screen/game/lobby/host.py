@@ -11,6 +11,7 @@ from model.screentype import ScreenType
 from screen.game.lobby.base.multiplay import BaseMultiPlayLobbyScreen
 from screen.game.lobby.dialog.inputname import InputNameDialog
 from screen.game.lobby.dialog.inputpassword import InputPasswordDialog
+from screen.game.lobby.dialog.storymenudialog import StoryMenuDialog
 
 
 class HostLobbyScreen(BaseMultiPlayLobbyScreen):
@@ -25,20 +26,22 @@ class HostLobbyScreen(BaseMultiPlayLobbyScreen):
             self.input_name_dialog.dismiss()
         ))
 
+        self.story_menu_dialog = StoryMenuDialog(self)
+
         self.client_players = []
 
         self.menus = [
             {'text': '게임 시작', 'view': None, 'rect': None, 'action': lambda: (
                 self.play(),
             )},
+            {'text': '스토리 모드 설정', 'view': None, 'rect': None, 'action': lambda: (
+                self.story_menu_dialog.show()
+            )},
             {'text': '닉네임 설정', 'view': None, 'rect': None, 'action': lambda: (
                 self.input_name_dialog.show()
             )},
             {'text': '비밀번호 설정', 'view': None, 'rect': None, 'action': lambda: (
                 self.input_password_dialog.show()
-            )},
-            {'text': '스토리 모드 설정', 'view': None, 'rect': None, 'action': lambda: (
-
             )},
             {'text': '돌아가기', 'view': None, 'rect': None, 'action': lambda: (
                 self.close_connection(),
@@ -74,6 +77,9 @@ class HostLobbyScreen(BaseMultiPlayLobbyScreen):
         elif self.input_name_dialog.enabled:
             self.input_name_dialog.draw(screen)
 
+        elif self.story_menu_dialog.enabled:
+            self.story_menu_dialog.draw(screen)
+
         if self.toast.enabled:
             self.toast.draw(screen)
 
@@ -86,6 +92,9 @@ class HostLobbyScreen(BaseMultiPlayLobbyScreen):
         elif self.input_name_dialog.enabled:
             self.input_name_dialog.run_key_event(event)
 
+        elif self.story_menu_dialog.enabled:
+            self.story_menu_dialog.run_key_event(event)
+
     def run_click_event(self, event):
         if self.event_enabled:
             super().run_click_event(event)
@@ -94,6 +103,9 @@ class HostLobbyScreen(BaseMultiPlayLobbyScreen):
             self.input_password_dialog.run_click_event(event)
         elif self.input_name_dialog.enabled:
             self.input_name_dialog.run_click_event(event)
+
+        elif self.story_menu_dialog.enabled:
+            self.story_menu_dialog.run_click_event(event)
 
     def get_internal_ip(self):
         internal_ip = socket.gethostbyname(socket.gethostname())

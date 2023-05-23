@@ -4,6 +4,7 @@ from game.single import SinglePlayGame
 from model.screentype import ScreenType
 from screen.game.lobby.base.base import BaseLobbyScreen
 from screen.game.lobby.dialog.inputname import InputNameDialog
+from screen.game.lobby.dialog.storymenudialog import StoryMenuDialog
 
 
 class LobbyScreen(BaseLobbyScreen):
@@ -11,13 +12,15 @@ class LobbyScreen(BaseLobbyScreen):
         super().__init__(screen_controller)
 
         self.input_name_dialog = InputNameDialog(self, self.play)
+        self.story_menu_dialog = StoryMenuDialog(self)
+
 
         self.menus = [
             {'text': '플레이', 'view': None, 'rect': None, 'action': lambda: (
                 self.input_name_dialog.show(),
             )},
             {'text': '스토리 모드 설정', 'view': None, 'rect': None, 'action': lambda: (
-
+                self.story_menu_dialog.show()
             )},
             {'text': '돌아가기', 'view': None, 'rect': None, 'action': lambda: (
                 self.screen_controller.set_screen(ScreenType.HOME)
@@ -37,6 +40,9 @@ class LobbyScreen(BaseLobbyScreen):
         if self.input_name_dialog.enabled:
             self.input_name_dialog.draw(screen)
 
+        elif self.story_menu_dialog.enabled:
+            self.story_menu_dialog.draw(screen)
+
     def run_key_event(self, event):
         if self.event_enabled:
             super().run_key_event(event)
@@ -44,12 +50,18 @@ class LobbyScreen(BaseLobbyScreen):
         elif self.input_name_dialog.enabled:
             self.input_name_dialog.run_key_event(event)
 
+        elif self.story_menu_dialog.enabled:
+            self.story_menu_dialog.run_key_event(event)
+
     def run_click_event(self, event):
         if self.event_enabled:
             super().run_click_event(event)
 
         elif self.input_name_dialog.enabled:
             self.input_name_dialog.run_click_event(event)
+
+        elif self.story_menu_dialog.enabled:
+            self.story_menu_dialog.run_click_event(event)
 
     def play(self):
         players = [Player(self.input_name_dialog.input)]
