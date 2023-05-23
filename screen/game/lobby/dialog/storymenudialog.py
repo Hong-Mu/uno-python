@@ -9,6 +9,8 @@ class StoryMenuDialog(BaseMenuDialog):
         self.confirmed_idx = -1
 
         self.title_name = "스토리 모드 선택"
+
+        self.height = 350
         self.menus = [
             {'text': '스토리A', 'view': None, 'rect': None,
              'action': lambda: (

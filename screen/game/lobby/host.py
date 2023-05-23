@@ -215,13 +215,19 @@ class HostLobbyScreen(BaseMultiPlayLobbyScreen):
     def play(self):
         players = [Player(self.input_name_dialog.input, sid='host')]
 
+        cnt = 0
         for idx, slot in enumerate(self.player_slots):
             player = slot['player']
             if slot['enabled']:
                 if player is None:
                     players.append(Computer(f'Computer{idx}'))
                 else:
+                    cnt += 1
                     players.append(player)
+
+        if cnt == 0:
+            self.toast.show('최소 1명의 프레이어가 접속해야 합니다..!')
+            return
 
         self.screen_controller.set_game(MultiPlayGame())
         self.screen_controller.game.set_players(players)
