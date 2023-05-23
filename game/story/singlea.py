@@ -23,7 +23,7 @@ class SingleA(BaseAchievementGame):
         self.boss = Computer('Computer0')
 
         self.players.append(self.boss)
-        self.computer_deal(23)
+        self.computer_deal(7)
 
     def set_winner(self, player):
         super().set_winner(player)
